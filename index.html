@@ -81,6 +81,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .clock{display:inline-flex;align-items:center;gap:6px;background:var(--strip);color:var(--strip-ink);border-radius:999px;padding:4px 12px 4px 6px;font-size:var(--fs-s);font-weight:600;white-space:nowrap}
 .clock b{font:800 1.1rem/1 var(--display);color:#ff8c4d;font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .clock svg{width:18px;height:18px;flex:none}
+@media (prefers-reduced-motion:no-preference){.clock svg{animation:clock-spin 6s linear infinite}@keyframes clock-spin{to{transform:rotate(360deg)}}}   /* il pallone gira piano (solo transform: costa niente) */
 
 /* ——— menu delle viste: in basso sul telefono, in alto da computer ——— */
 .seg{z-index:3;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:relative}
