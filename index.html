@@ -896,7 +896,7 @@ function sourcesBlock(c) {
   const row = (lab, x) => x ? `<tr><td>${lab}</td><td>${num(x.min)}</td><td>${num(x.punti)}</td></tr>` : "";
   return `<details${c.disaccordo ? " open" : ""}><summary><span>Altre fonti${c.disaccordo ? " · <b>il modello non è d'accordo</b>" : ""}</span></summary>
     <table class="lastday"><thead><tr><th>Fonte</th><th>Minuti</th><th>Punti</th></tr></thead><tbody>
-    ${row("Modello", c.modello)}${row("FantasyPros", c.FantasyPros)}${row("ESPN", c.ESPN)}</tbody></table>
+    ${row("Modello", c.modello)}${row("FantasyPros", c.FantasyPros)}${row("ESPN", c.ESPN)}${c.BR ? `<tr><td>Basketball-Reference</td><td class="muted">(minuti nostri)</td><td>${num(c.BR.punti)}</td></tr>` : ""}</tbody></table>
     <p class="note">Punti Dunkest a partita senza avversario. Nel piano FantasyPros pesa il 60% a inizio stagione, il 20% fino a 9 partite, poi 0 (tarato sul 2025-26).</p></details>`;
 }
 
@@ -906,10 +906,11 @@ function disagreements() {
   const rows = c.slice(0, 15).map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.squadra)} · ${cr(x.crediti)}${x.mio ? ` · <b style="color:var(--accent-text)">in rosa/piano</b>` : ""}</small></td>
     <td>${num(x.modello.min, 0)} / ${num(x.modello.punti, 0)}</td>
     <td>${x.FantasyPros ? num(x.FantasyPros.min, 0) + " / " + num(x.FantasyPros.punti, 0) : "–"}</td>
-    <td>${x.ESPN ? num(x.ESPN.min, 0) + " / " + num(x.ESPN.punti, 0) : "–"}</td></tr>`).join("");
+    <td>${x.ESPN ? num(x.ESPN.min, 0) + " / " + num(x.ESPN.punti, 0) : "–"}</td>
+    <td>${x.BR ? num(x.BR.punti, 0) : "–"}</td></tr>`).join("");
   return `<div class="card">${head("Dove il modello non è d'accordo", "min / punti")}
     <p class="note">Minuti / punti a partita. Prima i giocatori della tua rosa e del piano, poi i disaccordi più grandi. Non vuol dire che il modello sbagli: spesso conosce un infortunio o un cambio di ruolo; ma sono i casi da controllare.</p>
-    <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Modello</th><th>FP</th><th>ESPN</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Modello</th><th>FP</th><th>ESPN</th><th>BR</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
 }
 
 // Stato delle fonti: da quanto tempo ogni origine dati non si aggiorna
