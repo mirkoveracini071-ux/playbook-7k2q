@@ -33,7 +33,7 @@
   --card:#ffffff; --card-ink:#151a21; --card-muted:#56616d; --card-line:#e2e6ea; --strip:#151a21; --strip-ink:#ffffff;
   --on-dark-up:#5fd08f; --on-dark-down:#ff8a8a; --on-dark-muted:#9aa6b2;
   --board:#161b22; --board-line:#2b333d; --board-ink:#f4f6f8; --board-muted:#9aa6b2; --glow:rgba(255,122,51,.4);
-  --sk:#dde2e7; --scrim:rgba(8,10,14,.5); --shadow:rgba(20,32,48,.10); --shadow-2:rgba(20,32,48,.18);
+  --sk:#dde2e7; --track:#e4e9ee; --tab-on:#ffffff; --noise:rgba(86,97,109,.14); --scrim:rgba(8,10,14,.5); --shadow:rgba(20,32,48,.10); --shadow-2:rgba(20,32,48,.18);
   /* tipografia */
   --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
   --body:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
@@ -45,19 +45,19 @@
   --nav-h:0px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a; --line-2:#3b4550;
+  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --card:#f3f5f7; --card-line:#dde2e7; --board:#07090c; --board-line:#1f262e;
-  --sk:#1f252d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}}
+  --sk:#1f252d; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a; --line-2:#3b4550;
+  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --card:#f3f5f7; --card-line:#dde2e7; --board:#07090c; --board-line:#1f262e;
-  --sk:#1f252d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}
+  --sk:#1f252d; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -85,27 +85,35 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 
 /* ——— menu delle viste: in basso sul telefono, in alto da computer ——— */
 .seg{z-index:3;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative}
-.seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;padding:4px 2px;border-radius:12px;transition:color var(--d-state)}
+.seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;min-width:0;padding:4px 2px;border-radius:12px;transition:color var(--d-state)}
 .seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap}
+.seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:clip}
 .seg button[aria-pressed="true"]{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 13%,transparent)}
-.seg-ind{position:absolute;left:0;top:0;border-radius:12px;background:color-mix(in srgb,var(--accent) 13%,transparent);pointer-events:none;opacity:0}
+/* l'indicatore copre tutto il menu e si "ritaglia" sulla voce scelta: si anima solo clip-path (niente layout) */
+.seg-ind{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 15%,transparent);pointer-events:none;opacity:0;clip-path:inset(50% 50% 50% 50%)}
 .seg.js button[aria-pressed="true"]{background:none}
 .seg.js .seg-ind{opacity:1}
 @media (max-width:699px){
-  :root{--nav-h:calc(66px + env(safe-area-inset-bottom,0px))}
-  .seg{position:fixed;left:0;right:0;bottom:0;padding:6px max(8px,env(safe-area-inset-left,0px)) calc(6px + env(safe-area-inset-bottom,0px));
+  :root{--nav-h:calc(68px + env(safe-area-inset-bottom,0px))}
+  .seg{position:fixed;left:0;right:0;bottom:0;padding:6px max(4px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px));
     background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
     border-top:1px solid var(--line);box-shadow:0 -6px 20px var(--shadow)}
+  /* sul telefono la voce scelta ha la "pillola" dietro l'icona, come nelle app iOS/Android; etichette più grandi */
+  .seg button{min-height:56px;padding:2px 0;gap:3px;border-radius:10px}
+  .seg button svg{box-sizing:border-box;width:46px;height:30px;padding:4px 12px;border-radius:999px}
+  .seg button[aria-pressed="true"]{background:none}
+  .seg button[aria-pressed="true"] svg{background:color-mix(in srgb,var(--accent) 15%,transparent)}
+  .seg.js button[aria-pressed="true"] svg{background:none}
+  .seg button span{font-size:clamp(.66rem,2.85vw,.78rem);letter-spacing:-.005em}
+  .seg button[aria-pressed="true"] span{font-weight:700}
 }
-@media (max-width:480px){.seg button span{font-size:.64rem;letter-spacing:0}.seg{padding-inline:2px}.seg button{padding-inline:0}}
 @media (min-width:700px){
   .seg{position:sticky;top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     border:1px solid var(--line);border-radius:999px;padding:4px;transition:box-shadow var(--d-state)}
-  .seg button{grid-auto-flow:column;gap:6px;min-height:44px;border-radius:999px}
-  .seg button svg{width:18px;height:18px}
-  .seg button span{font-size:.95rem}
-  .seg-ind{border-radius:999px}
+  .seg{border-radius:20px}
+  .seg button{gap:3px;min-height:54px;border-radius:16px;padding:4px 2px}
+  .seg button svg{width:20px;height:20px}
+  .seg button span{font-size:.86rem}
   .seg.stuck{box-shadow:0 8px 22px var(--shadow)}
 }
 
@@ -123,7 +131,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .hint{font-size:var(--fs-xs);color:var(--muted);text-align:center;margin:-6px 0 0}
 .empty{border:1.5px dashed var(--line-2);border-radius:14px;padding:18px 16px;color:var(--muted);display:grid;gap:6px;justify-items:start;font-size:var(--fs-s)}
 .empty b{color:var(--fg);font-size:var(--fs-m)}
-.empty svg{width:40px;height:40px;fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.empty svg{width:40px;height:40px;fill:none;stroke:var(--muted);opacity:.8;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:999px;border:0;background:var(--fg);color:var(--bg);font-weight:700;cursor:pointer}
 
 /* numeri: tessere e tabellone */
@@ -419,10 +427,96 @@ details b{color:var(--accent-text)}
 .sc-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-weight:600;line-height:1.25}
 .sc-h b{font:800 1.3rem/1 var(--display);font-variant-numeric:tabular-nums}
 .sc-row small{font-size:.8rem}
-.sc-bar{height:12px;border-radius:999px;background:var(--surface-2);overflow:hidden}
+.sc-bar{height:12px;border-radius:999px;background:var(--track);overflow:hidden}
 .sc-bar i{display:block;height:100%;width:var(--w);border-radius:999px;background:var(--accent)}
 .sc-row.ghost .sc-bar i{background:repeating-linear-gradient(135deg,color-mix(in srgb,var(--muted) 55%,transparent) 0 6px,transparent 6px 10px)}
 .sc-row.best .sc-h b{color:var(--accent-text)}
+
+/* ——— tabelle su telefono: prima colonna ferma, ombra che dice "c'è altro a destra" ——— */
+.scroll{background:
+    linear-gradient(to left,var(--surface) 40%,transparent) right/28px 100% no-repeat local,
+    radial-gradient(farthest-side at 100% 50%,var(--shadow-2),transparent) right/12px 100% no-repeat scroll}
+.scroll th:first-child,.scroll td:first-child{position:sticky;left:0;z-index:1;background:var(--surface)}
+.scroll td:first-child{min-width:8.5em}
+@media (hover:hover){.scroll tbody tr:hover td{background:var(--surface-2)}}
+.more-btn{justify-self:center;min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--fg);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.more-btn::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform var(--d-state) var(--e-out)}
+.more-btn[aria-expanded="true"]::after{transform:translateY(2px) rotate(-135deg)}
+tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
+
+/* ——— opzioni: confronto a colpo d'occhio ——— */
+.cmp-list{display:grid;gap:2px;margin-inline:-8px}
+.cmp-row{display:grid;grid-template-columns:28px minmax(0,1fr) auto;grid-template-areas:"n name v" ". bar bar";gap:6px 10px;align-items:center;text-align:left;
+  border:0;background:none;cursor:pointer;border-radius:12px;padding:10px 8px;min-height:44px;touch-action:manipulation}
+.cmp-row .alt-n{grid-area:n;width:1.6rem;height:1.6rem}
+.cmp-row.rec .alt-n{background:var(--accent);color:var(--accent-ink)}
+.cmp-name{grid-area:name;display:grid;min-width:0;line-height:1.2}
+.cmp-name b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmp-name small,.cmp-v small{font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.cmp-v{grid-area:v;display:grid;justify-items:end;line-height:1.1;font-variant-numeric:tabular-nums}
+.cmp-v b{font:800 1.35rem/1 var(--display)}
+.cmp-v small.up{color:var(--good)}.cmp-v small.down{color:var(--bad)}
+.cmp-bar{grid-area:bar;position:relative;height:10px;border-radius:999px;background:var(--track)}
+.cmp-bar .cmp-noise{position:absolute;top:-3px;bottom:-3px;background:var(--noise);border-radius:4px}
+.cmp-bar .cmp-zero{position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;margin-left:-1px;background:var(--fg);opacity:.55;border-radius:1px}
+.cmp-bar i{position:absolute;top:0;bottom:0;border-radius:999px}
+.cmp-bar i.p{background:var(--good);transform-origin:left}
+.cmp-bar i.n{background:var(--bad);transform-origin:right}
+.cmp-bar i.z{background:color-mix(in srgb,var(--muted) 70%,transparent)}
+.cmp-bar em{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 3px var(--surface)}
+.cmp-scale{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.cmp-scale > span{grid-column:2;display:flex;justify-content:space-between}
+@media (hover:hover){.cmp-row:hover{background:var(--surface-2)}}
+.alt{position:relative;scroll-margin-top:16px}
+.alt::after{content:"";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 0 0 3px var(--accent);opacity:0;pointer-events:none}
+.alt-h b{min-width:0;text-wrap:balance}
+.alt .alt-h{flex-wrap:nowrap}
+.alt-d{margin-left:auto;align-self:center;white-space:nowrap;flex:none;font:700 var(--fs-s)/1 var(--body);font-variant-numeric:tabular-nums;padding:4px 8px;border-radius:999px;background:var(--surface-2);color:var(--muted)}
+.alt-d.up{color:var(--good);background:color-mix(in srgb,var(--good) 13%,transparent)}
+.alt-d.down{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.alt .mv{margin-top:0}
+.pc-l{display:grid;gap:6px;margin:0;font-size:var(--fs-s)}
+.pc-l div{display:grid;grid-template-columns:4.2em 1fr;gap:8px;align-items:baseline}
+.pc-l dt{font:600 var(--fs-xs)/1.2 var(--body);text-transform:uppercase;letter-spacing:.08em}
+.pc-l dt.up{color:var(--good)}.pc-l dt.down{color:var(--bad)}
+.pc-l dd{margin:0;color:var(--muted);text-wrap:pretty}
+.alt-ro .alt-sl{grid-template-columns:1fr}
+
+/* ——— modello: indice delle sezioni, fonti in griglia, schede, squadre a barre ——— */
+.jump{position:relative;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-inline:-16px;padding:8px 16px;z-index:2}
+.jump::-webkit-scrollbar{display:none}
+.jump a{flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;font-weight:600;font-size:var(--fs-s);white-space:nowrap;transition:background-color var(--d-state),color var(--d-state),border-color var(--d-state)}
+.jump a[aria-current="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+@media (max-width:699px){.jump{position:sticky;top:0;padding-top:calc(8px + env(safe-area-inset-top,0px));background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}
+.msec{display:grid;gap:16px;min-width:0;scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+@media (min-width:700px){.msec{scroll-margin-top:76px}.jump{margin-inline:0;padding-inline:0}.alt{scroll-margin-top:80px}}
+.src-sum{display:flex;align-items:center;gap:10px;background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:var(--fs-s);color:var(--muted)}
+.src-sum b{font:800 1.5rem/1 var(--display);color:var(--fg)}
+.src-dot{width:10px;height:10px;border-radius:999px;background:var(--good);flex:none}
+.bad > .src-dot,.src-sum.bad .src-dot{background:none;box-shadow:inset 0 0 0 2px var(--bad)}
+.src-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr;column-gap:20px}
+@media (min-width:520px){.src-grid{grid-template-columns:1fr 1fr}}
+.src-grid li{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:10px;align-items:center;min-height:38px;padding:6px 0;border-bottom:1px solid var(--line);font-size:var(--fs-s);line-height:1.25}
+.src-grid li small{color:var(--muted);font-size:var(--fs-xs);white-space:nowrap}
+.src-grid li:last-child{border-bottom:0}
+.src-grid li.bad{font-weight:600}
+.src-grid li.bad small{color:var(--bad);font-weight:700}
+.tabs{position:relative;display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));background:var(--surface-2);border-radius:12px;padding:4px}
+.tabs button{position:relative;z-index:1;border:0;background:none;border-radius:9px;min-height:44px;padding:4px 6px;font-weight:600;font-size:var(--fs-s);color:var(--muted);cursor:pointer;transition:color var(--d-state)}
+.tabs button[aria-selected="true"]{color:var(--fg)}
+.tabs i{position:absolute;top:4px;bottom:4px;left:4px;width:calc((100% - 8px) / var(--n,3));border-radius:9px;background:var(--tab-on);box-shadow:0 1px 3px var(--shadow-2);transform:translateX(calc(var(--t,0) * 100%))}
+.tabpan{display:grid;gap:10px;min-width:0}
+.tm-l{list-style:none;margin:0;padding:0;display:grid}
+.tm-g{font:600 var(--fs-xs)/1.2 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 0 2px}
+.tm{display:grid;grid-template-columns:3.1em minmax(0,1fr) 3em;grid-template-areas:"c bar v" ". who who";gap:2px 10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.tm:last-child{border-bottom:0}
+.tm-c{grid-area:c;font:800 1.05rem/1 var(--display);letter-spacing:.03em;border-left:3px solid var(--tc,var(--line-2));padding-left:6px}
+.tm-bar{grid-area:bar;height:8px;border-radius:999px;background:var(--track);overflow:hidden}
+.tm-bar i{display:block;height:100%;width:var(--w);border-radius:999px;transform-origin:left}
+.tm-bar i.p{background:var(--good)}.tm-bar i.n{background:var(--bad)}
+.tm-v{grid-area:v;text-align:right;font-variant-numeric:tabular-nums}
+.tm-who{grid-area:who;font-size:var(--fs-xs);color:var(--muted);line-height:1.35}
+.tm-who em{font-style:normal;font-weight:700;color:var(--fg)}
 
 /* ——— scheda giocatore ——— */
 .scrim{position:fixed;inset:0;z-index:4;background:var(--scrim);opacity:0}
@@ -477,7 +571,8 @@ details b{color:var(--accent-text)}
    da cui arriva il contenuto (vista o giornata a destra o a sinistra). Con "riduci movimento" non c'è
    nessuna di queste regole: la pagina appare subito completa. */
 @media (prefers-reduced-motion:no-preference){
-  .seg.ready .seg-ind{transition:transform var(--d-move) var(--e-out),width var(--d-move) var(--e-out),height var(--d-move) var(--e-out)}
+  .seg.ready .seg-ind{transition:clip-path var(--d-move) var(--e-out)}
+  .seg.ready button[aria-pressed="true"] svg > *{transform-box:fill-box;transform-origin:center;animation:nav-pop var(--d-enter) var(--e-spring)}
   .mode i{transition:transform var(--d-move) var(--e-out)}
   .pc{transition:transform var(--d-state) var(--e-out)}
   .pc:active{transform:scale(.96);transition-duration:var(--d-press)}
@@ -508,6 +603,16 @@ details b{color:var(--accent-text)}
   .play .sc-bar i{transform-origin:left;animation:grow .8s var(--e-out) backwards;animation-delay:calc(200ms + var(--b,0) * 100ms)}
   .sheet.open .spark rect.b{transform-box:fill-box;transform-origin:bottom;animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(220ms + var(--b,0) * 35ms)}
   .sheet.open .spark .v{animation:fade var(--d-state) backwards;animation-delay:calc(480ms + var(--b,0) * 35ms)}
+  .play .cmp-row{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 55ms)}
+  .play .cmp-bar i{animation:grow .7s var(--e-out) backwards;animation-delay:calc(260ms + var(--k,0) * 70ms)}
+  .play .cmp-bar em{animation:pop var(--d-enter) var(--e-spring) backwards;animation-delay:calc(260ms + var(--k,0) * 70ms)}
+  .play .tm-bar i,.tab-in .tm-bar i{animation:grow .7s var(--e-out) backwards;animation-delay:calc(120ms + var(--k,0) * 35ms)}
+  details[open] .src-grid li,.play .src-grid li{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 25ms)}
+  .tab-in{animation:rise var(--d-enter) var(--e-out) backwards}
+  .tabs i{transition:transform var(--d-move) var(--e-out)}
+  .alt.flash::after{animation:flash 1.2s var(--e-out)}
+  .cmp-row,.jump a,.tabs button,.more-btn{transition:transform var(--d-press) var(--e-out),background-color var(--d-state),color var(--d-state)}
+  .cmp-row:active,.jump a:active,.tabs button:active,.more-btn:active{transform:scale(.97)}
   .kpi .delta.show{animation:delta 1.6s var(--e-out) both}
   .live-dot::after{animation:ping 1.6s var(--e-out) infinite}
   .sk::after{animation:shimmer 1.3s infinite}
@@ -544,6 +649,8 @@ details b{color:var(--accent-text)}
   @keyframes shimmer{to{transform:translateX(100%)}}
   @keyframes bounce{from{transform:translateY(-46px) rotate(-30deg)}to{transform:translateY(0) rotate(40deg)}}
   @keyframes squash{from{transform:scaleX(.45);opacity:.25}to{transform:scaleX(1);opacity:.6}}
+  @keyframes flash{0%,35%{opacity:1}100%{opacity:0}}
+  @keyframes nav-pop{from{transform:scale(.6)}}
   @keyframes prog{to{transform:scaleX(1)}}
 }
 </style>
@@ -597,6 +704,16 @@ const dmy = s => { const [y,m,d] = s.split("-"); return `${d}/${m}`; };
 const DOW = ["dom","lun","mar","mer","gio","ven","sab"];
 const dow = s => DOW[new Date(s + "T12:00:00").getDay()];
 const ARROW = `<svg class="arrow" viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h12M11 5l5 5-5 5"/></svg>`;
+const ICON = {
+  alt: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M10 6v10a6 6 0 0 0 6 6h8a6 6 0 0 1 6 6v6"/><path d="M10 6l-4 4M10 6l4 4M30 34l-4-4M30 34l4-4"/></svg>`,
+  wait: `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="21" r="14"/><path d="M20 13v8l5 4M16 4h8"/></svg>`,
+  ticket: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 12h28v5a3 3 0 0 0 0 6v5H6v-5a3 3 0 0 0 0-6z"/><path d="M24 12v16" stroke-dasharray="2 3"/></svg>`,
+  ok: `<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="15"/><path d="M13 20.5l5 5 9-10"/></svg>`,
+  star: `<svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 6l4.2 8.8 9.6 1.2-7.1 6.6 1.9 9.6L20 27.4l-8.6 4.8 1.9-9.6-7.1-6.6 9.6-1.2z"/></svg>`
+};
+const MORE = 6;   // righe visibili nelle tabelle lunghe, il resto dietro "Mostra tutti"
+const moreRows = rows => rows.map((r, i) => i < MORE ? r : r.replace("<tr", '<tr class="more" hidden')).join("");
+const moreBtn = n => n > MORE ? `<button type="button" class="more-btn" data-more="${n}" aria-expanded="false">Mostra tutti (${n})</button>` : "";
 const head = (title, meta = "") => `<div class="card-h"><h2>${title}</h2>${meta ? `<span class="meta">${meta}</span>` : ""}</div>`;
 
 let D = null, day = 0, view = "form", mode = "piano", prevMode = null;
@@ -864,7 +981,7 @@ function lastDay() {
 function accuracy() {
   const r = D.registro;
   if (!r || !r.partite) return `<div class="card">${head("Precisione delle previsioni", "in attesa")}
-    <div class="empty"><b>Si riempie dopo le prime partite</b>Dal 20 ottobre ogni previsione della giornata viene confrontata con i punti veri della regular season e il modello si ritara da solo.</div></div>`;
+    <div class="empty">${ICON.wait}<b>Si riempie dopo le prime partite</b>Dal 20 ottobre ogni previsione della giornata viene confrontata con i punti veri della regular season e il modello si ritara da solo.</div></div>`;
   return `<div class="card">${head("Precisione delle previsioni")}
     <div class="kpis" style="--n:3"><div class="kpi"><b>${num(r.MAE)}</b><span>errore medio (punti)</span></div>
       <div class="kpi"><b>${sign(r.bias)}</b><span>distorsione</span></div>
@@ -876,7 +993,7 @@ function accuracy() {
 function paperBets() {
   const r = D.schedine;
   if (!r || !r.giocate) return `<div class="card">${head("Prova schedine", "sulla carta")}
-    <div class="empty"><b>Nessuna giocata ancora</b>Nessun soldo vero. Dal 20 ottobre, ogni mattina il modello confronta le sue previsioni (fatte senza guardare le quote) con le soglie DraftKings e registra 1 unità finta quando vede almeno il 5% di valore; dopo le partite le giocate si chiudono con i risultati veri. Servono alcune centinaia di giocate per capire se c'è un vantaggio reale.</div></div>`;
+    <div class="empty">${ICON.ticket}<b>Nessuna giocata ancora</b>Nessun soldo vero. Dal 20 ottobre, ogni mattina il modello confronta le sue previsioni (fatte senza guardare le quote) con le soglie DraftKings e registra 1 unità finta quando vede almeno il 5% di valore; dopo le partite le giocate si chiudono con i risultati veri. Servono alcune centinaia di giocate per capire se c'è un vantaggio reale.</div></div>`;
   const pct = v => v == null ? "–" : (v > 0 ? "+" : "") + (v * 100).toLocaleString("it-IT", {maximumFractionDigits: 1}) + "%";
   const last = (r.ultime || []).slice(-6).reverse().map(g => `<tr><td>${esc(g.GIOCATORE || g.SQUADRA)}<br><small class="muted">${esc(g.MERCATO)} · ${esc(g.DATA)}</small></td>
     <td>${num(g.QUOTA, 2)}</td><td>${esc(g.ESITO)}</td></tr>`).join("");
@@ -903,50 +1020,68 @@ function sourcesBlock(c) {
 function disagreements() {
   const c = D.confronto || [];
   if (!c.length) return "";
-  const rows = c.slice(0, 15).map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.squadra)} · ${cr(x.crediti)}${x.mio ? ` · <b style="color:var(--accent-text)">in rosa/piano</b>` : ""}</small></td>
+  const L = c.slice(0, 15), rows = moreRows(L.map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.squadra)} · ${cr(x.crediti)}${x.mio ? ` · <b style="color:var(--accent-text)">in rosa/piano</b>` : ""}</small></td>
     <td>${num(x.modello.min, 0)} / ${num(x.modello.punti, 0)}</td>
     <td>${x.FantasyPros ? num(x.FantasyPros.min, 0) + " / " + num(x.FantasyPros.punti, 0) : "–"}</td>
     <td>${x.ESPN ? num(x.ESPN.min, 0) + " / " + num(x.ESPN.punti, 0) : "–"}</td>
-    <td>${x.BR ? num(x.BR.punti, 0) : "–"}</td></tr>`).join("");
+    <td>${x.BR ? num(x.BR.punti, 0) : "–"}</td></tr>`));
   return `<div class="card">${head("Dove il modello non è d'accordo", "min / punti")}
-    <p class="note">Minuti / punti a partita. Prima i giocatori della tua rosa e del piano, poi i disaccordi più grandi. Non vuol dire che il modello sbagli: spesso conosce un infortunio o un cambio di ruolo; ma sono i casi da controllare.</p>
-    <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Modello</th><th>FP</th><th>ESPN</th><th>BR</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <p class="note">Minuti / punti a partita. Prima i giocatori della tua rosa e del piano, poi i disaccordi più grandi: sono i casi da controllare (spesso il modello conosce un infortunio o un cambio di ruolo).</p>
+    <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Modello</th><th>FP</th><th>ESPN</th><th>BR</th></tr></thead><tbody>${rows}</tbody></table></div>${moreBtn(L.length)}</div>`;
 }
 
-// Stato delle fonti: da quanto tempo ogni origine dati non si aggiorna
+// Stato delle fonti: da quanto tempo ogni origine dati non si aggiorna. Riassunto in una riga, poi una griglia
+// compatta di tessere (prima quelle da controllare); pallino pieno = fresca, anello rosso = vecchia.
 function sourcesCard() {
   const F = D.fonti || [];
   if (!F.length) return "";
   const bad = F.filter(f => !f.ok).length;
-  const age = h => h == null ? "mai scaricata" : h < 1 ? "meno di un'ora fa" : h < 48 ? `${Math.round(h)} ore fa` : `${Math.round(h / 24)} giorni fa`;
+  const age = h => h == null || !isFinite(h) ? "mai scaricata" : h < 1 ? "meno di un'ora fa" : h < 48 ? `${Math.round(h)} ore fa` : `${Math.round(h / 24)} giorni fa`;
+  const short = h => h == null ? "mai" : h < 1 ? "< 1 h" : h < 48 ? `${Math.round(h)} h` : `${Math.round(h / 24)} g`;
+  const oldest = Math.max(...F.map(f => f.ore == null ? Infinity : f.ore));
+  const L = [...F].sort((x, y) => x.ok - y.ok);
+  const li = (f, k) => `<li class="${f.ok ? "" : "bad"}" style="--k:${k}"><span class="src-dot" aria-hidden="true"></span><span>${esc(f.nome)}</span><small class="num" aria-label="${age(f.ore)}${f.ok ? "" : ", da controllare"}">${short(f.ore)}</small></li>`;
   return `<div class="card">${head("Stato delle fonti", bad ? `<span style="color:var(--bad)">${bad} da controllare</span>` : "tutte fresche")}
-    <ul class="mod-list src">${F.map(f => `<li><b>${f.ok ? "● " : "○ "}${esc(f.nome)}</b><span class="${f.ok ? "muted" : "down"}">${age(f.ore)}</span></li>`).join("")}</ul>
+    <div class="src-sum${bad ? " bad" : ""}"><span class="src-dot" aria-hidden="true"></span><b>${F.length - bad}/${F.length}</b><span>aggiornate · ${isFinite(oldest) ? `la più vecchia ${age(oldest)}` : "una non è mai stata scaricata"}</span></div>
+    ${L.some(f => !f.ok) ? `<ul class="src-grid">${L.filter(f => !f.ok).map(li).join("")}</ul>` : ""}
+    ${bad < F.length ? `<details><summary><span>${bad ? `Le altre ${F.length - bad} fonti, fresche` : `Vedi le ${F.length} fonti`}</span></summary><ul class="src-grid">${L.filter(f => f.ok).map(li).join("")}</ul></details>` : ""}
     <p class="note">Dalla prima partita il limite è 36 ore, prima 7 giorni. Una fonte vecchia vuol dire che il modello lavora su dati non aggiornati.</p></div>`;
 }
 
-// Cambi di squadra: chi tira di più, chi meno, e cosa cambia per i compagni
+// Cambi di squadra: chi tira di più, chi meno, e cosa cambia per i compagni. Una sola scheda: in testa la sintesi,
+// il metodo dietro "Come si misura", poi tre schede interne (più usati, tua rosa, squadre a barre).
+let modTab = "movers";
 function swapsCard() {
   const S = D.scambi;
   if (!S) return "";
   const m = S.misura, mine = new Set(D.rosa || []);
-  const teamRows = (L) => L.map(t => `<tr><td><b>${esc(t.squadra)}</b></td>
-    <td><small class="muted">${t.partiti.map(x => esc(surname(x.nome))).join(", ") || "–"}</small></td>
-    <td><small class="muted">${t.arrivati.map(x => esc(surname(x.nome))).join(", ") || "–"}</small></td>
-    <td class="${t.netto > 0 ? "up" : "down"}">${sign(t.netto, 0)}</td></tr>`).join("");
-  const movers = S.cambiati.map(x => `<tr><td>${esc(x.nome)}${mine.has(x.nome) ? ' <span class="pill mine-tag">tua</span>' : ""}<br><small class="muted">${esc(x.da)} → ${esc(x.a)} · ${cr(x.crediti)} cr</small></td>
-    <td>${num(x.usage36, 0)}</td><td>${num(x.ppg, 0)}</td><td class="${x.dfp > 0.05 ? "up" : x.dfp < -0.05 ? "down" : ""}">${sign(x.dfp, 1)}</td></tr>`).join("");
+  const fx = v => v > 0.05 ? "up" : v < -0.05 ? "down" : "";
+  const mv = S.cambiati.map(x => `<tr><td>${esc(x.nome)}${mine.has(x.nome) ? ' <span class="pill mine-tag">tua</span>' : ""}<br><small class="muted">${esc(x.da)} → ${esc(x.a)} · ${cr(x.crediti)} cr</small></td>
+    <td>${num(x.usage36, 0)}</td><td>${num(x.ppg, 0)}</td><td class="${fx(x.dfp)}">${sign(x.dfp, 1)}</td></tr>`);
+  const movers = mv.length ? `<div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Azioni</th><th>Pt</th><th>Eff.</th></tr></thead><tbody>${moreRows(mv)}</tbody></table></div>${moreBtn(mv.length)}
+    <p class="note">Azioni ogni 36 minuti e punti a partita. Eff. = punti Dunkest a partita in più o in meno per i compagni nuovi (stima).</p>` : "";
   const my = S.tutti.filter(x => mine.has(x.nome)).sort((a, b) => a.dfp - b.dfp);
-  const myRows = my.map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.da)}${x.da !== x.a ? " → " + esc(x.a) : ""}</small></td><td class="${x.dusage36 > 0 ? "up" : "down"}">${sign(x.dusage36, 1)}</td><td class="${x.dfp > 0.05 ? "up" : x.dfp < -0.05 ? "down" : ""}">${sign(x.dfp, 1)}</td></tr>`).join("");
-  const T = S.squadre;
+  const myR = my.map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.da)}${x.da !== x.a ? " → " + esc(x.a) : ""}</small></td><td class="${x.dusage36 > 0 ? "up" : "down"}">${sign(x.dusage36, 1)}</td><td class="${fx(x.dfp)}">${sign(x.dfp, 1)}</td></tr>`);
+  const mineH = myR.length ? `<div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Δ azioni/36</th><th>Δ pt</th></tr></thead><tbody>${moreRows(myR)}</tbody></table></div>${moreBtn(myR.length)}
+    <p class="note">Quanto cambiano azioni e punti Dunkest a partita dei tuoi giocatori per i compagni nuovi.</p>` : "";
+  const T = S.squadre || [], lose = T.filter(t => t.netto < 0).slice(0, 7), gain = T.filter(t => t.netto > 0).slice(-7).reverse();
+  const mx = Math.max(1, ...[...lose, ...gain].map(t => Math.abs(t.netto)));
+  const who = L => L.map(x => esc(surname(x.nome))).join(", ");
+  const tm = (t, k) => `<li class="tm" style="--k:${k}"><b class="tm-c" style="--tc:${teamTone(t.squadra)}">${esc(t.squadra)}</b>
+    <span class="tm-bar" aria-hidden="true"><i class="${t.netto > 0 ? "p" : "n"}" style="--w:${(Math.abs(t.netto) / mx * 100).toFixed(1)}%"></i></span><b class="tm-v ${t.netto > 0 ? "up" : "down"}">${sign(t.netto, 0)}</b>
+    <small class="tm-who">${t.partiti.length ? `<em>Escono</em> ${who(t.partiti)}` : ""}${t.partiti.length && t.arrivati.length ? " · " : ""}${t.arrivati.length ? `<em>Entrano</em> ${who(t.arrivati)}` : ""}</small></li>`;
+  const teams = lose.length || gain.length ? `${lose.length ? `<div class="tm-g">Perdono più azioni</div><ul class="tm-l">${lose.map(tm).join("")}</ul>` : ""}
+    ${gain.length ? `<div class="tm-g">Ne guadagnano di più</div><ul class="tm-l">${gain.map((t, k) => tm(t, k + lose.length)).join("")}</ul>` : ""}
+    <p class="note">Saldo = azioni a partita degli arrivati meno quelle dei partiti. Una squadra con saldo alto ha più giocatori che si contendono i tiri.</p>` : "";
+  const tabs = [["movers", "Più usati", movers], ["mine", "Tua rosa", mineH], ["teams", "Squadre", teams]].filter(t => t[2]);
+  if (!tabs.length) return "";
+  if (!tabs.some(t => t[0] === modTab)) modTab = tabs[0][0];
+  const ti = tabs.findIndex(t => t[0] === modTab);
   return `<div class="card">${head("Chi cambia squadra", `${m.cambiati} su ${m.giocatori}`)}
-    <p class="note">Misura: quante azioni chiude un giocatore (tiri + 0,44 liberi + palle perse) ogni 36 minuti, dati 2025-26. Sulle ${m.transizioni} stagioni passate (2022-23 → 2025-26): per ogni azione ogni 36 minuti in più dei compagni, un giocatore ne chiude in media <b>${num(Math.abs(m.dusage_per_dC), 1)}</b> in meno (t ${num(m.t_usage, 1)}, effetto solido). Sui punti Dunkest invece l'effetto è piccolo e incerto (circa ${num(Math.abs(m.dfp_per_dC) * 30 / 36, 1)} punti a partita per azione, t ${num(m.t_fp, 1)}): perdi tiri ma anche palle perse e tiri sbagliati. Il test sul 2025-26 non lo trova negli errori del modello, quindi qui è informativo e non cambia le proiezioni.</p></div>
-    <div class="card">${head("Chi cambia e quanto tira", "azioni/36 · punti a partita · effetto compagni")}
-      <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Azioni</th><th>Pt</th><th>Eff.</th></tr></thead><tbody>${movers}</tbody></table></div>
-      <p class="note">Eff. = punti Dunkest a partita in più o in meno per i compagni nuovi (stima). I più usati che cambiano casa.</p></div>
-    ${my.length ? `<div class="card">${head("Nella tua rosa", "azioni/36 · punti")}<div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Azioni</th><th>Pt</th></tr></thead><tbody>${myRows}</tbody></table></div></div>` : ""}
-    <div class="card">${head("Squadre: azioni che escono e che entrano", "per partita, saldo")}
-      <div class="scroll"><table class="lastday"><thead><tr><th>Sq.</th><th>Partiti</th><th>Arrivati</th><th>Saldo</th></tr></thead><tbody>${teamRows(T.slice(0, 7))}${teamRows(T.slice(-7))}</tbody></table></div>
-      <p class="note">Saldo = azioni a partita degli arrivati meno quelle dei partiti (prime 7 squadre che perdono, ultime 7 che guadagnano). Una squadra con saldo alto ha più giocatori che si contendono i tiri.</p></div>`;
+    <p class="note">Su ${m.transizioni} cambi di squadra passati: più azioni dei compagni nuovi vogliono dire meno tiri per te (effetto solido), ma sui punti Dunkest l'effetto è piccolo e incerto. Qui è informativo: <b style="color:var(--fg)">non cambia le proiezioni</b>.</p>
+    <details><summary><span>Come si misura</span></summary><p class="note">Misura: quante azioni chiude un giocatore (tiri + 0,44 liberi + palle perse) ogni 36 minuti, dati 2025-26. Sulle ${m.transizioni} stagioni passate (2022-23 → 2025-26): per ogni azione ogni 36 minuti in più dei compagni, un giocatore ne chiude in media <b>${num(Math.abs(m.dusage_per_dC), 1)}</b> in meno (t ${num(m.t_usage, 1)}, effetto solido). Sui punti Dunkest invece l'effetto è piccolo e incerto (circa ${num(Math.abs(m.dfp_per_dC) * 30 / 36, 1)} punti a partita per azione, t ${num(m.t_fp, 1)}): perdi tiri ma anche palle perse e tiri sbagliati. Il test sul 2025-26 non lo trova negli errori del modello, quindi qui è informativo e non cambia le proiezioni.</p></details>
+    <div class="tabs" role="tablist" aria-label="Chi cambia squadra" style="--n:${tabs.length};--t:${ti}">${tabs.map(([k, l]) => `<button type="button" role="tab" id="tab-${k}" aria-controls="pan-${k}" aria-selected="${k === modTab}" tabindex="${k === modTab ? 0 : -1}" data-tab="${k}">${l}</button>`).join("")}<i aria-hidden="true"></i></div>
+    ${tabs.map(([k, , h]) => `<div class="tabpan" role="tabpanel" id="pan-${k}" aria-labelledby="tab-${k}"${k === modTab ? "" : " hidden"}>${h}</div>`).join("")}</div>`;
 }
 
 // Vista Modello: precisione, prova schedine, test sulle stagioni passate
@@ -967,7 +1102,27 @@ function renderMod() {
       <div class="scroll"><table class="lastday"><thead><tr><th>Strategia</th><th>Punti</th><th>Cambi</th><th>Valore</th></tr></thead><tbody>${str}</tbody></table></div>
       <p class="note">${esc(s.note)}</p></div>`;
   }
-  document.getElementById("v-mod").innerHTML = `${sourcesCard()}${swapsCard()}${accuracy()}${seasonCard()}${paperBets()}${disagreements()}${tests}`;
+  const parts = [["m-fonti", "Fonti", sourcesCard()], ["m-scambi", "Cambi di squadra", swapsCard()], ["m-prec", "Precisione", accuracy()], ["m-stag", "Stagione", seasonCard()],
+    ["m-sched", "Schedine", paperBets()], ["m-conf", "Altre fonti", disagreements()], ["m-test", "Test", tests]].filter(x => x[2]);
+  const el = document.getElementById("v-mod");
+  el.innerHTML = `<nav class="jump" aria-label="Sezioni del modello">${parts.map(([id, l], k) => `<a href="#${id}" data-jump="${id}"${k ? "" : ' aria-current="true"'}>${l}</a>`).join("")}</nav>
+    ${parts.map(([id, , h]) => `<div class="msec" id="${id}">${h}</div>`).join("")}`;
+  watchSections(el);
+}
+
+// Indice della vista Modello: si accende la sezione che stai leggendo
+let secObs = null;
+function watchSections(el) {
+  if (secObs) secObs.disconnect();
+  if (!("IntersectionObserver" in window)) return;
+  const nav = el.querySelector(".jump");
+  secObs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    nav.querySelectorAll("a").forEach(a => a.dataset.jump === e.target.id ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current"));
+    const a = nav.querySelector("[aria-current]");
+    if (a) nav.scrollTo({left: a.offsetLeft - 16, behavior: calm ? "auto" : "smooth"});
+  }), {rootMargin: "-30% 0px -65% 0px"});
+  el.querySelectorAll(".msec").forEach(s => secObs.observe(s));
 }
 
 // La stagione passata giocata dal modello completo: barre in scala con i punti
@@ -1043,21 +1198,48 @@ function renderPrezzi() {
     <div class="card">${head("Taratura plusvalenze")}${calib}</div>`;
 }
 
-// Opzioni: formazioni alternative per il prossimo turno, da confrontare
+// Opzioni: formazioni alternative per il prossimo turno, da confrontare.
+// In testa un confronto a colpo d'occhio: differenza di punti attesi rispetto alla consigliata, in scala, con la
+// fascia di rumore (±1,5 punti) in grigio; tocca una riga per andare alla sua scheda.
+const ALT_NOISE = 1.5;
+const itNum = t => esc(t).replace(/(^|[^\d.])-(?=\d)/g, "$1−").replace(/(\d)\.(\d{1,2})(?!\d)/g, "$1,$2");   // testi del piano: virgola decimale e segno meno tipografico
 function renderAlt() {
-  const A = D.alternative;
-  if (!A) { document.getElementById("v-alt").innerHTML = `<div class="empty"><b>Nessuna alternativa calcolata</b>Chiedi a Claude di prepararle.</div>`; return; }
+  const A = D.alternative, el = document.getElementById("v-alt");
+  if (!A || !A.opzioni || !A.opzioni.length) { el.innerHTML = `<div class="empty">${ICON.alt}<b>Nessuna alternativa calcolata</b><span>Chiedi a Claude di prepararle: qui le vedrai confrontate con il piano, una accanto all'altra.</span></div>`; return; }
+  const O = A.opzioni, rec = O.find(o => o.tag === "consigliata") || O[0];
   const age = Math.floor((Date.now() - new Date(A.calcolato + "T12:00:00")) / 864e5);
-  const cards = A.opzioni.map(o => `<article class="alt${o.tag === "consigliata" ? " rec" : ""}">
-    <div class="alt-h"><span class="alt-n">${o.id}</span><b>${esc(o.nome)}</b>${o.tag === "consigliata" ? '<span class="pill mine-tag">consigliata</span>' : o.tag === "scartata" ? '<span class="pill out">sconsigliata</span>' : o.tag === "prudente" ? '<span class="pill q">piano B</span>' : ""}</div>
+  const dl = o => o.punti - rec.punti;
+  const span = Math.ceil(Math.max(ALT_NOISE * 2, ...O.map(o => Math.abs(dl(o)))));
+  const pos = v => (50 + v / span * 48).toFixed(1);
+  const cls = d => d > ALT_NOISE ? "up" : d < -ALT_NOISE ? "down" : "";
+  const tag = o => o.tag === "consigliata" ? '<span class="pill mine-tag">consigliata</span>' : o.tag === "scartata" ? '<span class="pill out">sconsigliata</span>' : o.tag === "prudente" ? '<span class="pill q">piano B</span>' : "";
+  const cambi = n => `${n} ${n === 1 ? "cambio" : "cambi"}`;
+  const rows = O.map((o, k) => {
+    const d = dl(o), isRec = o === rec, bar = isRec ? `<em style="left:50%"></em>`
+      : `<i class="${Math.abs(d) <= ALT_NOISE ? "z" : d > 0 ? "p" : "n"}" style="left:${pos(Math.min(0, d))}%;right:${(100 - pos(Math.max(0, d))).toFixed(1)}%;transform-origin:${d >= 0 ? "left" : "right"}"></i>`;
+    return `<button type="button" class="cmp-row${isRec ? " rec" : ""}" data-alt="${o.id}" style="--k:${k}" aria-label="${esc(o.nome)}: ${num(o.punti)} punti attesi${isRec ? ", riferimento" : `, ${sign(d)} sulla consigliata`}, ${cambi(o.fuori.length)}. Vai alla scheda">
+      <span class="alt-n">${o.id}</span>
+      <span class="cmp-name"><b>${esc(o.nome)}</b><small>${cambi(o.fuori.length)}${o.prezzi != null ? ` · ${sign(o.prezzi, 2)} cr` : ""}</small></span>
+      <span class="cmp-v"><b>${num(o.punti)}</b><small class="${isRec ? "" : cls(d)}">${isRec ? "riferimento" : sign(d)}</small></span>
+      <span class="cmp-bar" aria-hidden="true"><span class="cmp-noise" style="left:${pos(-ALT_NOISE)}%;right:${(100 - pos(ALT_NOISE)).toFixed(1)}%"></span><span class="cmp-zero"></span>${bar}</span></button>`;
+  }).join("");
+  const cards = O.map((o, k) => {
+    const d = dl(o), isRec = o === rec;
+    return `<article class="alt${isRec ? " rec" : ""}" id="alt-${o.id}" style="--k:${k}">
+    <div class="alt-h"><span class="alt-n">${o.id}</span><b>${esc(o.nome)}</b>${tag(o)}${isRec ? "" : `<span class="alt-d ${cls(d)}" title="Rispetto alla consigliata">${sign(d)} pt</span>`}</div>
     <div class="alt-k"><span><b>${num(o.punti)}</b><small>punti attesi</small></span>${o.prezzi != null ? `<span class="${o.prezzi > 0 ? "up" : "down"}"><b>${sign(o.prezzi, 2)}</b><small>cr attesi</small></span>` : ""}<span><b>${o.fuori.length}</b><small>cambi</small></span></div>
-    <p>${esc(o.idea)} Capitano: <b>${esc(o.capitano)}</b>.</p>
-    ${o.fuori.length ? `<div class="alt-sw" aria-label="Cambi">${o.fuori.map(n => `<span class="chip o">fuori ${esc(surname(n))}</span>`).join("")}${o.dentro.map(n => `<span class="chip in">dentro ${esc(surname(n))}</span>`).join("")}</div>` : ""}
-    <p><b>Pro:</b> ${esc(o.pro)} <b>Contro:</b> ${esc(o.contro)}</p>
+    <p>${itNum(o.idea)} Capitano: <b>${esc(o.capitano)}</b>.</p>
+    ${o.fuori.length ? `<div class="mv" aria-label="Cambi"><span class="lab">Fuori</span><div class="chips">${o.fuori.map((n, j) => `<span class="chip o" style="--k:${j}">${esc(surname(n))}</span>`).join("")}</div>
+      <span class="lab">Dentro</span><div class="chips">${o.dentro.map((n, j) => `<span class="chip i" style="--k:${j + o.fuori.length}">${esc(surname(n))}</span>`).join("")}</div></div>` : ""}
+    ${o.pro || o.contro ? `<dl class="pc-l">${o.pro ? `<div><dt class="up">Pro</dt><dd>${itNum(o.pro)}</dd></div>` : ""}${o.contro ? `<div><dt class="down">Contro</dt><dd>${itNum(o.contro)}</dd></div>` : ""}</dl>` : ""}
     ${o.rosa ? `<details class="alt-ro"><summary>Rosa completa</summary>${["titolare", "sesto uomo", "panchina", "coach"].map(sl => { const L = o.rosa.filter(g => g.slot === sl); return L.length ? `<div class="alt-sl"><small>${sl === "titolare" ? "Quintetto" : sl === "sesto uomo" ? "Sesto uomo" : sl === "panchina" ? "Panchina" : "Coach"}</small>${L.map(g => `<span class="${o.fuori.length && o.dentro.includes(g.nome) ? "new" : ""}">${esc(g.ruolo)} ${esc(surname(g.nome))} <i>${esc(g.squadra)} · ${cr(g.crediti)}</i></span>`).join("")}</div>` : ""; }).join("")}</details>` : ""}
-    </article>`).join("");
-  document.getElementById("v-alt").innerHTML = `
+    </article>`;
+  }).join("");
+  el.innerHTML = `
     <div class="card">${head("Formazioni alternative", esc(A.giornata))}
+      <div class="cmp-list">${rows}</div>
+      <div class="cmp-scale" aria-hidden="true"><span><span>−${span}</span><span>consigliata</span><span>+${span}</span></span></div>
+      <p class="legend"><span><i style="background:var(--noise);border-color:transparent"></i>±${num(ALT_NOISE)} punti: differenza di rumore</span></p>
       <p class="note">${esc(A.nota)}</p>
       ${age > 2 ? `<p class="note" style="color:var(--warn-text)">Calcolate il ${esc(A.calcolato.split("-").reverse().join("/"))}: potrebbero non essere più aggiornate.</p>` : ""}</div>
     <div class="alt-list">${cards}</div>`;
@@ -1085,7 +1267,7 @@ function renderOcc() {
   document.getElementById("v-occ").innerHTML = `
     <div class="card">${head("Occasioni da pochi crediti", `${occ.length} giocatori`)}
       <p class="note">Giocatori fino a 6 crediti che avranno più minuti, o il posto da titolare, per l'assenza di un compagno (infortuni da app Dunkest e basketballmonster). Ordinati per punti attesi a giornata.</p></div>
-    ${occ.length ? `<div class="occ-list">${cards}</div>` : `<div class="empty"><b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
+    ${occ.length ? `<div class="occ-list">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
 }
 
 function renderInf() {
@@ -1098,7 +1280,7 @@ function renderInf() {
     <span class="why">${esc(i.motivo)}: ${esc(i.stato)}</span><span class="when">${i.data ? dmy(i.data) : ""}</span></div>`;
   const outN = rosterHits.filter(i => /out/i.test(i.stato) && !/question/i.test(i.stato)).length;
   document.getElementById("v-inf").innerHTML = `
-    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(row).join("")}</div>` : `<div class="empty"><b>Tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`}</div>
+    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(row).join("")}</div>` : `<div class="empty">${ICON.ok}<b>Tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`}</div>
     <div class="card">${head("Tutta la lega", `${L.length} giocatori`)}<div class="inj-list">${L.filter(i => !rosterHits.includes(i)).map(row).join("")}</div></div>`;
 }
 
@@ -1283,14 +1465,27 @@ function countUp(b, from = 0) {
   requestAnimationFrame(step);
 }
 
-// Indicatore che scivola sotto la vista scelta
+// Indicatore che scivola sotto la vista scelta: sul telefono è la pillola dietro l'icona, da computer tutta la voce.
+// Si muove ritagliando (clip-path) un velo grande quanto il menu: nessun ricalcolo del layout durante l'animazione.
+const mobileNav = matchMedia("(max-width: 699px)");
 function moveIndicator() {
   const nav = document.querySelector(".seg"), on = nav.querySelector('button[aria-pressed="true"]'), ind = nav.querySelector(".seg-ind");
   if (!on) return;
-  ind.style.width = on.offsetWidth + "px"; ind.style.height = on.offsetHeight + "px";
-  ind.style.transform = `translate(${on.offsetLeft}px, ${on.offsetTop}px)`;
+  const tgt = mobileNav.matches ? on.querySelector("svg") : on;
+  const n = nav.getBoundingClientRect(), r = tgt.getBoundingClientRect();
+  const W = nav.clientWidth, H = nav.clientHeight, t = r.top - n.top - nav.clientTop, l = r.left - n.left - nav.clientLeft;
+  ind.style.clipPath = `inset(${t.toFixed(1)}px ${(W - l - r.width).toFixed(1)}px ${(H - t - r.height).toFixed(1)}px ${l.toFixed(1)}px round ${mobileNav.matches ? (r.height / 2).toFixed(1) : 16}px)`;
   if (!nav.classList.contains("js")) { nav.classList.add("js"); requestAnimationFrame(() => requestAnimationFrame(() => nav.classList.add("ready"))); }
 }
+function fitNav() {
+  const sp = [...document.querySelectorAll(".seg button span")];
+  sp.forEach(x => x.style.fontSize = "");
+  const k = Math.min(1, ...sp.map(x => x.clientWidth / (x.scrollWidth || 1)));
+  if (k < 1) { const fs = parseFloat(getComputedStyle(sp[0]).fontSize) * k * .98; sp.forEach(x => x.style.fontSize = Math.max(9, fs).toFixed(2) + "px"); }
+}
+fitNav();
+addEventListener("resize", fitNav);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { fitNav(); moveIndicator(); });
 addEventListener("resize", moveIndicator);
 
 // Conto alla rovescia alla prossima giornata che non è ancora iniziata
@@ -1323,7 +1518,39 @@ function render() {
   moveIndicator();
 }
 
+// Schede interne di "Chi cambia squadra"
+function pickTab(k, focus) {
+  const bar = document.querySelector("#v-mod .tabs"); if (!bar) return;
+  const btns = [...bar.querySelectorAll("[data-tab]")], i = btns.findIndex(b => b.dataset.tab === k);
+  if (i < 0) return;
+  modTab = k; bar.style.setProperty("--t", i);
+  btns.forEach(b => { const on = b.dataset.tab === k; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
+  document.querySelectorAll("#v-mod .tabpan").forEach(p => {
+    const on = p.id === "pan-" + k; p.hidden = !on;
+    if (on && !calm) { p.classList.remove("tab-in"); p.querySelectorAll(".tm").forEach((x, j) => x.style.setProperty("--k", j)); void p.offsetWidth; p.classList.add("tab-in"); }
+  });
+  if (focus) btns[i].focus();
+}
+
 document.addEventListener("click", e => {
+  const tb = e.target.closest("[data-tab]"); if (tb) { pickTab(tb.dataset.tab); return; }
+  const mo = e.target.closest("[data-more]"); if (mo) {
+    const open = mo.getAttribute("aria-expanded") !== "true", box = mo.parentElement;
+    box.querySelectorAll("tr.more").forEach(r => r.hidden = !open);
+    mo.setAttribute("aria-expanded", open); mo.textContent = open ? "Mostra meno" : `Mostra tutti (${mo.dataset.more})`;
+    return;
+  }
+  const al = e.target.closest("[data-alt]"); if (al) {
+    const t = document.getElementById("alt-" + al.dataset.alt); if (!t) return;
+    t.scrollIntoView({behavior: calm ? "auto" : "smooth", block: "start"});
+    t.classList.remove("flash"); void t.offsetWidth; t.classList.add("flash");
+    return;
+  }
+  const jp = e.target.closest("[data-jump]"); if (jp) {
+    e.preventDefault();
+    document.getElementById(jp.dataset.jump)?.scrollIntoView({behavior: calm ? "auto" : "smooth", block: "start"});
+    return;
+  }
   const v = e.target.closest(".seg button"); if (v) { if (v.dataset.view === view) { scrollTo({top: 0, behavior: calm ? "auto" : "smooth"}); return; } dir = Math.sign(VIEWS.indexOf(v.dataset.view) - VIEWS.indexOf(view)); view = v.dataset.view; save(); render(); if (scrollY > 200) scrollTo({top: 0}); return; }
   const mb = e.target.closest("[data-mode]"); if (mb) { if (mb.dataset.mode === mode) return; morph(() => { prevMode = mode; mode = mb.dataset.mode; dir = mode === "mia" ? 1 : -1; keepDays = true; save(); render(); }); return; }
   const d = e.target.closest("[data-day]"); if (d) { if (+d.dataset.day === day) return; goDay(+d.dataset.day); return; }
@@ -1332,6 +1559,10 @@ document.addEventListener("click", e => {
 });
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") closeSheet();
+  if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".tabs")) {
+    const btns = [...e.target.closest(".tabs").querySelectorAll("[data-tab]")], i = btns.indexOf(e.target.closest("[data-tab]"));
+    const n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length]; if (n) pickTab(n.dataset.tab, true);
+  }
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".days")) { e.preventDefault(); goDay(day + (e.key === "ArrowRight" ? 1 : -1)); requestAnimationFrame(() => document.querySelector(`.days [data-day="${day}"]`)?.focus()); }
 });
 
