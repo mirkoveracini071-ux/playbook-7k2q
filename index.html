@@ -280,6 +280,7 @@ details b{color:var(--accent-text)}
 .pc .info small{display:block;font-size:.68rem;color:var(--card-muted);text-transform:uppercase;white-space:nowrap;letter-spacing:.02em}
 .pc .pts{background:var(--card);color:var(--card-ink);border-top:1px solid var(--card-line);font-size:.75rem;padding:2px 0 4px;font-variant-numeric:tabular-nums;color:var(--card-muted)}
 .pc .pts b{font-weight:700;color:var(--card-ink)}
+.pc .pts .se{display:block;font-size:.66rem;color:var(--card-muted);line-height:1.1;margin-top:1px}
 .pc .st3{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-top:1px solid var(--card-line);padding:3px 2px 4px;font-variant-numeric:tabular-nums;line-height:1.05}
 .pc .st3 > span + span{box-shadow:-1px 0 0 var(--card-line)}
 .pc .st3 b{display:block;font:700 .82rem var(--display);color:var(--card-ink)}
@@ -816,7 +817,7 @@ function card(p, g) {
     ${left ? `<span class="badges-l">${left}</span>` : ""}${right ? `<span class="badges-r">${right}</span>` : ""}${isCap ? `<span class="cap-b" title="Capitano">C</span>` : ""}${jersey(p.squadra, info.maglia, coach)}
     <span class="tag"><span class="nm" style="display:block"><i>${ROLE[p.ruolo]}</i>${esc(surname(p.nome))}${formArrow(info.forma)}</span>
     <span class="info"><span><b>${cr(p.crediti)}</b><small>cr</small></span><span><b>${turno || "HC"}</b><small>${esc(opp)}</small></span></span>
-    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi</span>${cardStats(p)}</span></button>`;
+    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi${seGioca(p) ? `<small class="se" title="Probabilità di giocare ${Math.round(p.p_gioca * 100)}%: i punti attesi sono già ridotti">${num(seGioca(p))} se gioca</small>` : ""}</span>${cardStats(p)}</span></button>`;
 }
 
 // Linee in scala: area 16x19 piedi, lunetta raggio 6, arco da tre a 23,75 dal ferro (dritto negli angoli), area senza sfondamento 4
@@ -1372,7 +1373,7 @@ function renderCalc() {
 }
 
 // Ultime partite: barre dei punti Dunkest, linea dei punti attesi per la giornata
-function spark(G, expv) {
+function spark(G, expv, ifPlays) {
   if (!G || !G.length) return "";
   const W = 320, H = 124, top = 18, base = 98, n = G.length, bw = (W - 8) / n;
   const mx = Math.max(...G.map(x => x.punti), expv || 0, 10), Y = v => base - Math.max(0, v) / mx * (base - top);
@@ -1384,7 +1385,7 @@ function spark(G, expv) {
       <text x="${X.toFixed(1)}" y="${base + 15}" text-anchor="middle" font-size="9" fill="var(--muted)">${x.casa ? "" : "@"}${esc(x.avv)}</text>`; }).join("");
   const line = expv ? `<line x1="2" x2="${W - 2}" y1="${Y(expv).toFixed(1)}" y2="${Y(expv).toFixed(1)}" stroke="var(--fg)" stroke-opacity=".75" stroke-dasharray="4 3" stroke-width="1.2"/>` : "";
   return `<div class="spark"><div class="spark-h"><b>Ultime ${n} partite</b><span class="muted num" style="font-size:var(--fs-s)">media ${num(avg)}</span></div>
-    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="dash"></i>attesi ${num(expv)}</span></p>` : ""}
+    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Punti Dunkest nelle ultime ${n} partite, media ${num(avg)}">
     <line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}</svg>
     <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}In arancio le partite sopra i punti attesi; @ = in trasferta.</span></div>`;
@@ -1402,6 +1403,11 @@ function openSheet(id) {
   if (p) showSheet(p);
 }
 
+// Punti attesi se il giocatore scende in campo (i "punti attesi" sono già moltiplicati per la probabilità di giocare)
+function seGioca(p) {
+  return p.ruolo !== "HC" && p.p_gioca != null && p.p_gioca >= 0.05 && p.p_gioca < 0.95 && p.punti ? p.punti / p.p_gioca : null;
+}
+
 // Statistiche attese a partita del giocatore p nella giornata mostrata (null se non ci sono)
 function playerStats(p) {
   if (p.ruolo === "HC" || !p.partita || !D.cerca) return null;
@@ -1414,7 +1420,7 @@ function playerStats(p) {
 function statsBlock(p) {
   if (p.ruolo === "HC" || !p.partita) return "";
   const st = playerStats(p);
-  const lab = '<div class="lab" style="margin-bottom:6px">Statistiche attese a partita</div>';
+  const lab = '<div class="lab" style="margin-bottom:6px">Statistiche attese a partita, se gioca</div>';
   if (!st) return `<div>${lab}<p class="note" style="margin:0">Non ci sono: il giocatore non ha storico NBA, partite di preseason né proiezioni di altre fonti, quindi i punti attesi sono una stima prudente senza dettaglio per statistica.</p></div>`;
   const src = st.src ? `<p class="note" style="margin:6px 0 0">Stima da ${esc(st.src)}: senza storico NBA non c'è la simulazione completa.</p>` : "";
   return `<div>${lab}<div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => st[k] != null ? `<div><b>${num(st[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div>${src}</div>`;
@@ -1428,6 +1434,7 @@ function showSheet(p) {
   const dl = [
     [`Partita`, p.partita ? `<b>${esc(p.partita)}</b>${p.turno ? ` · turno ${p.turno}` : ""}` : "Non gioca in questa giornata."],
     p.p_gioca != null && p.ruolo !== "HC" ? [`Probabilità di giocare`, `<b>${Math.round(p.p_gioca * 100)}%</b>`] : null,
+    seGioca(p) ? [`Punti se gioca`, `<b>${num(seGioca(p))}</b> <span class="muted">· i ${num(p.punti)} attesi sono già ridotti al ${Math.round(p.p_gioca * 100)}%</span>`] : null,
     info.quintetto ? [`Quintetto`, `${info.quintetto.titolare ? "<b>Titolare</b>" : "<b>Dalla panchina</b>"} · ${info.quintetto.confermato ? "confermato" : "previsto"} (${esc(info.quintetto.partita.split(" in ")[0])})`] : null,
     info.infortunio ? [`Infortunio`, `<span class="pill q">${esc(info.infortunio.motivo)}</span> ${esc(info.infortunio.stato)}`] : null,
     isCap ? [`Fascia`, `<span class="badge-inline">C</span> capitano nel piano`] : null
@@ -1442,7 +1449,7 @@ function showSheet(p) {
     ${p.p_dd != null ? `<div class="facts"><div><b>${Math.round(p.p_dd * 100)}%</b><span>doppia doppia</span></div>
       <div><b>${p.p_td < 0.01 ? "<1" : Math.round(p.p_td * 100)}%</b><span>tripla doppia</span></div>
       <div><b>${Math.round((p.p_3t || 0) * 100)}%</b><span>3+ triple</span></div></div>` : ""}
-    ${spark(info.partite, p.punti)}
+    ${spark(info.partite, seGioca(p) ?? p.punti, seGioca(p) != null)}
     ${formBlock(info.forma)}
     ${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}
     ${sourcesBlock(info.fonti)}
