@@ -84,7 +84,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 @media (prefers-reduced-motion:no-preference){.clock svg{animation:clock-spin 6s linear infinite}@keyframes clock-spin{to{transform:rotate(360deg)}}}   /* il pallone gira piano (solo transform: costa niente) */
 
 /* ——— menu delle viste: in basso sul telefono, in alto da computer ——— */
-.seg{z-index:3;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));position:relative}
+.seg{z-index:3;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative}
 .seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;padding:4px 2px;border-radius:12px;transition:color var(--d-state)}
 .seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap}
@@ -98,7 +98,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
     background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
     border-top:1px solid var(--line);box-shadow:0 -6px 20px var(--shadow)}
 }
-@media (max-width:380px){.seg button span{font-size:.72rem;letter-spacing:0}.seg{padding-inline:4px}}
+@media (max-width:480px){.seg button span{font-size:.64rem;letter-spacing:0}.seg{padding-inline:2px}.seg button{padding-inline:0}}
 @media (min-width:700px){
   .seg{position:sticky;top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
     border:1px solid var(--line);border-radius:999px;padding:4px;transition:box-shadow var(--d-state)}
@@ -336,6 +336,23 @@ details b{color:var(--accent-text)}
 .bar-l{display:flex;justify-content:space-between;gap:8px;font-size:var(--fs-s);color:var(--muted);font-variant-numeric:tabular-nums}
 .bar-l b{color:var(--fg)}
 
+
+/* ——— opzioni di formazione ——— */
+.alt-list{display:grid;gap:12px}
+.alt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
+.alt.rec{border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.alt-h{display:flex;gap:6px 10px;align-items:center;flex-wrap:wrap}
+.alt-h b{font:800 1.25rem/1.05 var(--display);text-transform:uppercase;letter-spacing:.02em}
+.alt-n{font:800 .9rem/1 var(--display);width:1.7rem;height:1.7rem;border-radius:50%;display:grid;place-items:center;background:var(--fg);color:var(--bg)}
+.alt-k{display:flex;gap:6px 22px;flex-wrap:wrap;align-items:flex-end;font-variant-numeric:tabular-nums}
+.alt-k > span{display:grid;line-height:1.1}
+.alt-k b{font:800 1.6rem/1 var(--display)}
+.alt-k small{font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.alt-sw{display:flex;flex-wrap:wrap;gap:6px}
+.alt-sw .chip.in{background:color-mix(in srgb,var(--good,var(--accent)) 14%,var(--surface));border-color:color-mix(in srgb,var(--good,var(--accent)) 40%,transparent)}
+.alt p{margin:0;font-size:var(--fs-s);color:var(--muted);text-wrap:pretty}
+.alt p b{color:var(--fg)}
+
 /* ——— occasioni ——— */
 .occ-list{display:grid;gap:12px}
 .occ{display:grid;grid-template-columns:56px 1fr;gap:14px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px}
@@ -533,6 +550,7 @@ details b{color:var(--accent-text)}
   </header>
   <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span>
     <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v6h5v-6M6.5 3.5v3.5a5.5 5.5 0 0 0 11 0V3.5"/></svg><span>Squadra</span></button>
+    <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v5a3 3 0 0 0 3 3h6a3 3 0 0 1 3 3v5"/><path d="M6 4L3.5 6.5M6 4l2.5 2.5M18 20l-2.5-2.5M18 20l2.5-2.5"/></svg><span>Opzioni</span></button>
     <button type="button" data-view="occ" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg><span>Occasioni</span></button>
     <button type="button" data-view="prezzi" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16"/><path d="M5 15.5l4-4.5 3.5 3L19 7"/><path d="M15 7h4v4"/></svg><span>Prezzi</span></button>
     <button type="button" data-view="inf" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8v8M8 12h8"/></svg><span>Infortuni</span></button>
@@ -542,6 +560,7 @@ details b{color:var(--accent-text)}
   <section id="v-form" class="view"><div class="loader" role="status"><svg viewBox="0 0 44 60" aria-hidden="true">
     <ellipse class="shadow" cx="22" cy="56" rx="14" ry="3" fill="var(--fg)" opacity=".4"/>
     <g class="ball"><circle cx="22" cy="40" r="14" fill="var(--accent)"/><g fill="none" stroke="var(--strip)" stroke-width="1.4" opacity=".75"><path d="M8 40h28M22 26v28"/><path d="M12 30c5 5 5 15 0 20M32 30c-5 5-5 15 0 20"/></g></g></svg><p>Carico il piano…</p></div><div class="sk" style="--h:150px"></div><div class="sk" style="--h:56px"></div><div class="sk" style="--h:84px"></div><div class="sk" style="--h:420px"></div></section>
+  <section id="v-alt" class="view" hidden></section>
   <section id="v-occ" class="view" hidden></section>
   <section id="v-prezzi" class="view" hidden></section>
   <section id="v-inf" class="view" hidden></section>
@@ -574,7 +593,7 @@ const ARROW = `<svg class="arrow" viewBox="0 0 20 20" aria-hidden="true"><path d
 const head = (title, meta = "") => `<div class="card-h"><h2>${title}</h2>${meta ? `<span class="meta">${meta}</span>` : ""}</div>`;
 
 let D = null, day = 0, view = "form", mode = "piano", prevMode = null;
-const VIEWS = ["form", "occ", "prezzi", "inf", "calc", "mod"];
+const VIEWS = ["form", "alt", "occ", "prezzi", "inf", "calc", "mod"];
 try { const s = JSON.parse(localStorage.getItem("pcc-ui") || "{}"); if (Number.isInteger(s.day)) day = s.day; if (VIEWS.includes(s.view)) view = s.view; if (s.mode) mode = s.mode; } catch (e) {}
 const save = () => { try { localStorage.setItem("pcc-ui", JSON.stringify({day, view, mode})); } catch (e) {} };
 
@@ -980,6 +999,25 @@ function renderPrezzi() {
     <div class="card">${head("Taratura plusvalenze")}${calib}</div>`;
 }
 
+// Opzioni: formazioni alternative per il prossimo turno, da confrontare
+function renderAlt() {
+  const A = D.alternative;
+  if (!A) { document.getElementById("v-alt").innerHTML = `<div class="empty"><b>Nessuna alternativa calcolata</b>Chiedi a Claude di prepararle.</div>`; return; }
+  const age = Math.floor((Date.now() - new Date(A.calcolato + "T12:00:00")) / 864e5);
+  const cards = A.opzioni.map(o => `<article class="alt${o.tag === "consigliata" ? " rec" : ""}">
+    <div class="alt-h"><span class="alt-n">${o.id}</span><b>${esc(o.nome)}</b>${o.tag === "consigliata" ? '<span class="pill mine-tag">consigliata</span>' : o.tag === "scartata" ? '<span class="pill out">sconsigliata</span>' : o.tag === "prudente" ? '<span class="pill q">piano B</span>' : ""}</div>
+    <div class="alt-k"><span><b>${num(o.punti)}</b><small>punti attesi</small></span>${o.prezzi != null ? `<span class="${o.prezzi > 0 ? "up" : "down"}"><b>${sign(o.prezzi, 2)}</b><small>cr attesi</small></span>` : ""}<span><b>${o.fuori.length}</b><small>cambi</small></span></div>
+    <p>${esc(o.idea)} Capitano: <b>${esc(o.capitano)}</b>.</p>
+    ${o.fuori.length ? `<div class="alt-sw" aria-label="Cambi">${o.fuori.map(n => `<span class="chip o">fuori ${esc(surname(n))}</span>`).join("")}${o.dentro.map(n => `<span class="chip in">dentro ${esc(surname(n))}</span>`).join("")}</div>` : ""}
+    <p><b>Pro:</b> ${esc(o.pro)} <b>Contro:</b> ${esc(o.contro)}</p>
+    <p>Calcolo ${esc(o.calcolo)}.</p></article>`).join("");
+  document.getElementById("v-alt").innerHTML = `
+    <div class="card">${head("Formazioni alternative", esc(A.giornata))}
+      <p class="note">${esc(A.nota)}</p>
+      ${age > 2 ? `<p class="note" style="color:var(--warn-text)">Calcolate il ${esc(A.calcolato.split("-").reverse().join("/"))}: potrebbero non essere più aggiornate.</p>` : ""}</div>
+    <div class="alt-list">${cards}</div>`;
+}
+
 // Occasioni: giocatori economici che avranno più minuti o il posto da titolare per l'assenza di un compagno
 function renderOcc() {
   const occ = D.occasioni || [];
@@ -1228,7 +1266,7 @@ function render() {
   document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === view));
   VIEWS.forEach(v => document.getElementById("v-" + v).hidden = v !== view);
   const strip = document.querySelector("#v-form .days"), scroll = strip ? strip.scrollLeft : 0;
-  ({form: renderForm, occ: renderOcc, prezzi: renderPrezzi, inf: renderInf, calc: renderCalc, mod: renderMod})[view]();
+  ({form: renderForm, alt: renderAlt, occ: renderOcc, prezzi: renderPrezzi, inf: renderInf, calc: renderCalc, mod: renderMod})[view]();
   if (keepDays) { const s = document.querySelector("#v-form .days"); if (s) s.scrollLeft = scroll; }
   keepDays = false;
   if (!litOnce && view === "form" && !calm) { const c = document.querySelector("#v-form .court"); if (c) { c.classList.add("lights"); litOnce = true; } }
