@@ -1,5 +1,5 @@
-/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione 009f28b317 */
-const V = '009f28b317', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
+/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione b0c1782011 */
+const V = 'b0c1782011', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
 
 self.addEventListener('install', e => {

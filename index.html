@@ -351,6 +351,36 @@ details b{color:var(--accent-text)}
 
 
 
+
+/* ——— stima di presenza, sostituti, mercato, avvisi ——— */
+.ovr .lab{margin-bottom:6px}
+.ovr-c{display:flex;flex-wrap:wrap;gap:6px}
+.ovr-c button{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;min-height:40px;padding:0 14px;font:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.ovr-c button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.subs{display:grid;gap:4px}
+.sbs{display:grid;grid-template-columns:1fr auto;gap:1px 10px;align-items:center;text-align:left;width:100%;border:0;background:var(--surface-2);color:var(--fg);font:inherit;padding:9px 12px;border-radius:12px;cursor:pointer;min-height:52px}
+.sbs b{font-weight:700}
+.sbs .m{grid-column:1;font-size:var(--fs-s);color:var(--muted)}
+.sbs .d{grid-column:2;grid-row:1 / span 2;text-align:right;font-variant-numeric:tabular-nums;line-height:1.15}
+.sbs .d b{font:800 1.2rem/1 var(--display);display:block}
+.sbs .d small{font-size:var(--fs-xs)}
+.sbs .up{color:var(--good,#1f7a4a)} .sbs .down{color:var(--bad,#c0392b)}
+.mkt-seg{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
+.mkt-seg button{border:0;background:none;color:var(--muted);font:inherit;font-weight:700;min-height:44px;border-radius:10px;cursor:pointer}
+.mkt-seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px var(--shadow)}
+.mkt-f{display:grid;gap:10px}
+.mkt-f .row{display:flex;flex-wrap:wrap;gap:6px}
+.mkt-f .chip-b{border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;min-height:40px;padding:0 14px;font:inherit;font-size:var(--fs-s);font-weight:600;cursor:pointer}
+.mkt-f .chip-b[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.mkt-f select{flex:1 1 140px;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:16px;padding:0 10px}
+.mkt-t td,.mkt-t th{white-space:nowrap;padding-inline:6px}
+.mkt-t td:first-child{white-space:normal;min-width:116px}
+.mkt-t tbody tr{cursor:pointer}
+.mkt-t tbody tr:active{background:var(--surface-2)}
+.mkt-more{justify-self:center;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;min-height:44px;padding:0 22px;font:inherit;font-weight:600;cursor:pointer}
+.avv{display:grid;gap:4px;background:color-mix(in srgb,var(--warn) 16%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 45%,transparent);color:var(--fg);border-radius:12px;padding:10px 12px;font-size:var(--fs-s)}
+.avv b{color:var(--warn-text)}
+
 /* ——— ricerca giocatori ——— */
 .srch{position:relative;z-index:4}
 .srch-f{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 6px 0 12px;min-height:48px;transition:border-color var(--d-state),box-shadow var(--d-state)}
@@ -691,6 +721,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
     <div class="brand"><h1 id="team">PolloconCurry</h1></div>
     <div class="brand-r"><span id="clock" class="clock" hidden></span><small id="upd">Carico i dati…</small></div>
   </header>
+  <div id="avv" class="avv" hidden role="status"></div>
   <div class="srch" id="srch">
     <label class="srch-f"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
       <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cerca un giocatore o una squadra" aria-label="Cerca un giocatore" aria-controls="qres">
@@ -799,6 +830,7 @@ function cardStats(p) {
 }
 
 function card(p, g) {
+  p = adj(p);
   const info = D.giocatori[p.nome] || {};
   const coach = p.ruolo === "HC";
   const opp = (p.partita || "").replace(/^\d\d\/\d\d\s*/, "").toUpperCase() || "RIPOSO";
@@ -817,7 +849,7 @@ function card(p, g) {
     ${left ? `<span class="badges-l">${left}</span>` : ""}${right ? `<span class="badges-r">${right}</span>` : ""}${isCap ? `<span class="cap-b" title="Capitano">C</span>` : ""}${jersey(p.squadra, info.maglia, coach)}
     <span class="tag"><span class="nm" style="display:block"><i>${ROLE[p.ruolo]}</i>${esc(surname(p.nome))}${formArrow(info.forma)}</span>
     <span class="info"><span><b>${cr(p.crediti)}</b><small>cr</small></span><span><b>${turno || "HC"}</b><small>${esc(opp)}</small></span></span>
-    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi${seGioca(p) ? `<small class="se" title="Probabilità di giocare ${Math.round(p.p_gioca * 100)}%: i punti attesi sono già ridotti">${num(seGioca(p))} se gioca</small>` : ""}</span>${cardStats(p)}</span></button>`;
+    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi${seGioca(p) ? `<small class="se" title="Probabilità di giocare ${Math.round(p.p_gioca * 100)}%: i punti attesi sono già ridotti">${num(seGioca(p))} se gioca${p._adj ? " ✎" : ""}</small>` : ""}</span>${cardStats(p)}</span></button>`;
 }
 
 // Linee in scala: area 16x19 piedi, lunetta raggio 6, arco da tre a 23,75 dal ferro (dritto negli angoli), area senza sfondamento 4
@@ -1287,7 +1319,56 @@ function renderAlt() {
 }
 
 // Occasioni: giocatori economici che avranno più minuti o il posto da titolare per l'assenza di un compagno
+let occMode = "occ";
+const mkt = {role: "", team: "", max: "", sort: "punti", n: 25};
+const occSeg = () => `<div class="mkt-seg" role="group" aria-label="Occasioni o mercato"><button type="button" data-occ="occ" aria-pressed="${occMode === "occ"}">Occasioni</button><button type="button" data-occ="mkt" aria-pressed="${occMode === "mkt"}">Mercato</button></div>`;
+
+// Mercato: tutti i giocatori con filtri e ordinamento, nella giornata mostrata
+function renderMkt() {
+  const C = D.cerca || [], teams = [...new Set(C.map(c => c.squadra))].sort();
+  const roles = [["", "Tutti"], ["G", "Guardie"], ["F", "Ali"], ["C", "Centri"], ["HC", "Coach"]];
+  document.getElementById("v-occ").innerHTML = `${occSeg()}
+    <div class="card mkt-f">${head("Mercato", esc(curG().label))}
+      <div class="row" role="group" aria-label="Ruolo">${roles.map(([v, l]) => `<button type="button" class="chip-b" data-mr="${v}" aria-pressed="${mkt.role === v}">${l}</button>`).join("")}</div>
+      <div class="row"><select id="mt" aria-label="Squadra"><option value="">Tutte le squadre</option>${teams.map(t => `<option value="${t}"${mkt.team === t ? " selected" : ""}>${t}</option>`).join("")}</select>
+        <select id="mm" aria-label="Prezzo massimo"><option value="">Qualsiasi prezzo</option>${[5, 7, 9, 12, 15, 20].map(v => `<option value="${v}"${String(mkt.max) === String(v) ? " selected" : ""}>Fino a ${v} cr</option>`).join("")}</select>
+        <select id="ms" aria-label="Ordina per"><option value="punti"${mkt.sort === "punti" ? " selected" : ""}>Più punti attesi</option><option value="ptcr"${mkt.sort === "ptcr" ? " selected" : ""}>Più punti per credito</option><option value="plus"${mkt.sort === "plus" ? " selected" : ""}>Più crediti attesi</option><option value="prezzo"${mkt.sort === "prezzo" ? " selected" : ""}>Prezzo più basso</option></select></div></div>
+    <div id="mkt-res"></div>`;
+  drawMkt();
+}
+function drawMkt() {
+  const mine = new Set(D.rosa || []);
+  let L = (D.cerca || []).map(c => ({c, v: rowVals(c)})).filter(x => x.v.partita && x.v.punti != null);
+  if (mkt.role) L = L.filter(x => x.c.ruolo === mkt.role);
+  if (mkt.team) L = L.filter(x => x.c.squadra === mkt.team);
+  if (mkt.max) L = L.filter(x => x.c.crediti <= +mkt.max);
+  const ptcr = x => x.c.crediti > 0 ? x.v.punti / x.c.crediti : 0;
+  const key = {punti: x => -x.v.punti, ptcr: x => -ptcr(x), plus: x => -(x.v.plus_cr ?? -9), prezzo: x => x.c.crediti}[mkt.sort];
+  L.sort((a, b) => key(a) - key(b) || b.v.punti - a.v.punti);
+  const shown = L.slice(0, mkt.n);
+  const rows = shown.map(({c, v}) => `<tr data-mid="${c.id}"><td><b>${esc(c.nome)}</b>${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></td>
+    <td>${cr(c.crediti)}</td><td><b>${num(v.punti)}</b>${v.adj ? " ✎" : ""}</td><td>${num(ptcr({c, v}), 2)}</td><td class="${v.plus_cr > 0.05 ? "up" : v.plus_cr < -0.05 ? "down" : ""}">${v.plus_cr != null ? sign(v.plus_cr, 2) : "–"}</td><td>${v.p != null && c.ruolo !== "HC" ? Math.round(v.p * 100) + "%" : "–"}</td></tr>`).join("");
+  document.getElementById("mkt-res").innerHTML = `<div class="card">${head("Risultati", `${L.length} giocatori`)}
+    ${L.length ? `<div class="scroll"><table class="lastday mkt-t"><thead><tr><th>Giocatore</th><th>Cr</th><th>Pt</th><th>Pt/cr</th><th>Plus</th><th>Pres.</th></tr></thead><tbody>${rows}</tbody></table></div>
+      ${L.length > shown.length ? `<button type="button" class="mkt-more" id="mkt-more">Mostra altri ${Math.min(25, L.length - shown.length)}</button>` : ""}
+      <p class="note">Punti attesi (Pt) nella giornata scelta in alto, già ridotti dalla probabilità di giocare (Pres.). Plus = crediti attesi. ✎ = con la tua stima di presenza.</p>` : `<div class="empty"><b>Nessun giocatore con questi filtri</b>Allarga il prezzo o la squadra.</div>`}</div>`;
+}
+document.getElementById("v-occ").addEventListener("click", e => {
+  const o = e.target.closest("[data-occ]");
+  if (o) { occMode = o.dataset.occ; render(); return; }
+  const r = e.target.closest("[data-mr]");
+  if (r) { mkt.role = r.dataset.mr; mkt.n = 25; renderMkt(); return; }
+  if (e.target.closest("#mkt-more")) { mkt.n += 25; drawMkt(); return; }
+  const row = e.target.closest("[data-mid]");
+  if (row) { const c = (D.cerca || []).find(x => x.id === +row.dataset.mid); if (c) { document.getElementById("sheet").dataset.from = ""; showSheet(srchPlayer(c)); } }
+});
+document.getElementById("v-occ").addEventListener("change", e => {
+  if (e.target.id === "mt") mkt.team = e.target.value; else if (e.target.id === "mm") mkt.max = e.target.value; else if (e.target.id === "ms") mkt.sort = e.target.value; else return;
+  mkt.n = 25; drawMkt();
+});
+
 function renderOcc() {
+  if (occMode === "mkt") return renderMkt();
   const occ = D.occasioni || [];
   const mine = new Set((D.rosa || []).map(n => n));
   const myRole = r => (D.app && D.app.attuale ? D.app.attuale.filter(p => p.ruolo === r) : []);
@@ -1305,7 +1386,7 @@ function renderOcc() {
         ${same.length && !mine.has(o.nome) ? `<div class="occ-s">Nella tua rosa, stesso ruolo e prezzo simile: <b style="color:var(--fg)">${esc(same.join(", "))}</b></div>` : ""}
       </div></article>`;
   }).join("");
-  document.getElementById("v-occ").innerHTML = `
+  document.getElementById("v-occ").innerHTML = `${occSeg()}
     <div class="card">${head("Occasioni da pochi crediti", `${occ.length} giocatori`)}
       <p class="note">Giocatori fino a 6 crediti che avranno più minuti, o il posto da titolare, per l'assenza di un compagno (infortuni da app Dunkest e basketballmonster). Ordinati per punti attesi a giornata.</p></div>
     ${occ.length ? `<div class="occ-list">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
@@ -1403,9 +1484,33 @@ function openSheet(id) {
   if (p) showSheet(p);
 }
 
-// Punti attesi se il giocatore scende in campo (i "punti attesi" sono già moltiplicati per la probabilità di giocare)
+// Stima di presenza decisa da te (solo su questo telefono): cambia i punti attesi di carte, schede, mercato e ricerca, non il piano
+let OVR = {};
+try { OVR = JSON.parse(localStorage.getItem("pcc-pres") || "{}") || {}; } catch (e) { OVR = {}; }
+function saveOvr() { try { localStorage.setItem("pcc-pres", JSON.stringify(OVR)); } catch (e) {} }
+
+// Punti attesi se il giocatore scende in campo (i "punti attesi" del piano sono già moltiplicati per la probabilità di giocare)
+function condPts(p) {
+  if (p._se != null) return p._se;
+  const c = (D.cerca || []).find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
+  if (d && d.se != null) return d.se;
+  return p.p_gioca != null && p.p_gioca >= 0.05 && p.punti ? p.punti / p.p_gioca : null;
+}
+function adj(p) {
+  if (!p || p.ruolo === "HC" || p._adj || OVR[p.nome] == null) return p;
+  const se = condPts(p);
+  return se == null ? p : {...p, _adj: true, _se: se, _auto: p.p_gioca, p_gioca: OVR[p.nome], punti: se * OVR[p.nome]};
+}
 function seGioca(p) {
-  return p.ruolo !== "HC" && p.p_gioca != null && p.p_gioca >= 0.05 && p.p_gioca < 0.95 && p.punti ? p.punti / p.p_gioca : null;
+  if (p.ruolo === "HC" || p.p_gioca == null || p.p_gioca >= 0.95) return null;
+  const v = condPts(p);
+  return v && v > 0 ? v : null;
+}
+// Valori di una riga dell'indice di ricerca nella giornata mostrata, con la tua stima di presenza
+function rowVals(c) {
+  const d = srchDay(c), o = c.ruolo !== "HC" ? OVR[c.nome] : null;
+  const se = d.se ?? (d.p >= 0.05 && d.punti ? d.punti / d.p : null);
+  return o != null && se != null ? {...d, punti: se * o, p: o, adj: true, se} : {...d, adj: false, se};
 }
 
 // Statistiche attese a partita del giocatore p nella giornata mostrata (null se non ci sono)
@@ -1414,6 +1519,33 @@ function playerStats(p) {
   const c = D.cerca.find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
   const st = p.stats || (d ? {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min} : null);
   return st && st.pts != null ? {...st, src: d && d.src} : null;
+}
+
+function ovrBlock(p) {
+  const cur = OVR[p.nome], opts = [0, 25, 50, 75, 90, 100];
+  return `<div class="ovr"><div class="lab">La tua stima di presenza <span class="muted" style="text-transform:none;letter-spacing:0">· solo su questo telefono, non cambia il piano</span></div>
+    <div class="ovr-c" role="group" aria-label="Probabilità di giocare">
+      <button type="button" data-ovr="" aria-pressed="${cur == null}">Modello${p._auto != null ? " " + Math.round((p._adj ? p._auto : p.p_gioca) * 100) + "%" : ""}</button>
+      ${opts.map(o => `<button type="button" data-ovr="${o}" aria-pressed="${cur != null && Math.round(cur * 100) === o}">${o}%</button>`).join("")}</div></div>`;
+}
+
+// Sostituti: stesso ruolo, fino a 1,5 crediti in più, i migliori per punti attesi nella giornata mostrata
+function subsBlock(p) {
+  if (!D.cerca) return "";
+  const mine = new Set(D.rosa || []);
+  const L = D.cerca.filter(c => c.id !== p.id && c.ruolo === p.ruolo && c.crediti <= p.crediti + 1.5)
+    .map(c => ({c, v: rowVals(c)})).filter(x => x.v.partita && x.v.punti != null)
+    .sort((a, b) => b.v.punti - a.v.punti).slice(0, 5);
+  if (!L.length) return "";
+  const base = p.punti || 0;
+  const rows = L.map(({c, v}, i) => {
+    const dp = v.punti - base, dc = c.crediti - p.crediti;
+    return `<button type="button" class="sbs" data-sub="${c.id}"><b>${esc(c.nome)}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}</b>
+      <span class="d"><b>${num(v.punti)}</b><small class="${dp > 0.05 ? "up" : dp < -0.05 ? "down" : ""}">${sign(dp, 1)} pt</small></span>
+      <span class="m">${esc(c.squadra)} · ${cr(c.crediti)} cr (${sign(dc, 1)})${v.p != null && v.p < 0.95 ? " · " + Math.round(v.p * 100) + "% presenza" : ""}${v.plus_cr != null ? " · plus " + sign(v.plus_cr, 2) + " cr" : ""}</span></button>`;
+  }).join("");
+  return `<div><div class="lab" style="margin-bottom:6px">Sostituti simili</div><div class="subs">${rows}</div>
+    <p class="note" style="margin:6px 0 0">Stesso ruolo, fino a 1,5 crediti in più di ${esc(surname(p.nome))}, i migliori per punti attesi (${esc(curG().label)}). Differenza rispetto ai suoi ${num(base)}.</p></div>`;
 }
 
 // Statistiche attese a partita: dalla simulazione, oppure (senza storico NBA) da FantasyPros o dalla preseason
@@ -1426,14 +1558,16 @@ function statsBlock(p) {
   return `<div>${lab}<div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => st[k] != null ? `<div><b>${num(st[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div>${src}</div>`;
 }
 
-function showSheet(p) {
-  const g = curG();
+let sheetBase = null;
+function showSheet(p0) {
+  sheetBase = p0;
+  const p = adj(p0), g = curG();
   const info = D.giocatori[p.nome] || {}, el = document.getElementById("sheet");
   const prices = D.fotografie.map(s => `<span>${esc(s)} <b>${cr(info.prezzi?.[s])}</b></span>`).join("");
   const isCap = g.capitano.length && g.capitano[0].id === p.id;
   const dl = [
     [`Partita`, p.partita ? `<b>${esc(p.partita)}</b>${p.turno ? ` · turno ${p.turno}` : ""}` : "Non gioca in questa giornata."],
-    p.p_gioca != null && p.ruolo !== "HC" ? [`Probabilità di giocare`, `<b>${Math.round(p.p_gioca * 100)}%</b>`] : null,
+    p.p_gioca != null && p.ruolo !== "HC" ? [`Probabilità di giocare`, `<b>${Math.round(p.p_gioca * 100)}%</b>${p._adj ? ` <span class="muted">· tua stima (il modello dice ${Math.round(p._auto * 100)}%)</span>` : ""}`] : null,
     seGioca(p) ? [`Punti se gioca`, `<b>${num(seGioca(p))}</b> <span class="muted">· i ${num(p.punti)} attesi sono già ridotti al ${Math.round(p.p_gioca * 100)}%</span>`] : null,
     info.quintetto ? [`Quintetto`, `${info.quintetto.titolare ? "<b>Titolare</b>" : "<b>Dalla panchina</b>"} · ${info.quintetto.confermato ? "confermato" : "previsto"} (${esc(info.quintetto.partita.split(" in ")[0])})`] : null,
     info.infortunio ? [`Infortunio`, `<span class="pill q">${esc(info.infortunio.motivo)}</span> ${esc(info.infortunio.stato)}`] : null,
@@ -1445,6 +1579,7 @@ function showSheet(p) {
     <div class="facts main"><div><b>${num(p.punti)}</b><span>punti attesi</span></div><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
     <dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
     ${statsBlock(p)}
+    ${p.ruolo !== "HC" ? ovrBlock(p) : ""}
     ${info.notizia && info.notizia.stato !== "NOTE" ? `<div class="news"><b>${esc(info.notizia.titolo)}</b>${esc(info.notizia.testo)} <span class="muted">· ${info.notizia.ore != null ? (info.notizia.ore < 24 ? Math.round(info.notizia.ore) + " h fa" : Math.round(info.notizia.ore / 24) + " g fa") : ""} · basketballmonster</span></div>` : ""}
     ${p.p_dd != null ? `<div class="facts"><div><b>${Math.round(p.p_dd * 100)}%</b><span>doppia doppia</span></div>
       <div><b>${p.p_td < 0.01 ? "<1" : Math.round(p.p_td * 100)}%</b><span>tripla doppia</span></div>
@@ -1454,6 +1589,7 @@ function showSheet(p) {
     ${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}
     ${sourcesBlock(info.fonti)}
     ${p.ruolo !== "HC" && rule() ? `<details><summary><span>Punti che servono a ${cr(p.crediti)} crediti</span></summary>${thresholdsTable(p.crediti)}</details>` : ""}
+    ${subsBlock(p)}
     <div><div class="lab" style="margin-bottom:6px">Prezzi</div><div class="prices">${prices}</div></div>`;
   [...el.children].forEach((c, i) => c.style.setProperty("--i", Math.min(i, 8)));
   clearTimeout(sheetTimer);
@@ -1489,12 +1625,12 @@ function runSearch() {
   const toks = q.split(/\s+/).filter(Boolean);
   const planIds = new Set(curG().giocatori.map(p => p.id)), mine = new Set(D.rosa || []);
   let list = toks.length ? srchIdx.filter(c => toks.every(t => c.k.includes(t))) : srchIdx.filter(c => c.ruolo !== "HC");
-  const score = c => (toks.length && fold(c.squadra) === toks[0] ? 1500 : 0) + (toks.length && fold(c.nome).startsWith(toks[0]) ? 1000 : 0) + (toks.length && fold(c.nome).split(" ").some(w => w.startsWith(toks[0])) ? 500 : 0) + (srchDay(c).punti || 0);
+  const score = c => (toks.length && fold(c.squadra) === toks[0] ? 1500 : 0) + (toks.length && fold(c.nome).startsWith(toks[0]) ? 1000 : 0) + (toks.length && fold(c.nome).split(" ").some(w => w.startsWith(toks[0])) ? 500 : 0) + (rowVals(c).punti || 0);
   list = list.sort((a, b) => score(b) - score(a)).slice(0, toks.length ? 40 : 8);
   srchList = list; srchSel = list.length ? 0 : -1;
   const head = toks.length ? "" : `<div class="srch-h">Migliori per punti attesi · ${esc(curG().label)}</div>`;
   res.innerHTML = head + (list.length ? list.map((c, i) => {
-    const d = srchDay(c);
+    const d = rowVals(c);
     const tag = mine.has(c.nome) ? '<span class="pill mine-tag">in rosa</span>' : planIds.has(c.id) ? '<span class="pill q">nel piano</span>' : "";
     return `<button type="button" class="srch-r${i === 0 ? " on" : ""}" role="option" data-i="${i}"><b>${esc(c.nome)}</b>
       <span class="pt"><b>${d.punti != null ? num(d.punti) : "–"}</b><small>${d.partita ? (d.p != null && c.ruolo !== "HC" ? Math.round(d.p * 100) + "% · " : "") + "punti" : "non gioca"}</small></span>
@@ -1527,6 +1663,18 @@ function closeSearch() { document.getElementById("qres").hidden = true; }
   });
   document.addEventListener("pointerdown", e => { if (!e.target.closest("#srch")) closeSearch(); });
 })();
+
+document.getElementById("sheet").addEventListener("click", e => {
+  const o = e.target.closest("[data-ovr]");
+  if (o && sheetBase) {
+    const v = o.dataset.ovr;
+    if (v === "") delete OVR[sheetBase.nome]; else OVR[sheetBase.nome] = +v / 100;
+    saveOvr(); const keep = document.getElementById("sheet").scrollTop;
+    showSheet(sheetBase); document.getElementById("sheet").scrollTop = keep; render(); return;
+  }
+  const b = e.target.closest("[data-sub]");
+  if (b) { const c = (D.cerca || []).find(x => x.id === +b.dataset.sub); if (c) { document.getElementById("sheet").dataset.from = ""; showSheet(srchPlayer(c)); } }
+});
 
 let sheetTimer = 0;
 function closeSheet() {
@@ -1633,6 +1781,18 @@ function clock() {
   const ball = `<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7" fill="var(--accent)"/><g fill="none" stroke="var(--strip)" stroke-width="1"><path d="M1 8h14M8 1v14"/><path d="M3 3c2.5 2.5 2.5 7.5 0 10M13 3c-2.5 2.5-2.5 7.5 0 10"/></g></svg>`;
   el.innerHTML = `${ball}${esc(g.label)} ${n === 0 ? "<b>oggi</b>" : n === 1 ? "<b>domani</b>" : `tra <b>${n}</b> giorni`}`;
   el.hidden = false;
+}
+
+// Avviso se i dati sono vecchi mentre la giornata è vicina o in corso (aggiornamento fermo, token scaduto...)
+function avvisi() {
+  const el = document.getElementById("avv"), out = [];
+  const [dd, tt] = D.aggiornato.split(" "), age = (Date.now() - new Date(dd + "T" + tt + ":00")) / 36e5;
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const days = Math.round((new Date(D.piano.giornate[0].dal + "T12:00:00") - today) / 864e5);
+  if (age > 30 && days <= 2) out.push(`<b>Dati vecchi di ${Math.round(age)} ore.</b> L'aggiornamento automatico potrebbe essersi fermato: il piano può non essere più valido.`);
+  if (D.token && D.token.ok === false) out.push(`<b>Token Dunkest:</b> ${esc(D.token.motivo)} (ultimo tentativo ${esc(D.token.quando)}). Va rinnovato nelle impostazioni dell'ambiente.`);
+  el.innerHTML = out.map(t => `<span>${t}</span>`).join("");
+  el.hidden = !out.length;
 }
 
 function render() {
@@ -1776,6 +1936,7 @@ fetch("data.json", {cache: "no-store"}).then(r => { if (!r.ok) throw new Error(r
   const [dd, tt] = D.aggiornato.split(" ");
   document.getElementById("upd").textContent = `${offline ? "Offline · dati salvati del" : "Aggiornato"} ${dmy(dd)} alle ${tt}`;
   clock();
+  avvisi();
   render();
 }).catch(err => {
   document.getElementById("upd").textContent = "";
