@@ -1973,6 +1973,6 @@ fetch("data.json", {cache: "no-store"}).then(r => { if (!r.ok) throw new Error(r
 moveIndicator();
 </script>
 
-<script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
+<script>if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {const had = !!navigator.serviceWorker.controller; let reloaded = false;navigator.serviceWorker.addEventListener('controllerchange', () => { if (had && !reloaded) { reloaded = true; location.reload(); } });addEventListener('load', () => navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {}));}</script>
 </body>
 </html>

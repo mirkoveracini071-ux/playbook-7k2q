@@ -1,5 +1,5 @@
-/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione 12edf88606 */
-const V = '12edf88606', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
+/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione c243307a65 */
+const V = 'c243307a65', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
 
 self.addEventListener('install', e => {
@@ -25,7 +25,7 @@ async function dataFirstNetwork(req) {
 }
 async function pageFirstNetwork(req) {
   try {
-    const r = await fetch(req);
+    const r = await fetch(req, {cache: 'no-cache'});   // ricontrolla sempre sul sito: niente copia vecchia di 10 minuti dalla cache del browser
     if (r.ok) (await caches.open(SHELL)).put(req, r.clone());
     return r;
   } catch (err) {
