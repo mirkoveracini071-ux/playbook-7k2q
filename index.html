@@ -280,6 +280,10 @@ details b{color:var(--accent-text)}
 .pc .info small{display:block;font-size:.68rem;color:var(--card-muted);text-transform:uppercase;white-space:nowrap;letter-spacing:.02em}
 .pc .pts{background:var(--card);color:var(--card-ink);border-top:1px solid var(--card-line);font-size:.75rem;padding:2px 0 4px;font-variant-numeric:tabular-nums;color:var(--card-muted)}
 .pc .pts b{font-weight:700;color:var(--card-ink)}
+.pc .st3{display:grid;grid-template-columns:repeat(3,1fr);background:var(--card);border-top:1px solid var(--card-line);padding:3px 2px 4px;font-variant-numeric:tabular-nums;line-height:1.05}
+.pc .st3 > span + span{box-shadow:-1px 0 0 var(--card-line)}
+.pc .st3 b{display:block;font:700 .82rem var(--display);color:var(--card-ink)}
+.pc .st3 small{display:block;font-size:.6rem;color:var(--card-muted);text-transform:uppercase;letter-spacing:.03em}
 .form{font-style:normal;font-weight:800;margin-left:3px;font-size:.8em}
 .form.up{color:var(--on-dark-up)}.form.down{color:var(--on-dark-down)}
 /* stati della carta */
@@ -787,6 +791,12 @@ function formArrow(f) {
   return `<em class="form ${up ? "up" : "down"}" title="${up ? "In forma" : "In calo"}: ultime 5 ${num(f.media_5)} contro media ${num(f.media)}">${up ? "▲" : "▼"}</em>`;
 }
 
+function cardStats(p) {
+  const st = playerStats(p);
+  if (!st) return "";
+  return `<span class="st3" title="Punti, rimbalzi, assist attesi a partita${st.src ? " (stima: " + esc(st.src) + ")" : ""}"><span><b>${num(st.pts, 1)}</b><small>pt</small></span><span><b>${num(st.reb, 1)}</b><small>rb</small></span><span><b>${num(st.ast, 1)}</b><small>as</small></span></span>`;
+}
+
 function card(p, g) {
   const info = D.giocatori[p.nome] || {};
   const coach = p.ruolo === "HC";
@@ -806,7 +816,7 @@ function card(p, g) {
     ${left ? `<span class="badges-l">${left}</span>` : ""}${right ? `<span class="badges-r">${right}</span>` : ""}${isCap ? `<span class="cap-b" title="Capitano">C</span>` : ""}${jersey(p.squadra, info.maglia, coach)}
     <span class="tag"><span class="nm" style="display:block"><i>${ROLE[p.ruolo]}</i>${esc(surname(p.nome))}${formArrow(info.forma)}</span>
     <span class="info"><span><b>${cr(p.crediti)}</b><small>cr</small></span><span><b>${turno || "HC"}</b><small>${esc(opp)}</small></span></span>
-    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi</span></span></button>`;
+    <span class="pts" style="display:block"><b>${num(p.punti)}</b> pt attesi</span>${cardStats(p)}</span></button>`;
 }
 
 // Linee in scala: area 16x19 piedi, lunetta raggio 6, arco da tre a 23,75 dal ferro (dritto negli angoli), area senza sfondamento 4
@@ -1392,14 +1402,21 @@ function openSheet(id) {
   if (p) showSheet(p);
 }
 
+// Statistiche attese a partita del giocatore p nella giornata mostrata (null se non ci sono)
+function playerStats(p) {
+  if (p.ruolo === "HC" || !p.partita || !D.cerca) return null;
+  const c = D.cerca.find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
+  const st = p.stats || (d ? {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min} : null);
+  return st && st.pts != null ? {...st, src: d && d.src} : null;
+}
+
 // Statistiche attese a partita: dalla simulazione, oppure (senza storico NBA) da FantasyPros o dalla preseason
 function statsBlock(p) {
   if (p.ruolo === "HC" || !p.partita) return "";
-  const c = (D.cerca || []).find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
-  const st = p.stats || (d ? {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min} : null);
+  const st = playerStats(p);
   const lab = '<div class="lab" style="margin-bottom:6px">Statistiche attese a partita</div>';
-  if (!st || st.pts == null) return `<div>${lab}<p class="note" style="margin:0">Non ci sono: il giocatore non ha storico NBA, partite di preseason né proiezioni di altre fonti, quindi i punti attesi sono una stima prudente senza dettaglio per statistica.</p></div>`;
-  const src = d && d.src ? `<p class="note" style="margin:6px 0 0">Stima da ${esc(d.src)}: senza storico NBA non c'è la simulazione completa.</p>` : "";
+  if (!st) return `<div>${lab}<p class="note" style="margin:0">Non ci sono: il giocatore non ha storico NBA, partite di preseason né proiezioni di altre fonti, quindi i punti attesi sono una stima prudente senza dettaglio per statistica.</p></div>`;
+  const src = st.src ? `<p class="note" style="margin:6px 0 0">Stima da ${esc(st.src)}: senza storico NBA non c'è la simulazione completa.</p>` : "";
   return `<div>${lab}<div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => st[k] != null ? `<div><b>${num(st[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div>${src}</div>`;
 }
 
