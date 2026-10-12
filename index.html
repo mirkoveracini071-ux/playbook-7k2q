@@ -382,10 +382,11 @@ details b{color:var(--accent-text)}
 .avv b{color:var(--warn-text)}
 
 
-/* ——— avanzamento della pagina: barra sottile in cima, mossa da JS con smorzamento ——— */
-.sp{position:fixed;left:0;right:0;top:env(safe-area-inset-top,0px);height:3px;z-index:7;pointer-events:none;opacity:0;transition:opacity .25s ease;contain:strict}
+/* ——— avanzamento della pagina sul bordo del menu: mosso da JS con smorzamento ——— */
+.sp{position:absolute;left:16px;right:16px;bottom:-1px;height:3px;pointer-events:none;opacity:0;transition:opacity .25s ease}
 .sp.on{opacity:1}
-.sp i{display:block;width:100%;height:100%;background:var(--accent);transform:scaleX(0);transform-origin:0 50%;will-change:transform;border-radius:0 3px 3px 0}
+.sp i{display:block;width:100%;height:100%;background:var(--accent);border-radius:2px;transform:scaleX(0);transform-origin:0 50%;will-change:transform}
+@media (max-width:699px){.sp{left:0;right:0;top:-1px;bottom:auto;height:2px}.sp i{border-radius:0}}
 
 /* ——— ricerca giocatori ——— */
 .srch{position:relative;z-index:4}
@@ -728,7 +729,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
       <button type="button" class="srch-x" id="qx" hidden aria-label="Cancella la ricerca"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></label>
     <div id="qres" class="srch-res" hidden></div>
   </div>
-  <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span>
+  <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span><span id="sp" class="sp" aria-hidden="true"><i></i></span>
     <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v6h5v-6M6.5 3.5v3.5a5.5 5.5 0 0 0 11 0V3.5"/></svg><span>Squadra</span></button>
     <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v5a3 3 0 0 0 3 3h6a3 3 0 0 1 3 3v5"/><path d="M6 4L3.5 6.5M6 4l2.5 2.5M18 20l-2.5-2.5M18 20l2.5-2.5"/></svg><span>Opzioni</span></button>
     <button type="button" data-view="occ" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg><span>Occasioni</span></button>
@@ -748,7 +749,6 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
   <section id="v-mod" class="view" hidden></section>
   <p class="foot">Proiezioni del tuo Dunkest Optimizer. I cambi vanno fatti a mano nell'app.</p>
 </div>
-<div id="sp" class="sp" aria-hidden="true"><i></i></div>
 <div id="scrim" class="scrim" hidden></div>
 <div id="sheet" class="sheet" hidden role="dialog" aria-modal="false" aria-labelledby="sh-name"></div>
 
