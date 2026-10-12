@@ -1392,6 +1392,17 @@ function openSheet(id) {
   if (p) showSheet(p);
 }
 
+// Statistiche attese a partita: dalla simulazione, oppure (senza storico NBA) da FantasyPros o dalla preseason
+function statsBlock(p) {
+  if (p.ruolo === "HC" || !p.partita) return "";
+  const c = (D.cerca || []).find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
+  const st = p.stats || (d ? {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min} : null);
+  const lab = '<div class="lab" style="margin-bottom:6px">Statistiche attese a partita</div>';
+  if (!st || st.pts == null) return `<div>${lab}<p class="note" style="margin:0">Non ci sono: il giocatore non ha storico NBA, partite di preseason né proiezioni di altre fonti, quindi i punti attesi sono una stima prudente senza dettaglio per statistica.</p></div>`;
+  const src = d && d.src ? `<p class="note" style="margin:6px 0 0">Stima da ${esc(d.src)}: senza storico NBA non c'è la simulazione completa.</p>` : "";
+  return `<div>${lab}<div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => st[k] != null ? `<div><b>${num(st[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div>${src}</div>`;
+}
+
 function showSheet(p) {
   const g = curG();
   const info = D.giocatori[p.nome] || {}, el = document.getElementById("sheet");
@@ -1409,7 +1420,7 @@ function showSheet(p) {
     <button type="button" class="close" aria-label="Chiudi"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></header>
     <div class="facts main"><div><b>${num(p.punti)}</b><span>punti attesi</span></div><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
     <dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
-    ${p.stats ? `<div><div class="lab" style="margin-bottom:6px">Statistiche attese a partita</div><div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => p.stats[k] != null ? `<div><b>${num(p.stats[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div></div>` : ""}
+    ${statsBlock(p)}
     ${info.notizia && info.notizia.stato !== "NOTE" ? `<div class="news"><b>${esc(info.notizia.titolo)}</b>${esc(info.notizia.testo)} <span class="muted">· ${info.notizia.ore != null ? (info.notizia.ore < 24 ? Math.round(info.notizia.ore) + " h fa" : Math.round(info.notizia.ore / 24) + " g fa") : ""} · basketballmonster</span></div>` : ""}
     ${p.p_dd != null ? `<div class="facts"><div><b>${Math.round(p.p_dd * 100)}%</b><span>doppia doppia</span></div>
       <div><b>${p.p_td < 0.01 ? "<1" : Math.round(p.p_td * 100)}%</b><span>tripla doppia</span></div>
