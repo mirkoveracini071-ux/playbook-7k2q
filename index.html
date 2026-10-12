@@ -345,6 +345,30 @@ details b{color:var(--accent-text)}
 .bar-l b{color:var(--fg)}
 
 
+
+/* ——— ricerca giocatori ——— */
+.srch{position:relative;z-index:4}
+.srch-f{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 6px 0 12px;min-height:48px;transition:border-color var(--d-state),box-shadow var(--d-state)}
+.srch-f:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.srch-f svg{width:20px;height:20px;flex:none;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
+.srch-f input{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;font-size:16px;padding:12px 0;outline:none;-webkit-appearance:none;appearance:none}
+.srch-f input::placeholder{color:var(--muted)}
+.srch-f input::-webkit-search-cancel-button{display:none}
+.srch-x{border:0;background:var(--surface-2);color:var(--muted);width:36px;height:36px;border-radius:999px;cursor:pointer;display:grid;place-items:center;flex:none}
+.srch-x svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2}
+.srch-res{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 34px var(--shadow-2);max-height:min(62vh,520px);overflow:auto;overscroll-behavior:contain;padding:6px}
+.srch-h{font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:8px 10px 4px}
+.srch-r{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;width:100%;text-align:left;border:0;background:none;color:var(--fg);font:inherit;padding:9px 10px;border-radius:10px;cursor:pointer;min-height:52px}
+.srch-r:hover,.srch-r.on{background:var(--surface-2)}
+.srch-r b{font-weight:700;overflow-wrap:anywhere}
+.srch-r .m{grid-column:1;font-size:var(--fs-s);color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 8px;align-items:center}
+.srch-r .pt{grid-column:2;grid-row:1 / span 2;text-align:right;font-variant-numeric:tabular-nums;line-height:1.15}
+.srch-r .pt b{font:800 1.25rem/1 var(--display);display:block}
+.srch-r .pt small{color:var(--muted);font-size:var(--fs-xs)}
+.srch-r .pill{font-size:.68rem;padding:1px 7px}
+.srch-empty{padding:18px 12px;color:var(--muted);text-align:center;font-size:var(--fs-s)}
+.sheet .facts.six{grid-template-columns:repeat(3,1fr)}
+
 /* ——— opzioni di formazione ——— */
 .alt-list{display:grid;gap:12px}
 .alt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:10px;min-width:0}
@@ -662,6 +686,12 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
     <div class="brand"><h1 id="team">PolloconCurry</h1></div>
     <div class="brand-r"><span id="clock" class="clock" hidden></span><small id="upd">Carico i dati…</small></div>
   </header>
+  <div class="srch" id="srch">
+    <label class="srch-f"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>
+      <input id="q" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Cerca un giocatore o una squadra" aria-label="Cerca un giocatore" aria-controls="qres">
+      <button type="button" class="srch-x" id="qx" hidden aria-label="Cancella la ricerca"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></label>
+    <div id="qres" class="srch-res" hidden></div>
+  </div>
   <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span>
     <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v6h5v-6M6.5 3.5v3.5a5.5 5.5 0 0 0 11 0V3.5"/></svg><span>Squadra</span></button>
     <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v5a3 3 0 0 0 3 3h6a3 3 0 0 1 3 3v5"/><path d="M6 4L3.5 6.5M6 4l2.5 2.5M18 20l-2.5-2.5M18 20l2.5-2.5"/></svg><span>Opzioni</span></button>
@@ -1358,8 +1388,12 @@ function formBlock(f) {
 }
 
 function openSheet(id) {
-  const g = curG(), p = g.giocatori.find(x => x.id === id);
-  if (!p) return;
+  const p = curG().giocatori.find(x => x.id === id);
+  if (p) showSheet(p);
+}
+
+function showSheet(p) {
+  const g = curG();
   const info = D.giocatori[p.nome] || {}, el = document.getElementById("sheet");
   const prices = D.fotografie.map(s => `<span>${esc(s)} <b>${cr(info.prezzi?.[s])}</b></span>`).join("");
   const isCap = g.capitano.length && g.capitano[0].id === p.id;
@@ -1375,6 +1409,7 @@ function openSheet(id) {
     <button type="button" class="close" aria-label="Chiudi"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></header>
     <div class="facts main"><div><b>${num(p.punti)}</b><span>punti attesi</span></div><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
     <dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
+    ${p.stats ? `<div><div class="lab" style="margin-bottom:6px">Statistiche attese a partita</div><div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => p.stats[k] != null ? `<div><b>${num(p.stats[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div></div>` : ""}
     ${info.notizia && info.notizia.stato !== "NOTE" ? `<div class="news"><b>${esc(info.notizia.titolo)}</b>${esc(info.notizia.testo)} <span class="muted">· ${info.notizia.ore != null ? (info.notizia.ore < 24 ? Math.round(info.notizia.ore) + " h fa" : Math.round(info.notizia.ore / 24) + " g fa") : ""} · basketballmonster</span></div>` : ""}
     ${p.p_dd != null ? `<div class="facts"><div><b>${Math.round(p.p_dd * 100)}%</b><span>doppia doppia</span></div>
       <div><b>${p.p_td < 0.01 ? "<1" : Math.round(p.p_td * 100)}%</b><span>tripla doppia</span></div>
@@ -1392,6 +1427,71 @@ function openSheet(id) {
   requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add("open"); scrim.classList.add("on"); }));
   el.querySelector(".close").focus({preventScroll: true});
 }
+
+// ——— ricerca giocatori ———
+const fold = t => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+let srchIdx = null, srchSel = -1, srchList = [];
+function buildSearch() {
+  if (srchIdx || !D || !D.cerca) return;
+  srchIdx = D.cerca.map(c => ({...c, k: fold(c.nome + " " + c.squadra)}));
+}
+function srchDay(c) { return c.g[Math.min(day, c.g.length - 1)] || c.g[0] || {}; }
+function srchPlayer(c) {
+  const inPlan = curG().giocatori.find(x => x.id === c.id);
+  if (inPlan) return inPlan;
+  const d = srchDay(c), mine = (D.rosa || []).includes(c.nome);
+  return {id: c.id, nome: c.nome, squadra: c.squadra, ruolo: c.ruolo, crediti: c.crediti, slot: mine ? "in rosa, fuori dal piano" : "non nel tuo piano",
+          partita: d.partita || "", turno: null, punti: d.punti ?? 0, plus: d.plus ?? 0, plus_cr: d.plus_cr ?? null, p_gioca: d.p ?? null,
+          note: d.note || "", p_dd: d.dd ?? null, p_td: d.td ?? null, p_3t: d.t3 ?? null,
+          stats: c.ruolo === "HC" ? null : {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min}};
+}
+function runSearch() {
+  const box = document.getElementById("q"), res = document.getElementById("qres"), x = document.getElementById("qx");
+  buildSearch();
+  const q = fold(box.value).trim();
+  x.hidden = !q;
+  if (!srchIdx) { res.hidden = true; return; }
+  const toks = q.split(/\s+/).filter(Boolean);
+  const planIds = new Set(curG().giocatori.map(p => p.id)), mine = new Set(D.rosa || []);
+  let list = toks.length ? srchIdx.filter(c => toks.every(t => c.k.includes(t))) : srchIdx.filter(c => c.ruolo !== "HC");
+  const score = c => (toks.length && fold(c.squadra) === toks[0] ? 1500 : 0) + (toks.length && fold(c.nome).startsWith(toks[0]) ? 1000 : 0) + (toks.length && fold(c.nome).split(" ").some(w => w.startsWith(toks[0])) ? 500 : 0) + (srchDay(c).punti || 0);
+  list = list.sort((a, b) => score(b) - score(a)).slice(0, toks.length ? 40 : 8);
+  srchList = list; srchSel = list.length ? 0 : -1;
+  const head = toks.length ? "" : `<div class="srch-h">Migliori per punti attesi · ${esc(curG().label)}</div>`;
+  res.innerHTML = head + (list.length ? list.map((c, i) => {
+    const d = srchDay(c);
+    const tag = mine.has(c.nome) ? '<span class="pill mine-tag">in rosa</span>' : planIds.has(c.id) ? '<span class="pill q">nel piano</span>' : "";
+    return `<button type="button" class="srch-r${i === 0 ? " on" : ""}" role="option" data-i="${i}"><b>${esc(c.nome)}</b>
+      <span class="pt"><b>${d.punti != null ? num(d.punti) : "–"}</b><small>${d.partita ? (d.p != null && c.ruolo !== "HC" ? Math.round(d.p * 100) + "% · " : "") + "punti" : "non gioca"}</small></span>
+      <span class="m">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo} · ${cr(c.crediti)} cr ${tag}</span></button>`;
+  }).join("") : `<div class="srch-empty">Nessun giocatore trovato per “${esc(box.value.trim())}”.</div>`);
+  res.hidden = false;
+}
+function pickResult(i) {
+  const c = srchList[i]; if (!c) return;
+  closeSearch();
+  document.getElementById("sheet").dataset.from = "";
+  showSheet(srchPlayer(c));
+}
+function closeSearch() { document.getElementById("qres").hidden = true; }
+(() => {
+  const box = document.getElementById("q"), res = document.getElementById("qres");
+  box.addEventListener("input", runSearch);
+  box.addEventListener("focus", runSearch);
+  document.getElementById("qx").addEventListener("click", () => { box.value = ""; runSearch(); box.focus(); });
+  res.addEventListener("click", e => { const b = e.target.closest(".srch-r"); if (b) pickResult(+b.dataset.i); });
+  box.addEventListener("keydown", e => {
+    if (e.key === "Escape") { closeSearch(); box.blur(); return; }
+    if (e.key === "Enter") { e.preventDefault(); pickResult(Math.max(srchSel, 0)); return; }
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      e.preventDefault(); if (!srchList.length) return;
+      srchSel = (srchSel + (e.key === "ArrowDown" ? 1 : -1) + srchList.length) % srchList.length;
+      res.querySelectorAll(".srch-r").forEach((b, i) => b.classList.toggle("on", i === srchSel));
+      res.querySelector(".srch-r.on")?.scrollIntoView({block: "nearest"});
+    }
+  });
+  document.addEventListener("pointerdown", e => { if (!e.target.closest("#srch")) closeSearch(); });
+})();
 
 let sheetTimer = 0;
 function closeSheet() {
