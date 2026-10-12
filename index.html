@@ -923,6 +923,31 @@ function sourcesCard() {
     <p class="note">Dalla prima partita il limite è 36 ore, prima 7 giorni. Una fonte vecchia vuol dire che il modello lavora su dati non aggiornati.</p></div>`;
 }
 
+// Cambi di squadra: chi tira di più, chi meno, e cosa cambia per i compagni
+function swapsCard() {
+  const S = D.scambi;
+  if (!S) return "";
+  const m = S.misura, mine = new Set(D.rosa || []);
+  const teamRows = (L) => L.map(t => `<tr><td><b>${esc(t.squadra)}</b></td>
+    <td><small class="muted">${t.partiti.map(x => esc(surname(x.nome))).join(", ") || "–"}</small></td>
+    <td><small class="muted">${t.arrivati.map(x => esc(surname(x.nome))).join(", ") || "–"}</small></td>
+    <td class="${t.netto > 0 ? "up" : "down"}">${sign(t.netto, 0)}</td></tr>`).join("");
+  const movers = S.cambiati.map(x => `<tr><td>${esc(x.nome)}${mine.has(x.nome) ? ' <span class="pill mine-tag">tua</span>' : ""}<br><small class="muted">${esc(x.da)} → ${esc(x.a)} · ${cr(x.crediti)} cr</small></td>
+    <td>${num(x.usage36, 0)}</td><td>${num(x.ppg, 0)}</td><td class="${x.dfp > 0.05 ? "up" : x.dfp < -0.05 ? "down" : ""}">${sign(x.dfp, 1)}</td></tr>`).join("");
+  const my = S.tutti.filter(x => mine.has(x.nome)).sort((a, b) => a.dfp - b.dfp);
+  const myRows = my.map(x => `<tr><td>${esc(x.nome)}<br><small class="muted">${esc(x.da)}${x.da !== x.a ? " → " + esc(x.a) : ""}</small></td><td class="${x.dusage36 > 0 ? "up" : "down"}">${sign(x.dusage36, 1)}</td><td class="${x.dfp > 0.05 ? "up" : x.dfp < -0.05 ? "down" : ""}">${sign(x.dfp, 1)}</td></tr>`).join("");
+  const T = S.squadre;
+  return `<div class="card">${head("Chi cambia squadra", `${m.cambiati} su ${m.giocatori}`)}
+    <p class="note">Misura: quante azioni chiude un giocatore (tiri + 0,44 liberi + palle perse) ogni 36 minuti, dati 2025-26. Sulle ${m.transizioni} stagioni passate (2022-23 → 2025-26): per ogni azione ogni 36 minuti in più dei compagni, un giocatore ne chiude in media <b>${num(Math.abs(m.dusage_per_dC), 1)}</b> in meno (t ${num(m.t_usage, 1)}, effetto solido). Sui punti Dunkest invece l'effetto è piccolo e incerto (circa ${num(Math.abs(m.dfp_per_dC) * 30 / 36, 1)} punti a partita per azione, t ${num(m.t_fp, 1)}): perdi tiri ma anche palle perse e tiri sbagliati. Il test sul 2025-26 non lo trova negli errori del modello, quindi qui è informativo e non cambia le proiezioni.</p></div>
+    <div class="card">${head("Chi cambia e quanto tira", "azioni/36 · punti a partita · effetto compagni")}
+      <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Azioni</th><th>Pt</th><th>Eff.</th></tr></thead><tbody>${movers}</tbody></table></div>
+      <p class="note">Eff. = punti Dunkest a partita in più o in meno per i compagni nuovi (stima). I più usati che cambiano casa.</p></div>
+    ${my.length ? `<div class="card">${head("Nella tua rosa", "azioni/36 · punti")}<div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Azioni</th><th>Pt</th></tr></thead><tbody>${myRows}</tbody></table></div></div>` : ""}
+    <div class="card">${head("Squadre: azioni che escono e che entrano", "per partita, saldo")}
+      <div class="scroll"><table class="lastday"><thead><tr><th>Sq.</th><th>Partiti</th><th>Arrivati</th><th>Saldo</th></tr></thead><tbody>${teamRows(T.slice(0, 7))}${teamRows(T.slice(-7))}</tbody></table></div>
+      <p class="note">Saldo = azioni a partita degli arrivati meno quelle dei partiti (prime 7 squadre che perdono, ultime 7 che guadagnano). Una squadra con saldo alto ha più giocatori che si contendono i tiri.</p></div>`;
+}
+
 // Vista Modello: precisione, prova schedine, test sulle stagioni passate
 function renderMod() {
   const t = D.test;
@@ -941,7 +966,7 @@ function renderMod() {
       <div class="scroll"><table class="lastday"><thead><tr><th>Strategia</th><th>Punti</th><th>Cambi</th><th>Valore</th></tr></thead><tbody>${str}</tbody></table></div>
       <p class="note">${esc(s.note)}</p></div>`;
   }
-  document.getElementById("v-mod").innerHTML = `${sourcesCard()}${accuracy()}${seasonCard()}${paperBets()}${disagreements()}${tests}`;
+  document.getElementById("v-mod").innerHTML = `${sourcesCard()}${swapsCard()}${accuracy()}${seasonCard()}${paperBets()}${disagreements()}${tests}`;
 }
 
 // La stagione passata giocata dal modello completo: barre in scala con i punti
