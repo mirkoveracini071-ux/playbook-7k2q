@@ -376,7 +376,7 @@ details b{color:var(--accent-text)}
 .badge.role.tit{background:var(--solid-good);color:var(--solid-ink)}
 .badge.role.pan{background:var(--solid-grey);color:var(--solid-ink)}
 .badge.role.prev{background:var(--card);color:var(--card-ink);border-style:dashed;border-color:currentColor}
-.cap-b{position:absolute;z-index:2;top:30%;right:10%;width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:var(--cap);color:var(--cap-ink);font:900 .9rem/1 var(--display);box-shadow:0 0 0 2px rgba(0,0,0,.25),0 3px 8px rgba(0,0,0,.3)}
+.cap-b{position:absolute;z-index:2;top:2px;right:8%;width:26px;height:26px;border-radius:999px;display:grid;place-items:center;background:var(--cap);color:var(--cap-ink);font:900 .9rem/1 var(--display);box-shadow:0 0 0 2px rgba(0,0,0,.25),0 3px 8px rgba(0,0,0,.3)}
 .cap-b::after{content:"";position:absolute;inset:-2px;border-radius:inherit;border:2px solid var(--cap);opacity:0}
 
 /* cambi */
@@ -840,7 +840,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
   @keyframes v-in{from{opacity:0;transform:translate(calc(var(--vdx,0) * 16px),calc((1 - var(--vdx,0) * var(--vdx,0)) * 6px))}}
   /* nella vista appena arrivata non c'è la cascata delle schede: entra tutta insieme. Restano le barre che si
      riempiono e i numeri che contano */
-  .quiet.play,.quiet .pc,.quiet .court svg.lines *,.quiet .cap-b,.quiet .cap-b::after,.quiet .badges-l > *,.quiet .badges-r > *,
+  .quiet.play,.quiet .pc,.quiet .court svg.lines *,.quiet .badges-l > *,.quiet .badges-r > *,
   .quiet .swap li,.quiet .chip,.quiet .todo li,.quiet.todo li,.quiet .cmp-row,.quiet .src-grid li,.quiet .bar em,.quiet .chart .ar,.quiet .chart .pt{animation:none!important}
   /* barre del confronto fonti (scheda, Statistiche > Altre fonti): si riempiono una dopo l'altra */
   details[open] .sb i{animation:grow 420ms var(--e-out) backwards;animation-delay:calc(60ms + var(--k,0) * 90ms)}
