@@ -2020,7 +2020,7 @@ function renderAlt() {
   const span = Math.ceil(Math.max(ALT_NOISE * 2, ...O.map(o => Math.abs(dl(o)))));
   const pos = v => (50 + v / span * 48).toFixed(1);
   const cls = d => d > ALT_NOISE ? "up" : d < -ALT_NOISE ? "down" : "";
-  const tag = o => o.tag === "consigliata" ? '<span class="pill mine-tag">consigliata</span>' : o.tag === "scartata" ? '<span class="pill out">sconsigliata</span>' : o.tag === "prudente" ? '<span class="pill q">piano B</span>' : "";
+  const tag = o => o.tag === "consigliata" ? '<span class="pill mine-tag">consigliata</span>' : o.tag === "scartata" ? '<span class="pill out">sconsigliata</span>' : o.tag === "prudente" ? '<span class="pill q">piano B</span>' : o.tag === "riserva" ? '<span class="pill q">riserva</span>' : "";
   const cambi = n => `${n} ${n === 1 ? "cambio" : "cambi"}`;
   const rows = O.map((o, k) => {
     const d = dl(o), isRec = o === rec, bar = isRec ? `<em style="left:50%"></em>`
@@ -2035,8 +2035,9 @@ function renderAlt() {
     const d = dl(o), isRec = o === rec;
     return `<article class="alt${isRec ? " rec" : ""}" id="alt-${o.id}" style="--k:${k}">
     <div class="alt-h"><span class="alt-n">${o.id}</span><b>${esc(o.nome)}</b>${tag(o)}${isRec ? "" : `<span class="alt-d ${cls(d)}" title="Rispetto alla consigliata">${sign(d)} pt</span>`}</div>
-    <div class="alt-k"><span><b>${num(o.punti)}</b><small>punti attesi</small></span>${o.prezzi != null ? `<span class="${o.prezzi > 0 ? "up" : "down"}"><b>${sign(o.prezzi, 2)}</b><small>cr attesi</small></span>` : ""}<span><b>${o.fuori.length}</b><small>cambi</small></span></div>
+    <div class="alt-k"><span><b>${num(o.punti)}</b><small>punti attesi</small></span>${o.prezzi != null ? `<span class="${o.prezzi > 0 ? "up" : "down"}"><b>${sign(o.prezzi, 2)}</b><small>cr attesi</small></span>` : ""}<span><b>${o.fuori.length}</b><small>cambi</small></span>${o.tag === "riserva" && o.cambi_in_piu ? `<span><b>${sign(o.cambi_in_piu, 0)}</b><small>cambi in più</small></span>` : ""}</div>
     <p>${itNum(o.idea)} Capitano: <b>${esc(o.capitano)}</b>.</p>
+    ${o.tag === "riserva" ? `<p class="alt-rs">Al posto di <b>${esc(surname(o.riserva_di))}</b>: ${o.al_posto.length ? o.al_posto.map(n => `<b>${esc(surname(n))}</b>`).join(", ") : "nessuno"}${o.esce_dalla_consigliata.length > 1 ? ` <span>(rispetto alla consigliata escono ${o.esce_dalla_consigliata.map(n => esc(surname(n))).join(", ")})</span>` : ""}.</p>` : ""}
     ${o.fuori.length ? `<div class="mv" aria-label="Cambi"><span class="lab">Fuori</span><div class="chips">${o.fuori.map((n, j) => `<span class="chip o" style="--k:${j}">${esc(surname(n))}</span>`).join("")}</div>
       <span class="lab">Dentro</span><div class="chips">${o.dentro.map((n, j) => `<span class="chip i" style="--k:${j + o.fuori.length}">${esc(surname(n))}</span>`).join("")}</div></div>` : ""}
     ${o.pro || o.contro ? `<dl class="pc-l">${o.pro ? `<div><dt class="up">Pro</dt><dd>${itNum(o.pro)}</dd></div>` : ""}${o.contro ? `<div><dt class="down">Contro</dt><dd>${itNum(o.contro)}</dd></div>` : ""}</dl>` : ""}
