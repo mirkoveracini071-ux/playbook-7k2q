@@ -476,6 +476,11 @@ details b{color:var(--accent-text)}
 .srch-r .pt small{color:var(--muted);font-size:var(--fs-xs)}
 .srch-r .pill{font-size:.68rem;padding:1px 7px}
 .srch-empty{padding:18px 12px;color:var(--muted);text-align:center;font-size:var(--fs-s)}
+/* giocatori di tutta la lega in arrivo (cerca.json): scheletro, oppure errore con "Riprova" */
+.all-ld{display:grid;gap:8px;padding:8px 4px}
+.all-ld > span{color:var(--muted);font-size:var(--fs-s)}
+.srch-res .all-ld{padding:8px 6px}
+.srch-res .empty{margin:4px}
 .sheet .facts.six{grid-template-columns:repeat(3,1fr)}
 
 /* ——— opzioni di formazione ——— */
@@ -1554,6 +1559,10 @@ const occSeg = () => `<div class="mkt-seg" role="group" aria-label="Occasioni o 
 
 // Mercato: tutti i giocatori con filtri e ordinamento, nella giornata mostrata
 function renderMkt() {
+  if (!hasAll()) {   // il mercato usa tutti i giocatori: arrivano con cerca.json
+    document.getElementById("v-occ").innerHTML = `${occSeg()}<div class="card mkt-f"><div class="mkt-fh"><b>Mercato</b><span class="meta">${esc(curG().label)}</span></div>${needAll(mktRedraw, 7)}</div>`;
+    return;
+  }
   const C = D.cerca || [], teams = [...new Set(C.map(c => c.squadra))].sort();
   const roles = [["", "Tutti"], ["G", "Guardie"], ["F", "Ali"], ["C", "Centri"], ["HC", "Coach"]];
   // Filtri compatti e sempre visibili (sticky) mentre scorri i risultati
@@ -1569,6 +1578,7 @@ function renderMkt() {
   requestAnimationFrame(() => { mktTimer = setTimeout(() => drawMkt(true), calm ? 0 : 120); });
 }
 let mktTimer = 0;
+const mktRedraw = () => { if (D && view === "occ" && occMode === "mkt") renderMkt(); };
 const mktSkeleton = () => `<div class="card mkt-sk" aria-busy="true" aria-label="Calcolo il mercato"><div class="sk" style="--h:22px;width:45%"></div>${Array.from({length: 7}, () => `<div class="sk-row"><span class="sk" style="--h:34px"></span><span class="sk" style="--h:34px"></span><span class="sk" style="--h:34px"></span></div>`).join("")}</div>`;
 function drawMkt(anim) {
   const mine = new Set(D.rosa || []), box = document.getElementById("mkt-res");
@@ -1596,6 +1606,7 @@ function drawMkt(anim) {
 document.getElementById("v-occ").addEventListener("click", e => {
   const o = e.target.closest("[data-occ]");
   if (o) { occMode = o.dataset.occ; render(); return; }
+  if (e.target.closest("[data-retry]")) { retry(renderMkt); return; }
   const r = e.target.closest("[data-mr]");
   if (r) { mkt.role = r.dataset.mr; mkt.n = 25; document.querySelectorAll("#v-occ [data-mr]").forEach(b => b.setAttribute("aria-pressed", b === r)); drawMkt(true); return; }
   if (e.target.closest("#mkt-more")) { mkt.n += 25; drawMkt(); return; }
@@ -1732,7 +1743,7 @@ function saveOvr() { try { localStorage.setItem("pcc-pres", JSON.stringify(OVR))
 // Punti attesi se il giocatore scende in campo (i "punti attesi" del piano sono già moltiplicati per la probabilità di giocare)
 function condPts(p) {
   if (p._se != null) return p._se;
-  const c = (D.cerca || []).find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
+  const c = crow(p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
   if (d && d.se != null) return d.se;
   return p.p_gioca != null && p.p_gioca >= 0.05 && p.punti ? p.punti / p.p_gioca : null;
 }
@@ -1755,8 +1766,8 @@ function rowVals(c) {
 
 // Statistiche attese a partita del giocatore p nella giornata mostrata (null se non ci sono)
 function playerStats(p) {
-  if (p.ruolo === "HC" || !p.partita || !D.cerca) return null;
-  const c = D.cerca.find(x => x.id === p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
+  if (p.ruolo === "HC" || !p.partita) return null;
+  const c = crow(p.id), d = c ? c.g[Math.min(day, c.g.length - 1)] : null;
   const st = p.stats || (d ? {pts: d.pts, reb: d.reb, ast: d.ast, stl: d.stl, blk: d.blk, min: d.min} : null);
   return st && st.pts != null ? {...st, src: d && d.src} : null;
 }
@@ -1771,7 +1782,7 @@ function ovrBlock(p) {
 
 // Sostituti: stesso ruolo, fino a 1,5 crediti in più, i migliori per punti attesi nella giornata mostrata
 function subsBlock(p) {
-  if (!D.cerca) return "";
+  if (!hasAll()) return shTab === "sub" ? needAll(refreshSheet, 4) : allLoading(4);   // si scaricano quando apri la scheda Sostituti
   const mine = new Set(D.rosa || []);
   const L = D.cerca.filter(c => c.id !== p.id && c.ruolo === p.ruolo && c.crediti <= p.crediti + 1.5)
     .map(c => ({c, v: rowVals(c)})).filter(x => x.v.partita && x.v.punti != null)
@@ -1803,6 +1814,7 @@ function showSheet(p0, src) {
   sheetBase = p0;
   const p = adj(p0), g = curG();
   const info = D.giocatori[p.nome] || {}, el = document.getElementById("sheet");
+  if (!D.giocatori[p.nome] && !hasAll()) needAll(refreshSheet);   // scheda di chi non è in rosa né nel piano: dettagli in cerca.json
   const prices = D.fotografie.map(s => `<span>${esc(s)} <b>${cr(info.prezzi?.[s])}</b></span>`).join("");
   const isCap = g.capitano.length && g.capitano[0].id === p.id;
   const dl = [
@@ -1872,6 +1884,7 @@ function pickShTab(k, focus) {
   const btns = [...bar.querySelectorAll("[data-shtab]")], i = btns.findIndex(b => b.dataset.shtab === k), was = btns.findIndex(b => b.dataset.shtab === shTab);
   if (i < 0) return;
   shTab = k; try { sessionStorage.setItem("pcc-shtab", k); } catch (e) {}
+  if (k === "sub" && !hasAll()) { refreshSheet(); if (focus) el.querySelector('[data-shtab="sub"]')?.focus(); return; }   // avvia il caricamento dei sostituti
   bar.style.setProperty("--t", i);
   btns.forEach(b => { const on = b.dataset.shtab === k; b.setAttribute("aria-selected", on); b.tabIndex = on ? 0 : -1; });
   el.querySelectorAll(".sh-pan").forEach(p => {
@@ -1880,6 +1893,66 @@ function pickShTab(k, focus) {
   });
   el.scrollTop = 0;
   if (focus) btns[i].focus();
+}
+
+// ——— giocatori di tutta la lega (cerca.json): indice di ricerca e schede di chi non è in rosa né nel piano ———
+// data.json ha solo rosa e piano, così la pagina si apre presto. Il resto si scarica quando serve (ricerca, Mercato,
+// sostituti, scheda di un altro giocatore) oppure in silenzio poco dopo il primo disegno. Una sola richiesta anche se
+// lo chiedono più parti insieme; se fallisce si riprova al prossimo uso (o con "Riprova").
+let moreP = null, moreErr = "", errAt = 0, allFailed = false, retryNow = false;
+const waiters = new Set();   // ridisegni da fare quando arrivano (o non arrivano): uno per contesto
+const hasAll = () => !!(D && D.cerca);
+const crow = id => (D.cerca || D.cerca_rosa || []).find(x => x.id === id);   // riga dell'indice: rosa e piano ci sono sempre
+function settleAll(failed) {
+  const w = [...waiters]; waiters.clear();
+  allFailed = failed;
+  try { w.forEach(f => { try { f(); } catch (e) { console.error(e); } }); } finally { allFailed = false; }
+}
+function loadAll() {
+  if (hasAll()) return Promise.resolve(D);
+  if (!moreP) moreP = fetch("cerca.json", {cache: "no-store"})
+    .then(r => { if (!r.ok) throw new Error("errore " + r.status); return r.json(); })
+    .then(x => {
+      if (!x || !Array.isArray(x.cerca)) throw new Error("file non valido");
+      D.giocatori = {...(x.giocatori || {}), ...D.giocatori};   // rosa e piano restano quelli di data.json
+      D.cerca = x.cerca; srchIdx = null; moreErr = ""; moreP = null;
+      settleAll(false);
+      return D;
+    })
+    .catch(err => {
+      moreP = null;
+      errAt = waiters.size ? Date.now() : 0;   // fallito il precarico silenzioso: il primo uso riprova subito
+      moreErr = navigator.onLine === false || err instanceof TypeError ? "offline" : String(err.message || "rete");
+      settleAll(true);
+      throw err;
+    });
+  return moreP;
+}
+const allLoading = (rows = 4) => `<div class="all-ld" role="status" aria-busy="true" aria-label="Carico i giocatori"><span>Carico i giocatori…</span>${Array.from({length: rows}, () => `<div class="sk" style="--h:40px"></div>`).join("")}</div>`;
+const allError = () => `<div class="empty" role="alert"><b>Giocatori non disponibili</b><span>${moreErr === "offline" ? "Non riesco a scaricarli: sei offline o la rete non risponde, e su questo telefono non c'è ancora una copia salvata." : `Non riesco a scaricarli (${esc(moreErr)}).`} Rosa e piano funzionano lo stesso.</span><button type="button" class="btn" data-retry>Riprova</button></div>`;
+const retry = f => { retryNow = true; try { f(); } finally { retryNow = false; } };   // "Riprova": sempre un nuovo tentativo
+// Per chi ha bisogno di tutti i giocatori: "" se ci sono già; altrimenti avvia il caricamento, si segna "redraw" e
+// ritorna lo scheletro (o l'errore, durante il ridisegno dopo un tentativo fallito)
+function needAll(redraw, rows) {
+  if (hasAll()) return "";
+  if (allFailed) return allError();
+  if (moreErr && !moreP && !retryNow && Date.now() - errAt < 1500) return allError();   // appena fallito: niente nuovo tentativo a ogni lettera digitata
+  waiters.add(redraw);
+  loadAll().catch(() => {});
+  return allLoading(rows);
+}
+function refreshSheet() {
+  const el = document.getElementById("sheet");
+  if (!D || !sheetBase || el.hidden || !el.classList.contains("open")) return;
+  const keep = el.scrollTop; showSheet(sheetBase); el.scrollTop = keep;
+}
+// Dopo il primo disegno, appena il telefono è libero: così di solito ricerca e mercato sono già pronti.
+// Non con il risparmio dati attivo: lì si scarica solo quando li usi.
+function preloadAll() {
+  const c = navigator.connection;
+  if (c && c.saveData) return;
+  const idle = window.requestIdleCallback ? f => requestIdleCallback(f, {timeout: 3000}) : f => f();
+  setTimeout(() => idle(() => loadAll().catch(() => {})), 1500);
 }
 
 // ——— ricerca giocatori ———
@@ -1901,9 +1974,11 @@ function srchPlayer(c) {
 }
 function runSearch() {
   const box = document.getElementById("q"), res = document.getElementById("qres"), x = document.getElementById("qx");
-  buildSearch();
   const q = fold(box.value).trim();
   x.hidden = !q;
+  if (!D) { res.hidden = true; return; }
+  if (!hasAll()) { res.innerHTML = needAll(searchRedraw, 4); res.hidden = false; return; }
+  buildSearch();
   if (!srchIdx) { res.hidden = true; return; }
   const toks = q.split(/\s+/).filter(Boolean);
   const planIds = new Set(curG().giocatori.map(p => p.id)), mine = new Set(D.rosa || []);
@@ -1922,6 +1997,10 @@ function runSearch() {
   res.hidden = false;
   if (!calm) { res.classList.remove("cascade"); void res.offsetWidth; res.classList.add("cascade"); }   // i risultati entrano a cascata, brevissima
 }
+function searchRedraw() {   // i giocatori sono arrivati (o no): aggiorna i risultati se la ricerca è ancora aperta
+  const box = document.getElementById("q"), res = document.getElementById("qres");
+  if (document.activeElement === box || !res.hidden) runSearch();
+}
 function pickResult(i) {
   const c = srchList[i]; if (!c) return;
   document.getElementById("sheet").dataset.from = "";
@@ -1933,10 +2012,13 @@ function closeSearch() { document.getElementById("qres").hidden = true; }
   box.addEventListener("input", runSearch);
   box.addEventListener("focus", runSearch);
   document.getElementById("qx").addEventListener("click", () => { box.value = ""; runSearch(); box.focus(); });
-  res.addEventListener("click", e => { const b = e.target.closest(".srch-r"); if (b) pickResult(+b.dataset.i); });
+  res.addEventListener("click", e => {
+    if (e.target.closest("[data-retry]")) { retry(runSearch); box.focus({preventScroll: true}); return; }
+    const b = e.target.closest(".srch-r"); if (b) pickResult(+b.dataset.i);
+  });
   box.addEventListener("keydown", e => {
     if (e.key === "Escape") { closeSearch(); box.blur(); return; }
-    if (e.key === "Enter") { e.preventDefault(); pickResult(Math.max(srchSel, 0)); return; }
+    if (e.key === "Enter") { e.preventDefault(); if (hasAll()) pickResult(Math.max(srchSel, 0)); return; }
     if (e.key === "ArrowDown" || e.key === "ArrowUp") {
       e.preventDefault(); if (!srchList.length) return;
       srchSel = (srchSel + (e.key === "ArrowDown" ? 1 : -1) + srchList.length) % srchList.length;
@@ -1950,6 +2032,7 @@ function closeSearch() { document.getElementById("qres").hidden = true; }
 document.getElementById("sheet").addEventListener("click", e => {
   if (sheetDragMoved) { e.stopPropagation(); return; }   // fine di un trascinamento: niente clic
   const tb = e.target.closest("[data-shtab]"); if (tb) { pickShTab(tb.dataset.shtab); return; }
+  if (e.target.closest("[data-retry]")) { retry(refreshSheet); return; }
   const o = e.target.closest("[data-ovr]");
   if (o && sheetBase) {
     const v = o.dataset.ovr;
@@ -2365,6 +2448,7 @@ fetch("data.json", {cache: "no-store"}).then(r => { if (!r.ok) throw new Error(r
   clock();
   avvisi();
   render();
+  preloadAll();
 }).catch(err => {
   document.getElementById("upd").textContent = "";
   document.getElementById("v-form").hidden = false;
