@@ -1,6 +1,6 @@
-/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione be0a684de0 */
-const V = 'be0a684de0', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
-const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
+/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione 0f0c032b44 */
+const V = '0f0c032b44', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
+const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
