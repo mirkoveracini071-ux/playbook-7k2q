@@ -64,6 +64,9 @@
   --pres-ok:#1b7d45; --pres-ok-ink:#ffffff; --pres-mid:#e3a008; --pres-mid-ink:#1a1200; --pres-lo:#c22c2c; --pres-lo-ink:#ffffff;
   --warn-bar:#a86f00;   /* barra "in dubbio" su sfondo chiaro: il giallo pieno non si vede sul binario grigio */
   --pad-x:max(16px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
+  /* atmosfera per contesto (Squadra / mercato / analisi): solo un velo di colore in cima alla pagina */
+  --atm-sq:rgba(201,74,10,.10); --atm-mk:rgba(18,108,160,.11); --atm-an:rgba(40,120,88,.10);
+  --ghost:rgba(255,255,255,.13); --ic-w:1.75; --focus:var(--accent);
   color-scheme:light;
 }
 :root[data-theme="light"]{color-scheme:light}
@@ -77,7 +80,8 @@
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
   --warn-bar:#f0b429; --c-base:#7b8692;
-  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}}
+  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
+  --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
@@ -88,11 +92,13 @@
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
   --warn-bar:#f0b429; --c-base:#7b8692;
-  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5); color-scheme:dark}
+  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
+  --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);margin:0;-webkit-tap-highlight-color:transparent;font-variant-numeric:tabular-nums}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);margin:0;-webkit-tap-highlight-color:transparent;font-variant-numeric:tabular-nums;
+  font-kerning:normal;font-synthesis-weight:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 /* niente aggiornamento nativo tirando giù (Chrome Android): c'è quello della pagina */
 html,body{overscroll-behavior-y:contain}
 /* dove la pagina usa lo scorrimento di lato (giornate in Squadra, preferiti nel Mercato) Chrome non deve leggerlo come "indietro" */
@@ -100,7 +106,21 @@ html.swipe-x,html.swipe-x body{overscroll-behavior-x:none}
 .app{max-width:600px;margin:0 auto;padding-inline:var(--pad-x);padding-block:20px calc(40px + var(--nav-h));display:grid;gap:16px}
 .app > *{min-width:0}
 button{font:inherit;color:inherit}
-:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
+/* fuoco da tastiera: lo stesso anello ovunque, segue il raggio di ogni elemento (niente raggio imposto) */
+:focus-visible{outline:2.5px solid var(--focus);outline-offset:2px}
+:focus:not(:focus-visible){outline:none}
+.pc:focus-visible{outline-offset:4px;border-radius:12px}
+.seg button:focus-visible,.tabs button:focus-visible,.mode button:focus-visible,.dens button:focus-visible,.mkt-seg button:focus-visible{outline-offset:-2px}
+.live :focus-visible,.board :focus-visible{--focus:#ff8c4d}
+::selection{background:color-mix(in srgb,var(--accent) 30%,transparent);color:inherit}
+button,summary,select,label[for],[role=tab],.jump a{cursor:pointer;touch-action:manipulation}
+button:disabled{cursor:not-allowed}
+/* barre di scorrimento sottili, colore delle linee (la barra di avanzamento #sp sul bordo del menu è un'altra cosa) */
+html{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.scroll,.sheet,.srch-res,.shv-c{scrollbar-width:thin;scrollbar-color:var(--line-2) transparent}
+.scroll::-webkit-scrollbar,.sheet::-webkit-scrollbar,.srch-res::-webkit-scrollbar{width:6px;height:6px}
+.scroll::-webkit-scrollbar-thumb,.sheet::-webkit-scrollbar-thumb,.srch-res::-webkit-scrollbar-thumb{background:var(--line-2);border-radius:3px}
+.scroll::-webkit-scrollbar-track,.sheet::-webkit-scrollbar-track,.srch-res::-webkit-scrollbar-track{background:transparent}
 p{margin:0}
 b,strong{font-weight:700}
 .muted{color:var(--muted)}
@@ -114,7 +134,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .brand h1{font:900 clamp(1.55rem,8.6vw,2.8rem)/.88 var(--display);letter-spacing:.005em;margin:0;text-transform:uppercase;white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* tema: sistema -> chiaro -> scuro, ricordato su questo telefono */
 .thm{margin-left:auto;flex:none;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);cursor:pointer;padding:0}
-.thm svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.thm svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 .thm .f{fill:currentColor;stroke:none}
 .brand-r{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:var(--fs-s)}
 .brand-r small{color:var(--muted);font-size:var(--fs-s)}
@@ -139,7 +159,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 /* ——— menu delle viste: in basso sul telefono, in alto da computer ——— */
 .seg{z-index:3;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative}
 .seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;min-width:0;padding:4px 2px;border-radius:12px;transition:color var(--d-state)}
-.seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 .seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:clip}
 .seg button[aria-pressed="true"]{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 13%,transparent)}
 /* l'indicatore copre tutto il menu e si "ritaglia" sulla voce scelta: si anima solo clip-path (niente layout) */
@@ -501,7 +521,7 @@ details b{color:var(--accent-text)}
 .srch{position:relative;z-index:4}
 .srch-f{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:0 6px 0 12px;min-height:48px;transition:border-color var(--d-state),box-shadow var(--d-state)}
 .srch-f:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
-.srch-f svg{width:20px;height:20px;flex:none;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round}
+.srch-f svg{width:20px;height:20px;flex:none;stroke:var(--muted);fill:none;stroke-width:var(--ic-w);stroke-linecap:round}
 .srch-f input{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;font-size:16px;padding:12px 0;outline:none;-webkit-appearance:none;appearance:none}
 .srch-f input::placeholder{color:var(--muted)}
 .srch-f input::-webkit-search-cancel-button{display:none}
@@ -563,7 +583,7 @@ details b{color:var(--accent-text)}
 .pair-pick label{display:grid;gap:4px;min-width:0}
 .pair-pick select{min-height:44px;width:100%;min-width:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:16px;font-weight:600;padding:0 8px}
 .pair-sw{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);display:grid;place-items:center;cursor:pointer}
-.pair-sw svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pair-sw svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 .pair-sum th:not(:first-child),.pair-sum td:not(:first-child){text-align:right}
 .pair-sum td:first-child{color:var(--muted)}
 .pair-cols{position:sticky;top:var(--stick-top,0px);z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-inline:-16px;padding:8px 16px;background:var(--surface);box-shadow:0 1px 0 var(--line);
@@ -860,7 +880,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .mkt-t .mn > span{min-width:0}
 .mkt-t td:first-child{touch-action:pan-y}
 .fav{flex:none;width:44px;height:44px;margin:-11px -4px -11px -14px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer;color:var(--muted);touch-action:manipulation}
-.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linejoin:round}
 .fav[aria-pressed="true"]{color:var(--warn-bar)}
 .fav[aria-pressed="true"] svg{fill:currentColor}
 .mkt-t tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
@@ -891,7 +911,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .cmpp-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:var(--fs-s);color:var(--muted)}
 .cmpp-hint .btn-o,.cmpp-x .btn-o{flex:none}
 .btn-o{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--fg);font:inherit;font-weight:600;font-size:var(--fs-s);cursor:pointer}
-.btn-o svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.btn-o svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 /* ——— condividi la formazione: anteprima dell'immagine (tieni premuto per salvarla) ——— */
 .share-row{display:flex;justify-content:center;margin-top:-4px}
 .shv{position:fixed;inset:0;z-index:7;background:var(--scrim);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
@@ -900,8 +920,100 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .shv-h b{font:800 var(--fs-l)/1 var(--display);text-transform:uppercase}
 .shv img{display:block;width:100%;height:auto;max-height:calc(100dvh - 170px);object-fit:contain;border-radius:10px;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto;background:var(--board)}
 .shv p{font-size:var(--fs-s);color:var(--muted);text-align:center}
+.shv-a{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}.shv-a .btn{gap:8px}.btn .ic{width:18px;height:18px}
 .shv .close{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;width:44px;height:44px;cursor:pointer;display:grid;place-items:center;flex:none}
 .shv .close svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+
+/* ——— icone: una famiglia sola (sprite #i-*), griglia 24, tratto 1,75, estremi e angoli arrotondati ——— */
+.ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round;vertical-align:-4px}
+.ic-s{width:16px;height:16px;vertical-align:-3px}
+.ic .f,.seg .f{fill:currentColor;stroke:none}
+.badge.inj{display:inline-flex;align-items:center;gap:2px}   /* icona e percentuale sulla stessa riga, alto come prima (19 px) */
+.badge .ic{width:11px;height:11px;stroke-width:2.6;vertical-align:-2px}
+.pill .ic{width:13px;height:13px;stroke-width:2.2;vertical-align:-2px;margin:0 3px 0 -2px}
+.avv > span{display:flex;gap:8px;align-items:flex-start}.avv .ic{color:var(--warn-text);margin-top:1px}
+.chip-b .ic{width:16px;height:16px;margin:0 5px 0 -3px;vertical-align:-3px}
+
+/* ——— atmosfera: Squadra calda, mercato (Opzioni, Occasioni, Prezzi) fredda, analisi (Infortuni, Calcola, Modello) verde.
+   Un velo in cima alla pagina che cambia colore con una transizione della variabile (registrata: si interpola) ——— */
+@property --atm{syntax:"<color>";inherits:true;initial-value:transparent}
+:root{--atm:var(--atm-sq)}
+:root[data-ctx="mk"]{--atm:var(--atm-mk)}
+:root[data-ctx="an"]{--atm:var(--atm-an)}
+body::before{content:"";position:fixed;left:0;right:0;top:0;height:min(70vh,560px);z-index:-1;pointer-events:none;
+  background:radial-gradient(130% 100% at 50% 0%,var(--atm),transparent 72%)}
+
+/* ——— tabellone d'arena: fondo a puntini (lampadine spente), cifre con il "88,8" spento dietro ——— */
+.kpis.board,.live,.result,.facts.main{background-color:var(--board);
+  background-image:radial-gradient(circle at 1.5px 1.5px,rgba(255,255,255,.05) 1px,transparent 1.4px),linear-gradient(rgba(255,255,255,.035),transparent 45%);
+  background-size:5px 5px,100% 100%}
+.live{background-size:5px 5px,100% 100%}
+/* il font da tabellone non ha cifre a larghezza fissa ("1" è largo metà dell'"8"): sul tabellone ogni cifra sta in una
+   cella fissa con l'8 spento dietro, come le cifre a lampadine; così i numeri non ballano quando cambiano */
+.sgb{position:relative;isolation:isolate}
+.dg{display:inline-block;position:relative;width:.49em;text-align:center}
+.dg.one{width:auto}.dg.one::before{content:none}   /* l'1 in una cella piena si leggerebbe come uno spazio ("2 10,5"): resta stretto */
+:is(.kpi,.result,.facts,.live) b.sgb span{font:inherit;color:inherit;letter-spacing:inherit;text-transform:none;line-height:inherit;margin:0;padding:0}
+.dg::before{content:"8";position:absolute;left:0;right:0;top:0;z-index:-1;color:var(--ghost);text-shadow:none;pointer-events:none}
+.board .kpi b,.live .kpi b,.result b,.facts.main b{letter-spacing:.015em;text-shadow:0 0 14px rgba(255,255,255,.08)}
+.board .kpi.hi b,.live .kpi.hi b{text-shadow:0 0 16px var(--glow)}
+/* rullo: la cifra vecchia esce, la nuova entra (solo transform, < 250 ms) */
+.rl{display:inline-block;height:1em;line-height:1;overflow:hidden;vertical-align:top;position:relative}
+.rl.dg::before{z-index:-1}
+.rl > span{display:block}
+.rl i{display:block;height:1em;font-style:normal}
+
+/* ——— testata di ogni vista: icona del menu, titolo, una riga ——— */
+.vh{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:center;padding-inline:2px}
+.vh-i{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;color:var(--accent-text);
+  background:color-mix(in srgb,var(--accent) 12%,var(--surface));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent)}
+.vh-i .ic{width:24px;height:24px}
+.vh h2{font:900 1.7rem/.95 var(--display);text-transform:uppercase;letter-spacing:.01em;margin:0}
+.vh p{font-size:var(--fs-s);color:var(--muted);line-height:1.35;margin-top:3px;text-wrap:pretty}
+.board .kpi > span{font-weight:600}
+
+/* ——— carta da collezione (scheda giocatore, Panoramica): testata nei colori della squadra, maglia grande, riflesso fermo ——— */
+.cc{position:relative;border-radius:16px;overflow:hidden;background:var(--card);color:var(--card-ink);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--t2) 55%,var(--card-line)),inset 0 0 0 4px var(--card),inset 0 0 0 5px color-mix(in srgb,var(--t1) 35%,transparent),0 10px 24px -14px var(--shadow-2)}
+.cc::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(118deg,transparent 30%,rgba(255,255,255,.22) 42%,rgba(255,255,255,.06) 50%,transparent 60%)}
+.cc-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px 7px;background:var(--t1);color:var(--ti);
+  font:800 1rem/1 var(--display);letter-spacing:.08em;text-transform:uppercase;border-bottom:3px solid var(--t2)}
+.cc-h span{display:inline-flex;align-items:center;gap:6px}
+.cc-h small{font:700 var(--fs-xs)/1 var(--body);letter-spacing:.06em}
+.cc-b{display:grid;grid-template-columns:108px minmax(0,1fr);gap:12px;align-items:center;padding:10px 14px 12px;
+  background:linear-gradient(160deg,color-mix(in srgb,var(--t1) 16%,var(--card)),var(--card) 70%)}
+.cc-j svg.jersey{width:108px;height:auto;display:block;filter:drop-shadow(0 8px 8px var(--jersey-shadow))}
+.cc-n{display:grid;gap:4px;min-width:0}
+.cc-n > b{font:900 2.6rem/.85 var(--display);letter-spacing:-.01em;color:var(--card-ink)}
+.cc-n > b small{font-size:.5em;color:var(--card-muted);margin-right:1px;vertical-align:.55em}
+.cc-n > span{font:800 1.15rem/1.05 var(--display);text-transform:uppercase;letter-spacing:.02em;overflow-wrap:anywhere}
+.cc-st{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:4px;border-top:1px solid var(--card-line);padding-top:6px}
+.cc-st span{display:grid;line-height:1.1;min-width:0}
+.cc-st span + span{padding-left:8px;box-shadow:-1px 0 0 var(--card-line)}
+.cc-st b{font:800 var(--fn-s)/1 var(--display)}
+.cc-st small{font-size:.66rem;color:var(--card-muted);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ——— conferme: un'etichetta sopra il menu, spunta che si disegna ——— */
+.toast{position:fixed;left:50%;bottom:calc(var(--nav-h) + 14px + env(safe-area-inset-bottom,0px));z-index:8;transform:translateX(-50%);
+  display:flex;align-items:center;gap:10px;max-width:calc(100vw - 32px);padding:9px 16px 9px 10px;border-radius:999px;background:var(--fg);color:var(--bg);
+  font:600 var(--fs-s)/1.3 var(--body);box-shadow:0 10px 26px var(--shadow-2);pointer-events:none}
+@media (min-width:700px){.toast{bottom:calc(24px + env(safe-area-inset-bottom,0px))}}
+.toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.toast svg{width:24px;height:24px;flex:none;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.toast .tc{fill:var(--good);stroke:none}.toast .tk{stroke:var(--good-ink)}
+.toast.err .tc{fill:var(--bad)}.toast.err .tk{stroke:#fff}
+
+/* ——— tabelle: nome in risalto, numeri da tabellone dove contano ——— */
+table td:first-child{font-weight:600}
+table td:first-child small,table td:first-child .muted{font-weight:400}
+.thr-table td:last-child b{font:800 var(--fn-s)/1 var(--display);letter-spacing:.01em}
+.thr-table td:first-child{font-weight:700}
+.pz-t td.cur{font-weight:700}
+.pz-t td.up,.pz-t td.down{font:800 var(--fn-s)/1.3 var(--display)}
+.inj-row .when{font:700 var(--fs-s)/1.4 var(--body);letter-spacing:.02em}
+.inj-more{justify-self:center;margin-top:10px}
+.inj-list .more:not([hidden]){animation:fade var(--d-state) var(--e-out) backwards}
 
 /* ——— movimento ———
    Regole: si animano solo transform e opacity (eccetto le linee del campo, disegnate una volta).
@@ -1057,6 +1169,17 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
   .shv.in{animation:fade 180ms ease-out both}
   .shv.in .shv-c{animation:rise 240ms var(--e-out) both;--dx:0;--dy:16px}
   @keyframes nav-pop{from{transform:scale(.6)}}
+  /* atmosfera del contesto: il velo cambia colore in 240 ms (niente lampi: si interpola il colore) */
+  :root{transition:--atm 240ms var(--e-out)}
+  /* conferme: entra dal basso (200 ms), la spunta si disegna (220 ms), esce in 160 ms */
+  .toast.in{animation:toast-in 200ms var(--e-out) both}
+  .toast.in .tk{animation:line 220ms var(--e-out) 70ms backwards}
+  .toast.in .tc{transform-box:fill-box;transform-origin:center;animation:pop 200ms var(--e-spring) both}
+  .toast.out{animation:toast-out 160ms ease-in both}
+  @keyframes toast-in{from{opacity:0;transform:translate(-50%,12px) scale(.96)}}
+  @keyframes toast-out{to{opacity:0;transform:translate(-50%,8px)}}
+  /* carta da collezione: entra con la scheda (una volta, 220 ms) */
+  .sheet.entering .cc{animation:rise 220ms var(--e-out) 60ms backwards;--dx:0;--dy:8px}
 }
 /* "Riduci movimento": nessuna animazione né transizione, nemmeno quelle fuori dal blocco qui sopra (colori dei
    pulsanti, freccia dei dettagli, comparsa della barra di avanzamento). Anche il JS lo controlla (calm). */
@@ -1091,6 +1214,28 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
       function () { fallback(); b.classList.remove("chk"); });
   } catch (e) { fallback(); if (b) b.classList.remove("chk"); }
 })();</script>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<!-- famiglia di icone: griglia 24, margine 3, tratto dal CSS (--ic-w 1,75), estremi e angoli tondi, cornici con raggio 3 -->
+<symbol id="i-form" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M9.5 3.5v6h5v-6M6.5 3.5v3.5a5.5 5.5 0 0 0 11 0V3.5"/></symbol>
+<symbol id="i-alt" viewBox="0 0 24 24"><path d="M6.5 4v5a3 3 0 0 0 3 3h5a3 3 0 0 1 3 3v5"/><path d="M4 6.5L6.5 4 9 6.5M15 17.5l2.5 2.5 2.5-2.5"/></symbol>
+<symbol id="i-occ" viewBox="0 0 24 24"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></symbol>
+<symbol id="i-prezzi" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><path d="M5 16l4-4.5 3.5 3L19 7.5"/><path d="M15 7.5h4v4"/></symbol>
+<symbol id="i-inf" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M12 8v8M8 12h8"/></symbol>
+<symbol id="i-calc" viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="3"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></symbol>
+<symbol id="i-mod" viewBox="0 0 24 24"><path d="M5 20.5v-7M10 20.5V4.5M15 20.5v-9M20 20.5V8"/></symbol>
+<!-- ruoli: mezzo campo (arco da tre e ferro), il pallino è dove gioca -->
+<symbol id="i-r-G" viewBox="0 0 24 24"><path d="M4.5 3.5v5a7.5 7.5 0 0 0 15 0v-5"/><circle cx="12" cy="6" r="1.5"/><circle class="f" cx="12" cy="20" r="2.3"/></symbol>
+<symbol id="i-r-F" viewBox="0 0 24 24"><path d="M4.5 3.5v5a7.5 7.5 0 0 0 15 0v-5"/><circle cx="12" cy="6" r="1.5"/><circle class="f" cx="20.2" cy="17.2" r="2.3"/></symbol>
+<symbol id="i-r-C" viewBox="0 0 24 24"><path d="M4.5 3.5v5a7.5 7.5 0 0 0 15 0v-5"/><circle cx="12" cy="6" r="1.5"/><circle class="f" cx="12" cy="11.2" r="2.3"/></symbol>
+<symbol id="i-r-HC" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="3"/><path d="M9.5 4.5v-1h5v1M8.5 10h7M8.5 14h4.5"/></symbol>
+<!-- stati: gioca, in dubbio, fuori; avviso -->
+<symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M8.3 12.4l2.6 2.6 4.9-5.4"/></symbol>
+<symbol id="i-mid" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.7a2.4 2.4 0 1 1 3.3 2.2c-.6.3-1 .8-1 1.4v.3M12 16.6h.01"/></symbol>
+<symbol id="i-lo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M9.2 9.2l5.6 5.6M14.8 9.2l-5.6 5.6"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M10.3 4.6a2 2 0 0 1 3.4 0l7 12.2a2 2 0 0 1-1.7 3H5a2 2 0 0 1-1.7-3z"/><path d="M12 9.5v4M12 16.6h.01"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><path d="M12 14.5v-11M8 7.5l4-4 4 4"/><path d="M7 11H5.5v9.5h13V11H17"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="3"/><path d="M15.5 8.5V6.5a3 3 0 0 0-3-3h-6a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h2"/></symbol>
+</defs></svg>
 <div id="ptr" class="ptr" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="var(--accent)"/><g fill="none" stroke="var(--strip)" stroke-width="1"><path d="M1 8h14M8 1v14"/><path d="M3 3c2.5 2.5 2.5 7.5 0 10M13 3c-2.5 2.5-2.5 7.5 0 10"/></g></svg></div>
 <span id="ptr-s" class="sr" role="status" aria-live="polite"></span>
 
@@ -1108,13 +1253,13 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
     <div id="qres" class="srch-res" hidden></div>
   </div>
   <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span><span id="sp" class="sp" aria-hidden="true"><i></i></span>
-    <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="2.5"/><path d="M9.5 3.5v6h5v-6M6.5 3.5v3.5a5.5 5.5 0 0 0 11 0V3.5"/></svg><span>Squadra</span></button>
-    <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v5a3 3 0 0 0 3 3h6a3 3 0 0 1 3 3v5"/><path d="M6 4L3.5 6.5M6 4l2.5 2.5M18 20l-2.5-2.5M18 20l2.5-2.5"/></svg><span>Opzioni</span></button>
-    <button type="button" data-view="occ" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg><span>Occasioni</span></button>
-    <button type="button" data-view="prezzi" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19.5h16"/><path d="M5 15.5l4-4.5 3.5 3L19 7"/><path d="M15 7h4v4"/></svg><span>Prezzi</span></button>
-    <button type="button" data-view="inf" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4.5"/><path d="M12 8v8M8 12h8"/></svg><span>Infortuni</span></button>
-    <button type="button" data-view="calc" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.5"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg><span>Calcola</span></button>
-    <button type="button" data-view="mod" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20v-7M10 20V5M15 20v-9M20 20V8"/></svg><span>Modello</span></button>
+    <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-form"/></svg><span>Squadra</span></button>
+    <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alt"/></svg><span>Opzioni</span></button>
+    <button type="button" data-view="occ" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-occ"/></svg><span>Occasioni</span></button>
+    <button type="button" data-view="prezzi" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-prezzi"/></svg><span>Prezzi</span></button>
+    <button type="button" data-view="inf" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-inf"/></svg><span>Infortuni</span></button>
+    <button type="button" data-view="calc" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calc"/></svg><span>Calcola</span></button>
+    <button type="button" data-view="mod" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mod"/></svg><span>Modello</span></button>
   </nav>
   <section id="v-form" class="view"><div class="loader" role="status"><svg viewBox="0 0 44 60" aria-hidden="true">
     <ellipse class="shadow" cx="22" cy="56" rx="14" ry="3" fill="var(--fg)" opacity=".4"/>
@@ -1130,6 +1275,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 <div id="scrim" class="scrim" hidden></div>
 <div id="sheet" class="sheet" hidden role="dialog" aria-modal="false" aria-labelledby="sh-name"></div>
 <div id="tip" class="tip" role="status" hidden></div>
+<div id="toast" class="toast" aria-hidden="true" hidden><svg viewBox="0 0 24 24"></svg><span></span></div>
 
 <script>
 const TEAM = {ATL:["#C8102E","#FDB927"],BOS:["#007A33","#BA9653"],BKN:["#111111","#FFFFFF"],CHA:["#1D1160","#00788C"],CHI:["#CE1141","#111111"],
@@ -1186,6 +1332,23 @@ const MORE = 6;   // righe visibili nelle tabelle lunghe, il resto dietro "Mostr
 const moreRows = rows => rows.map((r, i) => i < MORE ? r : r.replace("<tr", '<tr class="more" hidden')).join("");
 const moreBtn = n => n > MORE ? `<button type="button" class="more-btn" data-more="${n}" aria-expanded="false">Mostra tutti (${n})</button>` : "";
 const head = (title, meta = "") => `<div class="card-h"><h2>${title}</h2>${meta ? `<span class="meta">${meta}</span>` : ""}</div>`;
+// Icone della famiglia (sprite #i-*): menu, ruoli (r-G, r-F, r-C, r-HC), stati (ok, mid, lo), avviso, condividi, copia
+const ic = (n, cls = "") => `<svg class="ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+// Testata di ogni vista: la stessa icona del menu, il titolo e una riga su cosa c'è
+const vhead = (icon, title, lede = "") => `<header class="vh"><span class="vh-i">${ic(icon)}</span><div><h2>${title}</h2>${lede ? `<p>${lede}</p>` : ""}</div></header>`;
+// Testo sul colore della squadra: bianco o quasi nero, quello con più contrasto
+const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
+const inkOn = hex => contrast(hex, "#ffffff") >= contrast(hex, "#111418") ? "#ffffff" : "#111418";
+// Testata della carta da collezione: il colore della squadra, scurito appena quanto serve per avere almeno 4,5:1 con il testo
+// (serve per pochi rossi e blu medi, es. POR 4,34 → 4,5)
+function bandOf(hex) {
+  const n = parseInt(hex.slice(1), 16), ch = [n >> 16, n >> 8 & 255, n & 255];
+  for (let f = 1; f >= .5; f -= .03) {
+    const h = "#" + ch.map(v => Math.round(v * f).toString(16).padStart(2, "0")).join("");
+    if (contrast(h, inkOn(h)) >= 4.5) return h;
+  }
+  return "#1a1f26";
+}
 
 let D = null, day = 0, view = "form", mode = "piano", prevMode = null;
 const VIEWS = ["form", "alt", "occ", "prezzi", "inf", "calc", "mod"];
@@ -1250,7 +1413,7 @@ function card(p, g) {
     p.nuovo ? `<span class="badge new">NUOVO</span>` : out ? `<span class="badge esce" title="Il piano lo cambia">ESCE</span>` : "",
     info.quintetto && !coach ? `<span class="badge role ${info.quintetto.titolare ? "tit" : "pan"}${info.quintetto.confermato ? "" : " prev"}" title="${info.quintetto.titolare ? "Titolare" : "Dalla panchina"} (${info.quintetto.confermato ? "quintetto confermato" : "quintetto previsto"}) · ${esc(info.quintetto.partita)}">${info.quintetto.titolare ? "TIT" : "PAN"}</span>` : ""
   ];
-  let right = rest ? `<span class="badge rest">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}">✚ ${Math.round(prob * 100)}%</span>` : "");
+  let right = rest ? `<span class="badge rest">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}">${ic(presCls(prob))}${Math.round(prob * 100)}%</span>` : "");
   // sulla carta del capitano in alto a destra c'è la C (che resta dov'è): il bollino passa a sinistra, sotto gli altri.
   // Sotto la C non c'è posto: tra la C e il nome restano meno dei 19 px del bollino fino a 375 px di schermo.
   const left = left0.join("") + (isCap ? right : "");
@@ -1330,7 +1493,7 @@ function renderForm() {
     <div class="bench"><div class="col"><div><h3><b>6° uomo</b> · 100%</h3>${six ? card(six, g) : ""}</div><div><h3><b>Coach</b></h3>${coach ? card(coach, g) : ""}</div></div>
     <div class="pan"><h3><b>Panchina</b> · 50%</h3><div class="grid">${bench.map(p => card(p, g)).join("")}</div></div></div></div>
     <p class="hint">${dens === "c" ? "In basso sulla carta: punti se gioca e punti · rimbalzi · assist a partita. " : ""}${D.piano.giornate.length > 1 ? "Scorri di lato per cambiare giornata · tocca un giocatore per i dettagli" : "Tocca un giocatore per i dettagli"}</p>
-    <div class="share-row"><button type="button" class="btn-o" id="share-f"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M6 12H5v8h14v-8h-1"/></svg>Condividi formazione</button></div>`;
+    <div class="share-row"><button type="button" class="btn-o" id="share-f">${ic("share")}Condividi formazione</button></div>`;
 
   // Cambi del piano rispetto alla giornata prima. Se coincidono con i "Cambi di rosa" (rispetto all'app) non li ripeto.
   const diff = mode === "mia" ? "" : diffCard(g);
@@ -1650,8 +1813,14 @@ function renderMod() {
   }
   const parts = [["m-fonti", "Fonti", sourcesCard()], ["m-scambi", "Cambi di squadra", swapsCard()], ["m-prec", "Precisione", accuracy()], ["m-stag", "Stagione", seasonCard()],
     ["m-sched", "Schedine", paperBets()], ["m-conf", "Altre fonti", disagreements()], ["m-test", "Test", tests]].filter(x => x[2]);
-  const el = document.getElementById("v-mod");
-  el.innerHTML = `<nav class="jump" aria-label="Sezioni del modello">${parts.map(([id, l], k) => `<a href="#${id}" data-jump="${id}"${k ? "" : ' aria-current="true"'}>${l}</a>`).join("")}</nav>
+  const el = document.getElementById("v-mod"), F = D.fonti || [], fOk = F.filter(f => f.ok).length, r = D.registro;
+  const kp = [F.length ? [`${fOk}/${F.length}`, "fonti fresche", fOk === F.length] : null,
+    t ? [num(t.previsioni.mae_dopo, 2), "errore del test", false] : null,
+    [r && r.partite ? String(r.partite) : "0", "partite nel registro", false],
+    D.scambi ? [String(D.scambi.misura.cambiati), "cambiano squadra", false] : null].filter(Boolean);
+  el.innerHTML = `${vhead("mod", "Modello", "Da dove vengono i numeri, quanto sbagliano e cosa è stato provato.")}
+    <div class="kpis board" style="--n:${kp.length}">${kp.map(([v, l, hi]) => `<div class="kpi${hi ? " hi" : ""}"><b>${esc(v)}</b><span>${l}</span></div>`).join("")}</div>
+    <nav class="jump" aria-label="Sezioni del modello">${parts.map(([id, l], k) => `<a href="#${id}" data-jump="${id}"${k ? "" : ' aria-current="true"'}>${l}</a>`).join("")}</nav>
     ${parts.map(([id, , h]) => `<div class="msec" id="${id}">${h}</div>`).join("")}`;
   watchSections(el);
 }
@@ -1715,31 +1884,35 @@ function renderPrezzi() {
   const tot = snaps.map((_, i) => rows.reduce((s, r) => s + (r.vals[i] ?? 0), 0));
   let chart = `<div class="empty"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 34h30"/><path d="M7 26l8-7 7 5 11-12" stroke-dasharray="3 4"/></svg><b>Una sola fotografia: ${esc(snaps[0] || "G1")}</b>Le variazioni reali arrivano quando l'app aggiorna i prezzi dopo la prima giornata giocata.</div>`;
   if (snaps.length > 1) {
-    const W = 320, H = 140, pl = 10, pr = 10, top = 26, base = H - 22, mn = Math.min(...tot) - .5, mx = Math.max(...tot) + .5;
+    const W = 320, H = 140, pl = 34, pr = 10, top = 26, base = H - 22, mn = Math.min(...tot) - .5, mx = Math.max(...tot) + .5, gid = "pz" + (++jid);
     const X = i => pl + 14 + i * (W - pl - pr - 28) / (snaps.length - 1), Y = v => base - (v - mn) / (mx - mn) * (base - top);
     const pts = tot.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
-    const grid = [0, .5, 1].map(f => { const v = mn + (mx - mn) * f; return `<line x1="${pl}" x2="${W - pr}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--line)" stroke-dasharray="${f ? "2 4" : ""}"/>`; }).join("");
+    // asse: base piena, due righe tratteggiate leggere, valori a sinistra fuori dal disegno
+    const grid = [0, .5, 1].map(f => { const v = mn + (mx - mn) * f, y = Y(v).toFixed(1);
+      return `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="${f ? "var(--line)" : "var(--line-2)"}"${f ? ` stroke-dasharray="2 4"` : ""}/>
+      <text x="${pl - 6}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--muted)">${num(v)}</text>`; }).join("");
     const lx = X(tot.length - 1), anchor = snaps.length > 1 ? "end" : "middle";
-    chart = `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Valore della rosa per giornata">${grid}
-      <polygon class="ar" points="${X(0).toFixed(1)},${base} ${pts} ${lx.toFixed(1)},${base}" fill="var(--c-area)"/>
+    chart = `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Valore della rosa per giornata">
+      <defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--c-hi);stop-opacity:.26"/><stop offset="1" style="stop-color:var(--c-hi);stop-opacity:0"/></linearGradient></defs>${grid}
+      <polygon class="ar" points="${X(0).toFixed(1)},${base} ${pts} ${lx.toFixed(1)},${base}" fill="url(#${gid})"/>
       <polyline class="ln" pathLength="1" points="${pts}" fill="none" stroke="var(--c-hi)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       ${tot.map((v, i) => `<circle class="pt" data-k="${i}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${i === tot.length - 1 ? 5 : 3}" fill="${i === tot.length - 1 ? "var(--c-hi)" : "var(--surface)"}" stroke="var(--c-hi)" stroke-width="2"/>
       <circle class="hit" data-hl="${i}" data-tip="${esc(snaps[i])}: ${num(v)} crediti" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="16" fill="transparent"/>
-      <text x="${X(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(snaps[i])}</text>`).join("")}
-      <text class="pt" x="${lx.toFixed(1)}" y="${(Y(tot.at(-1)) - 11).toFixed(1)}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="var(--fg)">${num(tot.at(-1))} cr</text></svg></div>`;
+      <text x="${X(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" font-size="11"${i === tot.length - 1 ? ` font-weight="700" fill="var(--fg)"` : ` fill="var(--muted)"`}>${esc(snaps[i])}</text>`).join("")}
+      <text class="pt" x="${lx.toFixed(1)}" y="${(tot.at(-1) < tot.at(-2) ? Math.min(Y(tot.at(-1)) + 22, base - 5) : Y(tot.at(-1)) - 11).toFixed(1)}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="var(--fg)">${num(tot.at(-1))} cr</text></svg></div>`;
   }
   const t = D.taratura;
   const src = t ? Object.entries(t.stagioni || {}).map(([k, v]) => `${k}: ${v} giornate`).join(", ") : "";
   const calib = t ? `<p>${t.campioni.toLocaleString("it-IT")} variazioni reali (${esc(src)}), precisione R² ${num(t.r2, 2)}. ${t.campioni >= 150 && t.b > 0 ? "<b>In uso</b> per le plusvalenze attese." : "Non ancora in uso: servono almeno 150 esempi."}</p>
     ${t.b > 0 ? `<div><div class="lab" style="margin-bottom:6px">Punti per non perdere valore</div><div class="chips">${[5, 10, 15, 20].map(p => `<span class="chip num">${p} cr → <b>${num(-(t.a + t.c * p) / t.b)}</b></span>`).join("")}</div></div>` : ""}`
     : `<p class="muted">Partirà da sola dopo la prima giornata con le variazioni reali: oggi le plusvalenze attese sono una stima.</p>`;
-  document.getElementById("v-prezzi").innerHTML = `
-    <div class="kpis"><div class="kpi hi"><b>${num(tot.at(-1))}</b><span>valore rosa</span></div>
+  document.getElementById("v-prezzi").innerHTML = `${vhead("prezzi", "Prezzi", "Valore della tua rosa giornata per giornata e regola delle plusvalenze.")}
+    <div class="kpis board"><div class="kpi hi"><b>${num(tot.at(-1))}</b><span>valore rosa</span></div>
       <div class="kpi"><b>${snaps.length > 1 ? sign(tot.at(-1) - tot[0]) : "–"}</b><span>dalla ${esc(snaps[0] || "G1")}</span></div>
       <div class="kpi"><b>${snaps.length}</b><span>fotografie</span></div><div class="kpi"><b>${esc(snaps.at(-1) || "–")}</b><span>ultima</span></div></div>
     <div class="card">${head("Valore della rosa", "crediti")}${chart}</div>
-    <div class="card">${head("Prezzi della rosa", `${rows.length} giocatori`)}<div class="scroll"><table><thead><tr><th>Giocatore</th>${snaps.map(s => `<th>${esc(s)}</th>`).join("")}<th>Var.</th></tr></thead>
-      <tbody>${rows.sort((a, b) => (b.d ?? 0) - (a.d ?? 0) || (b.vals.at(-1) ?? 0) - (a.vals.at(-1) ?? 0)).map(r => `<tr><td>${esc(r.n)}</td>${r.vals.map(v => `<td>${v == null ? "–" : cr(v)}</td>`).join("")}
+    <div class="card">${head("Prezzi della rosa", `${rows.length} giocatori`)}<div class="scroll"><table class="pz-t"><thead><tr><th>Giocatore</th>${snaps.map(s => `<th>${esc(s)}</th>`).join("")}<th>Var.</th></tr></thead>
+      <tbody>${rows.sort((a, b) => (b.d ?? 0) - (a.d ?? 0) || (b.vals.at(-1) ?? 0) - (a.vals.at(-1) ?? 0)).map(r => `<tr><td>${esc(r.n)}</td>${r.vals.map((v, i) => `<td${i === r.vals.length - 1 ? ' class="cur"' : ""}>${v == null ? "–" : cr(v)}</td>`).join("")}
       <td class="${r.d > 0 ? "up" : r.d < 0 ? "down" : ""}">${r.d == null || snaps.length < 2 ? "–" : sign(r.d)}</td></tr>`).join("")}</tbody></table></div></div>
     <div class="card">${head("Taratura plusvalenze")}${calib}</div>`;
 }
@@ -1751,7 +1924,8 @@ const ALT_NOISE = 1.5;
 const itNum = t => esc(t).replace(/(^|[^\d.])-(?=\d)/g, "$1−").replace(/(\d)\.(\d{1,2})(?!\d)/g, "$1,$2");   // testi del piano: virgola decimale e segno meno tipografico
 function renderAlt() {
   const A = D.alternative, el = document.getElementById("v-alt");
-  if (!A || !A.opzioni || !A.opzioni.length) { el.innerHTML = `<div class="empty">${ILL.alt}<b>Nessuna alternativa calcolata</b><span>Chiedi a Claude di prepararle: qui le vedrai confrontate con il piano, una accanto all'altra.</span></div>`; return; }
+  const vh = vhead("alt", "Opzioni", "Formazioni alternative per la prossima giornata, messe a confronto.");
+  if (!A || !A.opzioni || !A.opzioni.length) { el.innerHTML = `${vh}<div class="empty">${ILL.alt}<b>Nessuna alternativa calcolata</b><span>Chiedi a Claude di prepararle: qui le vedrai confrontate con il piano, una accanto all'altra.</span></div>`; return; }
   const O = A.opzioni, rec = O.find(o => o.tag === "consigliata") || O[0];
   const age = Math.floor((Date.now() - new Date(A.calcolato + "T12:00:00")) / 864e5);
   const dl = o => o.punti - rec.punti;
@@ -1787,7 +1961,7 @@ function renderAlt() {
         <label><span class="lab">Colonna B</span><select id="pb">${O.filter(o => o.rosa).map(o => `<option value="${o.id}">${o.id} · ${esc(o.nome)}</option>`).join("")}</select></label></div>
       <div id="pair-b"></div>
       <p class="legend"><span><i class="lg-out"></i>esce passando da A a B</span><span><i class="lg-in"></i>entra</span><span><i class="lg-mv"></i>in tutte e due, in un altro slot</span></p></div>` : "";
-  el.innerHTML = `
+  el.innerHTML = `${vh}
     <div class="card">${head("Formazioni alternative", esc(A.giornata))}
       <div class="cmp-list">${rows}</div>
       <div class="cmp-scale" aria-hidden="true"><span><span>−${span}</span><span>consigliata</span><span>+${span}</span></span></div>
@@ -1874,6 +2048,7 @@ const favBtn = n => `<button type="button" class="fav" data-fav="${esc(n)}" aria
 function toggleFav(n) {
   if (FAV.has(n)) FAV.delete(n); else FAV.add(n);
   saveFav(); buzz(6);
+  toast(FAV.has(n) ? `${surname(n)} nei preferiti` : `${surname(n)} tolto dai preferiti`);
   document.querySelectorAll("#v-occ .fav").forEach(b => { if (b.dataset.fav !== n) return; const on = FAV.has(n);
     b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", `${on ? "Togli dai preferiti" : "Aggiungi ai preferiti"}: ${n}`);
     if (!calm) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); } });
@@ -1883,7 +2058,7 @@ function toggleFav(n) {
 // Confronto affiancato: con "Confronta" acceso, toccare una riga la sceglie (A, poi B; la terza sostituisce la più vecchia)
 let cmpOn = false, cmpSel = [];
 const CMP_IC = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M4 8h4M16 16h4"/></svg>`;
-const occSeg = () => `<div class="mkt-seg" role="group" aria-label="Occasioni o mercato"><button type="button" data-occ="occ" aria-pressed="${occMode === "occ"}">Occasioni</button><button type="button" data-occ="mkt" aria-pressed="${occMode === "mkt"}">Mercato</button></div>`;
+const occSeg = () => `${vhead("occ", "Occasioni", occMode === "mkt" ? "Tutti i giocatori della lega: filtri, preferiti e confronto." : "Giocatori economici che avranno più spazio.")}<div class="mkt-seg" role="group" aria-label="Occasioni o mercato"><button type="button" data-occ="occ" aria-pressed="${occMode === "occ"}">Occasioni</button><button type="button" data-occ="mkt" aria-pressed="${occMode === "mkt"}">Mercato</button></div>`;
 
 // Mercato: tutti i giocatori con filtri e ordinamento, nella giornata mostrata
 function renderMkt() {
@@ -1892,11 +2067,11 @@ function renderMkt() {
     return;
   }
   const C = D.cerca || [], teams = [...new Set(C.map(c => c.squadra))].sort();
-  const roles = [["", "Tutti"], ["G", "Guardie"], ["F", "Ali"], ["C", "Centri"], ["HC", "Coach"]];
+  const roles = [["", "Tutti"], ["G", "Guardie"], ["F", "Ali"], ["C", "Centri"], ["HC", "Coach"]];   // ognuno con l'icona del ruolo
   // Filtri compatti e sempre visibili (sticky) mentre scorri i risultati
   document.getElementById("v-occ").innerHTML = `${occSeg()}
     <div class="card mkt-f"><div class="mkt-fh"><b>Mercato</b><span class="meta" id="mkt-n">${esc(curG().label)}</span></div>
-      <div class="row chips-x" role="group" aria-label="Filtri">${`<button type="button" class="chip-b" data-mfav aria-pressed="${mkt.fav}" aria-label="Solo preferiti">★ <span>${FAV.size}</span></button><button type="button" class="chip-b" data-mcmp aria-pressed="${cmpOn}">Confronta</button>`}${roles.map(([v, l]) => `<button type="button" class="chip-b" data-mr="${v}" aria-pressed="${mkt.role === v}">${l}</button>`).join("")}</div>
+      <div class="row chips-x" role="group" aria-label="Filtri">${`<button type="button" class="chip-b" data-mfav aria-pressed="${mkt.fav}" aria-label="Solo preferiti">★ <span>${FAV.size}</span></button><button type="button" class="chip-b" data-mcmp aria-pressed="${cmpOn}">Confronta</button>`}${roles.map(([v, l]) => `<button type="button" class="chip-b" data-mr="${v}" aria-pressed="${mkt.role === v}">${v ? ic("r-" + v) : ""}${l}</button>`).join("")}</div>
       <div class="sel3"><select id="mt" aria-label="Squadra"><option value="">Squadre</option>${teams.map(t => `<option value="${t}"${mkt.team === t ? " selected" : ""}>${t}</option>`).join("")}</select>
         <select id="mm" aria-label="Prezzo massimo"><option value="">Prezzo</option>${[5, 7, 9, 12, 15, 20].map(v => `<option value="${v}"${String(mkt.max) === String(v) ? " selected" : ""}>Fino a ${v} cr</option>`).join("")}</select>
         <select id="ms" aria-label="Ordina per"><option value="punti"${mkt.sort === "punti" ? " selected" : ""}>Più punti</option><option value="ptcr"${mkt.sort === "ptcr" ? " selected" : ""}>Più pt/cr</option><option value="plus"${mkt.sort === "plus" ? " selected" : ""}>Più plus</option><option value="prezzo"${mkt.sort === "prezzo" ? " selected" : ""}>Meno cari</option></select></div></div>
@@ -2021,7 +2196,7 @@ function renderOcc() {
       <div class="occ-j">${jersey(o.squadra, o.maglia, false)}</div>
       <div class="occ-b">
         <div class="occ-h"><b>${esc(o.nome)}</b>${mine.has(o.nome) ? '<span class="pill q">già in rosa</span>' : ""}</div>
-        <div class="occ-m">${ROLE_LONG[o.ruolo] || "Centro"} · ${esc(o.squadra)} · ${cr(o.crediti)} crediti</div>
+        <div class="occ-m">${ic("r-" + (ROLE_LONG[o.ruolo] ? o.ruolo : "C"), "ic-s")} ${ROLE_LONG[o.ruolo] || "Centro"} · ${esc(o.squadra)} · ${cr(o.crediti)} crediti</div>
         <div class="occ-k"><span><b>${num(o.punti_per_giornata)}</b><small>pt/giornata</small></span><span class="${o.plus_cr > 0 ? "up" : "down"}"><b>${sign(o.plus_cr, 2)}</b><small>cr attesi</small></span>
           <span class="gd" aria-label="Giornate">${(o.giornate || []).map(x => `<span>${esc(x)}</span>`).join("")}</span></div>
         <div class="occ-r">${esc(o.motivo || "")}</div>
@@ -2038,14 +2213,19 @@ function renderInf() {
   const mine = new Set(D.rosa);
   const planned = new Set(D.piano.giornate.flatMap(g => g.giocatori.map(p => p.nome)));
   const L = D.infortuni_lega || [];
-  const pill = s => /out/i.test(s) && !/question/i.test(s) ? `<span class="pill out">Fuori</span>` : `<span class="pill q">In dubbio</span>`;
+  const isOut = s => /out/i.test(s) && !/question/i.test(s);
+  const pill = s => isOut(s) ? `<span class="pill out">${ic("lo")}Fuori</span>` : `<span class="pill q">${ic("mid")}In dubbio</span>`;
   const rosterHits = L.filter(i => mine.has(i.nome) || planned.has(i.nome));
-  const row = i => `<div class="inj-row${mine.has(i.nome) ? " mine" : ""}"><span class="who">${esc(i.nome)} <span class="muted">· ${esc(i.squadra)}</span>${mine.has(i.nome) ? ` <span class="pill mine-tag">tua rosa</span>` : planned.has(i.nome) ? ` <span class="pill mine-tag">nel piano</span>` : ""}</span>${pill(i.stato)}
+  const row = (i, k = 0) => `<div class="inj-row${mine.has(i.nome) ? " mine" : ""}${k >= 12 ? " more" : ""}"${k >= 12 ? " hidden" : ""}><span class="who">${esc(i.nome)} <span class="muted">· ${esc(i.squadra)}</span>${mine.has(i.nome) ? ` <span class="pill mine-tag">tua rosa</span>` : planned.has(i.nome) ? ` <span class="pill mine-tag">nel piano</span>` : ""}</span>${pill(i.stato)}
     <span class="why">${esc(i.motivo)}: ${esc(i.stato)}</span><span class="when">${i.data ? dmy(i.data) : ""}</span></div>`;
-  const outN = rosterHits.filter(i => /out/i.test(i.stato) && !/question/i.test(i.stato)).length;
-  document.getElementById("v-inf").innerHTML = `
-    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(row).join("")}</div>` : `<div class="empty">${ILL.ok}<b>Nessun avviso: tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`}</div>
-    <div class="card">${head("Tutta la lega", `${L.length} giocatori`)}<div class="inj-list">${L.filter(i => !rosterHits.includes(i)).map(row).join("")}</div></div>`;
+  const outN = rosterHits.filter(i => isOut(i.stato)).length, others = L.filter(i => !rosterHits.includes(i));
+  document.getElementById("v-inf").innerHTML = `${vhead("inf", "Infortuni", "Prima chi riguarda la tua rosa e il piano, poi tutta la lega.")}
+    <div class="kpis board"><div class="kpi${rosterHits.length ? " hi" : ""}"><b>${rosterHits.length}</b><span>tuoi in lista</span></div>
+      <div class="kpi"><b>${outN}</b><span>tuoi fuori</span></div><div class="kpi"><b>${rosterHits.length - outN}</b><span>tuoi in dubbio</span></div>
+      <div class="kpi"><b>${L.length}</b><span>nella lega</span></div></div>
+    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(i => row(i)).join("")}</div>` : `<div class="empty">${ILL.ok}<b>Nessun avviso: tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`}</div>
+    <div class="card">${head("Tutta la lega", `${others.length} giocatori`)}<div class="inj-list">${others.map(row).join("")}</div>
+      ${others.length > 12 ? `<button type="button" class="more-btn inj-more" data-more="${others.length}" aria-expanded="false">Mostra tutti (${others.length})</button>` : ""}</div>`;
 }
 
 // Regola dei prezzi tarata sulle variazioni reali: variazione = a + b·punti + c·crediti (per singola giornata).
@@ -2058,7 +2238,7 @@ const TARGETS = [-0.3, -0.1, 0, 0.1, 0.3, 0.5, 1.0];
 
 function thresholdsTable(cr) {
   return `<table class="thr-table"><thead><tr><th>Per ottenere</th><th>Servono almeno</th></tr></thead><tbody>${
-    TARGETS.map(tg => `<tr><td class="${tg > 0 ? "up" : tg < 0 ? "down" : ""}">${tg > 0 ? "+" : ""}${num(tg)} cr</td><td>${num(Math.max(0, ptsFor(cr, tg)))} punti</td></tr>`).join("")
+    TARGETS.map(tg => `<tr><td class="${tg > 0 ? "up" : tg < 0 ? "down" : ""}">${tg > 0 ? "+" : ""}${num(tg)} cr</td><td><b>${num(Math.max(0, ptsFor(cr, tg)))}</b> punti</td></tr>`).join("")
   }</tbody></table>`;
 }
 
@@ -2066,11 +2246,12 @@ let calcCr = 10, calcPts = 25;
 try { const s = JSON.parse(localStorage.getItem("pcc-calc") || "{}"); if (s.cr) calcCr = s.cr; if (s.pts != null) calcPts = s.pts; } catch (e) {}
 function renderCalc() {
   const el = document.getElementById("v-calc");
-  if (!rule()) { el.innerHTML = `<div class="empty"><b>Regola dei prezzi non ancora disponibile</b><span>Esegui <code>python dunkest_cli.py storico</code> e ripubblica la pagina.</span></div>`; return; }
+  const vh = vhead("calc", "Calcola", "Quanto cambia il prezzo di un giocatore dopo una giornata.");
+  if (!rule()) { el.innerHTML = `${vh}<div class="empty"><b>Regola dei prezzi non ancora disponibile</b><span>Esegui <code>python dunkest_cli.py storico</code> e ripubblica la pagina.</span></div>`; return; }
   const t = rule();
-  el.innerHTML = `
+  el.innerHTML = `${vh}
     <div class="card">${head("Calcolatore plusvalenza")}
-      <p class="note">Quanto cambia il prezzo di un giocatore dopo una giornata, dati i crediti e i punti Dunkest fatti.</p>
+      <p class="note">Dati i crediti e i punti Dunkest fatti nella giornata.</p>
       <div class="calc">
         <label for="c-cr"><span>Crediti <b id="c-cr-v"></b></span><input type="range" id="c-cr" min="4" max="30" step="0.1" value="${calcCr}"></label>
         <div class="scale-l" aria-hidden="true"><span>4</span><span>30</span></div>
@@ -2087,8 +2268,10 @@ function renderCalc() {
     try { localStorage.setItem("pcc-calc", JSON.stringify({cr: calcCr, pts: calcPts})); } catch (e) {}
     const pl = plusFor(calcCr, calcPts);
     document.getElementById("c-cr-v").textContent = num(calcCr);
-    const pe = document.getElementById("c-plus"); pe.textContent = sign(pl); pe.className = pl > 0 ? "up" : pl < 0 ? "down" : "";
-    document.getElementById("c-new").textContent = num(calcCr + pl);
+    const pe = document.getElementById("c-plus"), ne = document.getElementById("c-new"), w1 = pe.dataset.v, w2 = ne.dataset.v;   // il testo finale, non quello a metà rullo
+    pe.textContent = sign(pl); pe.className = pl > 0 ? "up" : pl < 0 ? "down" : "";
+    ne.textContent = num(calcCr + pl);
+    roll(pe, w1 || null); roll(ne, w2 || null);   // al primo disegno parte il rullo da zero (animateIn); poi gira a ogni modifica
     document.getElementById("c-thr").innerHTML = thresholdsTable(calcCr);
   };
   el.querySelectorAll("input").forEach(i => i.addEventListener("input", upd));
@@ -2115,7 +2298,7 @@ function spark(G, expv, ifPlays) {
   return `<div class="spark"><div class="spark-h"><b>Ultime ${n} partite</b><span class="muted num" style="font-size:var(--fs-s)">media ${num(avg)}</span></div>
     ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Punti Dunkest nelle ultime ${n} partite, media ${num(avg)}">
-    ${defs}<line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
+    ${defs}<line x1="2" x2="${W - 2}" y1="${Y(mx / 2).toFixed(1)}" y2="${Y(mx / 2).toFixed(1)}" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
     <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}Piene in arancio le partite sopra i punti attesi, a righe quelle sotto; @ = in trasferta. Tocca una barra per il dettaglio.</span></div>`;
 }
 
@@ -2237,9 +2420,17 @@ function showSheet(p0, src) {
   ].filter(Boolean);
   const se = seGioca(p);
   const news = info.notizia && info.notizia.stato !== "NOTE" ? `<div class="news"><b>${esc(info.notizia.titolo)}</b>${esc(info.notizia.testo)} <span class="muted">· ${info.notizia.ore != null ? (info.notizia.ore < 24 ? Math.round(info.notizia.ore) + " h fa" : Math.round(info.notizia.ore / 24) + " g fa") : ""} · basketballmonster</span></div>` : "";
+  // Carta da collezione: testata nei colori della squadra (testo bianco o scuro, il più leggibile), maglia grande,
+  // numero, nome e tre dati già presenti (presenza, turno, avversario). Riflesso fermo, nessun effetto continuo.
+  const [t1, t2] = TEAM[p.squadra] || ["#4a5561", "#d5dbe1"], hc = p.ruolo === "HC";
+  const opp = (p.partita || "").replace(/^\d\d\/\d\d\s*/, "").toUpperCase() || "riposo";
+  const band = bandOf(t1), ccard = `<div class="cc" style="--t1:${band};--t2:${t2};--ti:${inkOn(band)}">
+    <div class="cc-h"><span>${esc(p.squadra)}</span><span>${ic("r-" + (ROLE[p.ruolo] ? p.ruolo : "C"), "ic-s")}<small>${esc(ROLE_LONG[p.ruolo] || p.ruolo)}</small></span></div>
+    <div class="cc-b"><div class="cc-j">${jersey(p.squadra, info.maglia, hc)}</div><div class="cc-n">${!hc && info.maglia != null ? `<b><small>#</small>${esc(info.maglia)}</b>` : ""}<span>${esc(p.nome)}</span>
+      <div class="cc-st"><span><b>${hc || p.p_gioca == null ? "–" : Math.round(p.p_gioca * 100) + "%"}</b><small>presenza</small></span><span><b>${p.turno ? "T" + p.turno : "–"}</b><small>turno</small></span><span><b>${esc(opp)}</b><small>partita</small></span></div></div></div></div>`;
   // Quattro schede interne: le stesse sezioni di prima, una alla volta
   const panels = [
-    ["pan", "Panoramica", `<div class="facts main" style="grid-template-columns:repeat(2,1fr)"><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
+    ["pan", "Panoramica", `${ccard}<div class="facts main" style="grid-template-columns:repeat(2,1fr)"><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
       <dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
       ${p.ruolo !== "HC" ? formStrip(info.partite, se ?? p.punti) : ""}
       ${news}
@@ -2259,12 +2450,13 @@ function showSheet(p0, src) {
   if (!panels.some(x => x[0] === shTab)) shTab = "pan";
   const ti = panels.findIndex(x => x[0] === shTab);
   el.innerHTML = `<div class="sh-top"><div class="grab" aria-hidden="true"></div>
-    <header>${jersey(p.squadra, info.maglia, p.ruolo === "HC")}<div class="sh-id"><h3 id="sh-name">${esc(p.nome)}</h3><div class="sub">${esc(p.squadra)} · ${ROLE_LONG[p.ruolo] || ROLE[p.ruolo]} · ${esc(p.slot)}</div></div>
+    <header>${jersey(p.squadra, info.maglia, p.ruolo === "HC")}<div class="sh-id"><h3 id="sh-name">${esc(p.nome)}</h3><div class="sub">${esc(p.squadra)} · ${ic("r-" + (ROLE[p.ruolo] ? p.ruolo : "C"), "ic-s")} ${ROLE_LONG[p.ruolo] || ROLE[p.ruolo]} · ${esc(p.slot)}</div></div>
     <div class="sh-pt"><b data-cnt="s${p.id}">${num(p.punti)}</b><span>pt attesi</span>${se ? `<small>${num(se)} se gioca${p._adj ? " ✎" : ""}</small>` : ""}</div>
     <button type="button" class="close" aria-label="Chiudi"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></header>
     <div class="tabs sh-tabs" role="tablist" aria-label="Sezioni della scheda" style="--n:${panels.length};--t:${ti}">${panels.map(([k, l]) => `<button type="button" role="tab" id="sht-${k}" aria-controls="shp-${k}" aria-selected="${k === shTab}" tabindex="${k === shTab ? 0 : -1}" data-shtab="${k}">${l}</button>`).join("")}<i aria-hidden="true"></i></div></div>
     ${panels.map(([k, , h]) => `<div class="sh-pan" role="tabpanel" id="shp-${k}" aria-labelledby="sht-${k}"${k === shTab ? "" : " hidden"}>${h}</div>`).join("")}`;
   tickNums(el);
+  el.querySelectorAll(".facts.main b").forEach(b => { b.classList.add("sgb"); b.innerHTML = seg(b.textContent); });
   if (!el.hidden && el.classList.contains("open")) return;   // già aperta (stima di presenza, sostituto): solo il contenuto
   clearTimeout(sheetTimer);
   const scrim = document.getElementById("scrim");
@@ -2573,6 +2765,7 @@ let keepDays = false;
 
 let dir = 0;            // -1 / +1: da che parte entra il contenuto (vista o giornata precedente/successiva)
 const lastVals = {};   // ultimo valore mostrato da ogni numero del tabellone: si conta da lì, non da zero
+const lastTxt = {};    // e il testo: il rullo gira solo le cifre cambiate
 const reveal = "IntersectionObserver" in window ? new IntersectionObserver(es => es.forEach(e => {
   if (e.isIntersecting) { e.target.classList.add("play"); reveal.unobserve(e.target); }
 }), {rootMargin: "0px 0px 60px 0px"}) : null;
@@ -2592,7 +2785,7 @@ function animateIn(el) {
     else { c.style.setProperty("--i", 0); reveal.observe(c); }   // fuori schermo: parte quando ci arrivi scorrendo
   });
   countKpis(el);
-  if (!calm) el.querySelectorAll(".result b").forEach(b => countUp(b, 0));
+  el.querySelectorAll(".result b").forEach(b => roll(b, zeros(b.textContent)));
   dir = 0;
 }
 
@@ -2601,10 +2794,11 @@ function countKpis(el) {
   el.querySelectorAll(".kpi").forEach(k => {
     const b = k.querySelector("b"), key = view + "|" + (k.querySelector("span")?.textContent || "");
     if (!b) return;
-    const prev = lastVals[key], cur = parse(b.textContent)?.v;
-    if (!calm) countUp(b, prev ?? 0);
+    const prev = lastVals[key], pc = parse(b.textContent), cur = pc?.v;
+    if (k.closest(".kpis.board,.live")) { const pt = lastTxt[key]; lastTxt[key] = b.textContent; roll(b, pt ?? zeros(b.textContent)); }
+    else if (!calm) countUp(b, prev ?? 0);
     if (prev != null && cur != null && Math.abs(cur - prev) >= 0.05) {
-      const dlt = document.createElement("i"), dv = cur - prev, dec = (parse(b.textContent)?.dec) || 0;
+      const dlt = document.createElement("i"), dv = cur - prev, dec = (pc?.dec) || 0;
       dlt.className = "delta " + (dv > 0 ? "pos" : "neg"); dlt.setAttribute("aria-hidden", "true");
       dlt.textContent = (dv > 0 ? "+" : "−") + Math.abs(dv).toLocaleString("it-IT", {minimumFractionDigits: dec, maximumFractionDigits: dec});
       k.appendChild(dlt); if (calm) dlt.classList.add("static"); else requestAnimationFrame(() => dlt.classList.add("show"));
@@ -2648,6 +2842,50 @@ function countUp(b, from = 0) {
     if (k < 1) requestAnimationFrame(step);
   };
   requestAnimationFrame(step);
+}
+
+// Tabellone: dietro ogni numero le cifre "spente" (8), e quando cambia le cifre diverse girano come un rullo
+// (la vecchia esce, la nuova entra: in su se il numero cresce, in giù se cala). 180 ms + al massimo 60 ms di sfasamento.
+const seg = t => esc(t).replace(/\d/g, d => `<span class="dg${d === "1" ? " one" : ""}">${d}</span>`);   // cifre in celle fisse con l'8 spento dietro
+const zeros = t => t.replace(/\d/g, "0");
+let rollN = 0;
+function roll(b, from) {
+  const to = b.textContent;   // chi chiama ha già scritto il valore nuovo
+  b.classList.add("sgb"); b.dataset.v = to;
+  if (calm || from == null || from === to || !b.isConnected) { b.dataset.rt = ""; b.innerHTML = seg(to); return; }
+  const n = Math.max(from.length, to.length), f = from.padStart(n), t = to.padStart(n);
+  const up = (parse(to)?.v ?? 0) >= (parse(from)?.v ?? 0), tok = String(++rollN), anims = [];
+  b.dataset.rt = tok; b.textContent = "";
+  let k = 0;
+  for (let i = 0; i < n; i++) {
+    if (f[i] === t[i]) { if (t[i] !== " ") b.insertAdjacentHTML("beforeend", seg(t[i])); continue; }
+    const rl = document.createElement("span"), w = document.createElement("span"), o = document.createElement("i"), nw = document.createElement("i");
+    rl.className = /[\d ]/.test(f[i]) && /\d/.test(t[i]) ? "rl dg" : "rl"; o.textContent = f[i] === " " ? "\u00a0" : f[i]; nw.textContent = t[i] === " " ? "\u00a0" : t[i];
+    if (up) w.append(o, nw); else w.append(nw, o);
+    rl.append(w); b.append(rl);
+    anims.push(w.animate([{transform: `translateY(${up ? 0 : -1}em)`}, {transform: `translateY(${up ? -1 : 0}em)`}],
+      {duration: 180, delay: Math.min(k++, 5) * 12, easing: "cubic-bezier(.22,1,.36,1)", fill: "both"}));
+  }
+  Promise.all(anims.map(a => a.finished)).catch(() => {}).finally(() => { if (b.dataset.rt === tok) { b.dataset.rt = ""; b.innerHTML = seg(to); } });
+}
+// Conferme brevi: etichetta sopra il menu con la spunta che si disegna (o la croce se è andata male), 1,9 s.
+// La legge anche il lettore di schermo (attraverso la riga di stato nascosta).
+let toastT = 0;
+function toast(msg, kind = "ok") {
+  const el = document.getElementById("toast"), st = document.getElementById("ptr-s");
+  if (!el) return;
+  st.textContent = msg;
+  el.querySelector("span").textContent = msg;
+  el.querySelector("svg").innerHTML = `<circle class="tc" cx="12" cy="12" r="11"/><path class="tk" pathLength="1" d="${kind === "err" ? "M8.5 8.5l7 7M15.5 8.5l-7 7" : "M7.2 12.4l3.2 3.2 6.4-6.8"}"/>`;
+  el.className = "toast" + (kind === "err" ? " err" : "");
+  el.hidden = false;
+  clearTimeout(toastT);
+  if (!calm) { void el.offsetWidth; el.classList.add("in"); }
+  toastT = setTimeout(() => {
+    if (calm) { el.hidden = true; return; }
+    el.classList.remove("in"); el.classList.add("out");
+    toastT = setTimeout(() => { el.hidden = true; el.classList.remove("out"); }, 170);
+  }, 1900);
 }
 
 // Indicatore che scivola sotto la vista scelta: sul telefono è la pillola dietro l'icona, da computer tutta la voce.
@@ -2738,7 +2976,7 @@ function avvisi() {
   const days = Math.round((new Date(D.piano.giornate[0].dal + "T12:00:00") - today) / 864e5);
   if (age > 30 && days <= 2) out.push(`<b>Dati vecchi di ${Math.round(age)} ore.</b> L'aggiornamento automatico potrebbe essersi fermato: il piano può non essere più valido.`);
   if (D.token && D.token.ok === false) out.push(`<b>Token Dunkest:</b> ${esc(D.token.motivo)} (ultimo tentativo ${esc(D.token.quando)}). Va rinnovato nelle impostazioni dell'ambiente.`);
-  el.innerHTML = out.map(t => `<span>${t}</span>`).join("");
+  el.innerHTML = out.map(t => `<span>${ic("warn")}<span>${t}</span></span>`).join("");
   el.hidden = !out.length;
 }
 
@@ -2748,6 +2986,7 @@ function render() {
   document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === view));
   VIEWS.forEach(v => document.getElementById("v-" + v).hidden = v !== view);
   document.documentElement.classList.toggle("swipe-x", view === "form" || view === "occ");
+  document.documentElement.dataset.ctx = {form: "sq", alt: "mk", occ: "mk", prezzi: "mk", inf: "an", calc: "an", mod: "an"}[view];
   const strip = document.querySelector("#v-form .days"), scroll = strip ? strip.scrollLeft : 0;
   ({form: renderForm, alt: renderAlt, occ: renderOcc, prezzi: renderPrezzi, inf: renderInf, calc: renderCalc, mod: renderMod})[view]();
   if (keepDays) { const s = document.querySelector("#v-form .days"); if (s) s.scrollLeft = scroll; }
@@ -2782,7 +3021,7 @@ document.addEventListener("click", e => {
   const tb = e.target.closest("[data-tab]"); if (tb) { pickTab(tb.dataset.tab); return; }
   const mo = e.target.closest("[data-more]"); if (mo) {
     const open = mo.getAttribute("aria-expanded") !== "true", box = mo.parentElement;
-    box.querySelectorAll("tr.more").forEach(r => r.hidden = !open);
+    box.querySelectorAll(".more").forEach(r => r.hidden = !open);
     mo.setAttribute("aria-expanded", open); mo.textContent = open ? "Mostra meno" : `Mostra tutti (${mo.dataset.more})`;
     return;
   }
@@ -2936,7 +3175,7 @@ async function drawLineup() {
   cv._fontsOk = fontsOk;
   return cv;
 }
-let shareBack = null, shareFile = null;
+let shareBack = null, shareFile = null, shareBlob = null;
 async function shareLineup(btn) {
   if (btn.getAttribute("aria-busy") === "true") return;
   btn.setAttribute("aria-busy", "true"); buzz(6);
@@ -2946,17 +3185,18 @@ async function shareLineup(btn) {
     if (!cv) throw new Error("immagine vuota");
     const url = cv.toDataURL("image/png");
     const blob = await new Promise(r => cv.toBlob(r, "image/png"));
-    shareFile = null;
+    shareFile = null; shareBlob = blob;
     try { if (blob) shareFile = new File([blob], `formazione-${g.label}.png`, {type: "image/png"}); } catch (e) {}
     const can = shareFile && navigator.share && navigator.canShare && (() => { try { return navigator.canShare({files: [shareFile]}); } catch (e) { return false; } })();
     if (can) {
-      try { await navigator.share({files: [shareFile], title: `${D.squadra} · ${g.label}`}); return; }
+      try { await navigator.share({files: [shareFile], title: `${D.squadra} · ${g.label}`}); toast("Formazione condivisa"); return; }
       catch (err) { if (err && err.name === "AbortError") return; }   // annullata da te: niente anteprima
     }
     openShare(url, g, can);
   } catch (err) {
     st.textContent = `Non riesco a preparare l'immagine (${err.message || err}).`;
     document.getElementById("upd").textContent = st.textContent;
+    toast("Immagine non pronta: riprova", "err");
   } finally { btn.removeAttribute("aria-busy"); }
 }
 function openShare(url, g, can) {
@@ -2964,12 +3204,14 @@ function openShare(url, g, can) {
   if (!el) { el = document.createElement("div"); el.id = "shv"; el.className = "shv"; el.hidden = true; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "shv-t"); document.body.appendChild(el);
     el.addEventListener("click", e => {
       if (e.target === el || e.target.closest(".close")) { closeShare(); return; }
-      if (e.target.closest("[data-shgo]") && shareFile) navigator.share({files: [shareFile], title: `${D.squadra}`}).catch(() => {});
+      if (e.target.closest("[data-shgo]") && shareFile) navigator.share({files: [shareFile], title: `${D.squadra}`}).then(() => toast("Formazione condivisa"), err => { if (!err || err.name !== "AbortError") toast("Condivisione non riuscita", "err"); });
+      if (e.target.closest("[data-shcp]") && shareBlob) navigator.clipboard.write([new ClipboardItem({"image/png": shareBlob})]).then(() => toast("Immagine copiata"), () => toast("Copia non riuscita: tieni premuto l'immagine", "err"));
     }); }
   shareBack = document.activeElement;
+  const canCopy = !!(shareBlob && navigator.clipboard && navigator.clipboard.write && window.ClipboardItem);
   el.innerHTML = `<div class="shv-c"><div class="shv-h"><b id="shv-t">Formazione ${esc(g.label)}</b><button type="button" class="close" aria-label="Chiudi"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
     <img src="${url}" alt="Campo della ${esc(g.label)}: carte, capitano e punti attesi">
-    <p>Tieni premuto sull'immagine per salvarla o condividerla.</p>${can ? `<button type="button" class="btn" data-shgo>Condividi…</button>` : ""}</div>`;
+    <p>Tieni premuto sull'immagine per salvarla o condividerla.</p>${can || canCopy ? `<div class="shv-a">${canCopy ? `<button type="button" class="btn-o" data-shcp>${ic("copy")}Copia</button>` : ""}${can ? `<button type="button" class="btn" data-shgo>${ic("share")}Condividi…</button>` : ""}</div>` : ""}</div>`;
   el.hidden = false;
   if (!calm) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); }
   el.querySelector(".close").focus({preventScroll: true});
@@ -3087,8 +3329,8 @@ function refreshData() {
   el.classList.add("back", "busy"); el.style.transform = "translateY(10px)"; el.style.opacity = "1";
   st.textContent = "Aggiorno i dati…";
   fetch("data.json", {cache: "no-cache"}).then(r => { if (!r.ok) throw new Error(r.status); offline = r.headers.get("x-pcc-offline") === "1"; return r.json(); })
-    .then(data => { applyData(data); vswap = true; keepDays = true; try { render(); } finally { vswap = false; } st.textContent = `Dati aggiornati: ${document.getElementById("upd").textContent}`; buzz(8); })
-    .catch(err => { st.textContent = `Non riesco ad aggiornare (${err.message || "rete"}): restano i dati di prima.`; document.getElementById("upd").textContent = st.textContent; })
+    .then(data => { applyData(data); vswap = true; keepDays = true; try { render(); } finally { vswap = false; } buzz(8); toast(`Dati aggiornati · ${document.getElementById("upd").textContent.replace(/^Aggiornato /, "")}`); })
+    .catch(err => { const m = `Non riesco ad aggiornare (${err.message || "rete"}): restano i dati di prima.`; document.getElementById("upd").textContent = m; toast("Aggiornamento non riuscito", "err"); st.textContent = m; })
     .finally(() => setTimeout(() => { ptrBusy = false; ptrBack(); }, Math.max(0, 450 - (performance.now() - t0))));
 }
 
