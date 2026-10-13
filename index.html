@@ -858,6 +858,9 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 
 /* ——— oggi: in cima a Squadra (prossimo turno, giorni alla chiusura dei cambi, avvisi sui tuoi, capitano) ——— */
 .today{gap:12px}
+.td-next{margin:0;font-size:var(--fs-s);line-height:1.35;color:var(--muted)}
+.td-next .lab{font:600 var(--fs-xs)/1.2 var(--body);text-transform:uppercase;letter-spacing:.08em;margin-right:6px}
+.td-next b{color:var(--fg)}
 .td-l{list-style:none;margin:0;padding:0;display:grid}
 .td-l li{display:grid;grid-template-columns:5.4em minmax(0,1fr);gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line);font-size:var(--fs-s);line-height:1.35}
 .td-l li:first-child{border-top:0;padding-top:0}
@@ -1625,7 +1628,7 @@ function activeIdx() {
 // Oggi: in cima a Squadra, quello che serve sapere aprendo l'app. Solo dati veri: le date dei turni ci sono, l'orario
 // della prima partita (cioè della chiusura dei cambi) in data.json non c'è, quindi il conto è in giorni e non in ore.
 const daysTo = d => Math.round((new Date(d + "T12:00:00") - new Date(today() + "T12:00:00")) / 864e5);
-function todayCard() {
+function todayCard(frag) {
   const i = activeIdx(), g = D.piano.giornate[i], t = today();
   const mg = hasMine() ? D.piano.attuale[i] : g;
   const A = D.app && D.app.attuale ? D.app.attuale : null;
@@ -1645,10 +1648,10 @@ function todayCard() {
     return {nm, pr, st: inj ? inj.stato : "in dubbio", abs};
   }).filter(Boolean);
   const c = g.capitano[0], cp = c && g.giocatori.find(p => p.id === c.id), capNowA = A && A.find(p => p.capitano);
+  if (!frag && !started) return "";   // prima della giornata i numeri stanno dentro "Da fare ora"
   const kDays = n == null ? "–" : n <= 0 ? "oggi" : String(n);
   const kDaysL = started ? (nt ? `giorni al T${nt.turno}` : "giornata finita") : `giorni alla ${esc(g.label)}`;
-  return `<div class="card today">${head("Oggi", `${dow(t)} ${dmy(t)}`)}
-    <div class="kpis" style="--n:3"><div class="kpi hi"><b>${kDays}</b><span>${kDaysL}</span></div>
+  const body = `<div class="kpis" style="--n:3"><div class="kpi hi"><b>${kDays}</b><span>${kDaysL}</span></div>
       <div class="kpi"><b>${inTurn.length}</b><span>${nt ? `in campo nel T${nt.turno}` : "in campo"}</span></div>
       <div class="kpi"><b>${warn.length}</b><span>${warn.length === 1 ? "avviso" : "avvisi"} in rosa</span></div></div>
     <ul class="td-l">
@@ -1656,7 +1659,12 @@ function todayCard() {
       ${!started ? `<li><span class="lab">Cambi</span><span>Entro l'inizio della ${esc(g.label)}, ${dow(g.dal)} ${dmy(g.dal)}. <span class="muted">L'orario della prima partita non è nei dati della pagina: il conto è in giorni.</span></span></li>` : ""}
       ${cp ? `<li><span class="lab">Capitano</span><span><span class="badge-inline">C</span> <b>${esc(cp.nome)}</b> (T${c.turno})${capNowA ? capNowA.nome === cp.nome ? " · ha già la fascia" : ` · ora ce l'ha ${esc(surname(capNowA.nome))}` : ""}</span></li>` : ""}
       <li><span class="lab">Avvisi</span>${warn.length ? warnStrip(warn) : `<span class="muted">Nessun tuo giocatore nella lista infortuni.</span>`}</li>
-    </ul></div>`;
+    </ul>`;
+  // dentro "Da fare ora": solo i numeri e il prossimo turno, il resto (cambi, capitano, avvisi) è già nell'elenco
+  if (frag) return `<div class="kpis" style="--n:2"><div class="kpi hi"><b>${kDays}</b><span>${kDaysL}</span></div>
+      <div class="kpi"><b>${inTurn.length}</b><span>${nt ? `in campo nel T${nt.turno}` : "in campo"}</span></div></div>
+    ${nt ? `<p class="td-next"><span class="lab">Prossimo</span> <b>${esc(tg.label)} · T${nt.turno}</b>, ${dow(nt.data)} ${dmy(nt.data)}</p>` : ""}`;
+  return `<div class="card today">${head("Oggi", `${dow(t)} ${dmy(t)}`)}${body}</div>`;
 }
 
 // Avvisi sui tuoi in Oggi: con uno solo una pillola ferma; con più di uno una striscia che scorre piano se non sta nella
@@ -1700,7 +1708,7 @@ function todoCard() {
       items.push(it("warn", `${esc(n)}: ${esc(inj ? inj.stato : "in dubbio")}${abs != null ? ` <span class="muted">(gioca al ${Math.round(abs * 100)}%)</span>` : ""}`,
         `${inj ? esc(inj.motivo) + " · " : ""}${g.giocatori.some(p => p.nome === n) ? "nel piano" : "nella tua rosa"}`));
   });
-  return `<div class="card todo">${head(`Da fare ora`, `${esc(g.label)} · ${when}`)}<ol class="chain">${items.join("")}</ol></div>`;
+  return `<div class="card todo">${head(`Da fare ora`, `${esc(g.label)} · ${when}`)}${todayCard(true)}<ol class="chain">${items.join("")}</ol></div>`;
 }
 
 // In diretta: punti veri dall'app Dunkest (alla data dell'ultimo aggiornamento) e consigli su capitano e cambi
