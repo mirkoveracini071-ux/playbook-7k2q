@@ -52,6 +52,9 @@
   /* grafici: un colore per il segno messo in evidenza, uno neutro per gli altri, uno per la riga di riferimento.
      Contrasto misurato >= 3 contro la superficie e il binario in tutti e due i temi */
   --c-hi:var(--accent); --c-base:#6b7581; --c-ref:var(--fg); --c-area:color-mix(in srgb,var(--accent) 14%,transparent);
+  /* la seconda serie (e i valori negativi) è anche a righe: si distingue senza colore */
+  --hatch-base:repeating-linear-gradient(135deg,var(--c-base) 0 2px,color-mix(in srgb,var(--c-base) 30%,transparent) 2px 4.5px);
+  --hatch-bad:repeating-linear-gradient(135deg,var(--bad) 0 2.5px,color-mix(in srgb,var(--bad) 35%,transparent) 2.5px 5px);
   /* movimento: quattro durate e tre curve per tutta la pagina */
   --d-press:110ms; --d-state:200ms; --d-enter:380ms; --d-move:520ms;
   --e-out:cubic-bezier(.22,1,.36,1); --e-io:cubic-bezier(.65,0,.35,1); --e-spring:cubic-bezier(.34,1.45,.64,1);
@@ -92,6 +95,8 @@
 body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--body);margin:0;-webkit-tap-highlight-color:transparent;font-variant-numeric:tabular-nums}
 /* niente aggiornamento nativo tirando giù (Chrome Android): c'è quello della pagina */
 html,body{overscroll-behavior-y:contain}
+/* dove la pagina usa lo scorrimento di lato (giornate in Squadra, preferiti nel Mercato) Chrome non deve leggerlo come "indietro" */
+html.swipe-x,html.swipe-x body{overscroll-behavior-x:none}
 .app{max-width:600px;margin:0 auto;padding-inline:var(--pad-x);padding-block:20px calc(40px + var(--nav-h));display:grid;gap:16px}
 .app > *{min-width:0}
 button{font:inherit;color:inherit}
@@ -350,6 +355,12 @@ details b{color:var(--accent-text)}
 .pc .ln{display:flex;justify-content:center;gap:2px 7px;background:var(--card);border-top:1px solid var(--card-line);padding:2px 3px 3px;font-size:.66rem;line-height:1.25;color:var(--card-muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
 .pc .ln b{color:var(--card-ink);font-weight:700}
 .pc .ln .s3 b + b::before{content:"·";color:var(--card-muted);font-weight:400;margin:0 2px}
+/* telefoni stretti (fino a 380 px): la carta è larga ~94 px, i numeri si stringono e la riga piccola va a capo invece di tagliarsi */
+@media (max-width:380px){
+  .pc .k3 .k b{font-size:1.24rem}
+  .pc .k3 > span:not(.k) b{font-size:.86rem}
+}
+@media (max-width:400px){.pc .ln{flex-wrap:wrap;row-gap:0;white-space:normal}}
 .pitch.compact .court{gap:12px;padding:24px 10px 36px}
 .pitch.compact .pc svg.jersey{width:54%}
 .pitch.compact .bench{padding:12px 10px 14px;gap:12px}
@@ -464,7 +475,7 @@ details b{color:var(--accent-text)}
 .mkt-f .chip-b[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
 .mkt-f select{flex:1 1 140px;min-width:0;min-height:44px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--fg);font:inherit;font-size:16px;padding:0 10px}
 .mkt-t td,.mkt-t th{white-space:nowrap;padding-inline:6px}
-.mkt-t td:first-child{white-space:normal;min-width:120px;max-width:150px}
+.mkt-t td:first-child{white-space:normal;min-width:150px;max-width:176px}
 .mkt-t th:first-child,.mkt-t td:first-child{box-shadow:1px 0 0 var(--line)}
 .mkt-t td:first-child{padding-right:8px}
 .mkt-t td:first-child + td{padding-left:10px}
@@ -516,7 +527,7 @@ details b{color:var(--accent-text)}
 .srch-res .empty{margin:4px}
 .sheet .facts.six{grid-template-columns:repeat(3,1fr)}
 .sb{display:block;width:56px;height:5px;margin:4px 0 0 auto;border-radius:3px;background:var(--track);overflow:hidden}
-.sb i{display:block;height:100%;width:var(--w);border-radius:3px;background:var(--c-base);transform-origin:left}
+.sb i{display:block;height:100%;width:var(--w);border-radius:3px;background:var(--hatch-base);box-shadow:inset 0 0 0 1px var(--c-base);transform-origin:left}
 .sb.me i{background:var(--c-hi)}
 /* scheletro a righe mentre arrivano i giocatori di tutta la lega */
 .sk-li{display:grid;grid-template-columns:1fr 3.2em;gap:6px 12px;align-items:center;padding:9px 10px;min-height:52px}
@@ -671,7 +682,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .cmp-bar .cmp-zero{position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;margin-left:-1px;background:var(--fg);opacity:.55;border-radius:1px}
 .cmp-bar i{position:absolute;top:0;bottom:0;border-radius:999px}
 .cmp-bar i.p{background:var(--good);transform-origin:left}
-.cmp-bar i.n{background:var(--bad);transform-origin:right}
+.cmp-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--bad);transform-origin:right}
 .cmp-bar i.z{background:var(--c-base)}
 .cmp-bar em{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:999px;background:var(--accent);box-shadow:0 0 0 3px var(--surface)}
 .cmp-scale{display:grid;grid-template-columns:28px 1fr;gap:10px;font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
@@ -724,7 +735,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .tm-c{grid-area:c;font:800 1.05rem/1 var(--display);letter-spacing:.03em;border-left:3px solid var(--tc,var(--line-2));padding-left:6px}
 .tm-bar{grid-area:bar;height:8px;border-radius:999px;background:var(--track);overflow:hidden}
 .tm-bar i{display:block;height:100%;width:var(--w);border-radius:999px;transform-origin:left}
-.tm-bar i.p{background:var(--good)}.tm-bar i.n{background:var(--bad)}
+.tm-bar i.p{background:var(--good)}.tm-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
 .tm-v{grid-area:v;text-align:right;font-variant-numeric:tabular-nums}
 .tm-who{grid-area:who;font-size:var(--fs-xs);color:var(--muted);line-height:1.35}
 .tm-who em{font-style:normal;font-weight:700;color:var(--fg)}
@@ -789,6 +800,8 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 /* legende dei grafici: stessi colori dei segni, uguali nei due temi */
 .legend i.hi{background:var(--c-hi);border-color:var(--c-hi)}
 .legend i.base{background:var(--c-base);border-color:var(--c-base)}
+.legend i.hatch{background:var(--hatch-base);border:1.5px solid var(--c-base)}
+.legend i.ref-pt{width:10px;height:10px;border-radius:2px;transform:rotate(45deg);background:var(--c-hi);border-color:var(--c-hi)}
 .legend i.dash{border:0;height:0;border-top:2px dashed var(--c-ref);border-radius:0;vertical-align:3px}
 .spark rect.hit,.chart .hit{cursor:pointer}
 .spark rect.b.on,.chart .pt.on{stroke:var(--fg);stroke-width:2}
@@ -807,6 +820,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .boot-c b{font:900 2rem/1 var(--display);text-transform:uppercase;letter-spacing:.01em}
 .boot-c small{font:600 var(--fs-xs)/1.2 var(--body);text-transform:uppercase;letter-spacing:.2em;color:var(--board-muted)}
 .boot.out{opacity:0;transition:opacity 200ms ease-out;pointer-events:none}
+.boot.chk{opacity:0}.boot.chk *{animation-play-state:paused!important}
 /* ——— aggiorna tirando giù: pallone che scende dall'alto e gira mentre ricarica ——— */
 .ptr{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:6;width:40px;height:40px;margin-left:-20px;border-radius:999px;
   background:var(--surface);box-shadow:0 0 0 1px var(--line),0 6px 16px var(--shadow-2);display:grid;place-items:center;transform:translateY(-70px);opacity:0;pointer-events:none}
@@ -820,6 +834,74 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .loader p{margin:10px 0 0;color:var(--muted);font-size:var(--fs-s)}
 .sk{border-radius:14px;background:var(--sk);height:var(--h,80px);position:relative;overflow:hidden}
 .sk::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--surface) 50%,transparent),transparent);transform:translateX(-100%)}
+
+/* ——— oggi: in cima a Squadra (prossimo turno, giorni alla chiusura dei cambi, avvisi sui tuoi, capitano) ——— */
+.today{gap:12px}
+.td-l{list-style:none;margin:0;padding:0;display:grid}
+.td-l li{display:grid;grid-template-columns:5.4em minmax(0,1fr);gap:10px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line);font-size:var(--fs-s);line-height:1.35}
+.td-l li:first-child{border-top:0;padding-top:0}
+.td-l .lab{padding-top:1px}
+.td-l b{font-weight:700}
+.td-inj{display:flex;flex-wrap:wrap;gap:6px}
+.td-inj span{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px 2px 7px;background:var(--surface-2);white-space:nowrap}
+/* ——— scheda: ultime 5 partite e mini-grafico di forma ——— */
+.f5{display:grid;gap:6px}
+.f5-h{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+.f5-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.f5-l li{display:grid;justify-items:center;gap:2px;background:var(--surface-2);border-radius:10px;padding:7px 2px 6px;min-width:0;font-variant-numeric:tabular-nums}
+.f5-l b{font:800 var(--fn-s)/1 var(--display)}
+.f5-l small{font-size:.68rem;color:var(--muted);white-space:nowrap;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.f5-b{position:relative;width:14px;height:38px;border-radius:4px;background:var(--track);margin:3px 0 2px}
+.f5-b i{position:absolute;left:0;right:0;bottom:0;height:var(--h);border-radius:4px;background:var(--hatch-base);box-shadow:inset 0 0 0 1.5px var(--c-base);transform-origin:bottom}
+.f5-l li.hi .f5-b i{background:var(--c-hi);box-shadow:none}
+.f5-b em{position:absolute;left:-4px;right:-4px;bottom:var(--e);height:2px;margin-bottom:-1px;background:var(--c-ref);border-radius:1px}
+/* ——— mercato: preferiti, confronto tra due giocatori ——— */
+.mkt-t .mn{display:flex;align-items:flex-start;min-width:0}
+.mkt-t .mn > span{min-width:0}
+.mkt-t td:first-child{touch-action:pan-y}
+.fav{flex:none;width:44px;height:44px;margin:-11px -4px -11px -14px;border:0;background:none;padding:0;display:grid;place-items:center;cursor:pointer;color:var(--muted);touch-action:manipulation}
+.fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round}
+.fav[aria-pressed="true"]{color:var(--warn-bar)}
+.fav[aria-pressed="true"] svg{fill:currentColor}
+.mkt-t tr.sel td{background:color-mix(in srgb,var(--accent) 10%,var(--surface))}
+.mkt-t tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--accent),1px 0 0 var(--line)}
+.mkt-t tr .ab{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:5px;margin-left:4px;font:800 .72rem/1 var(--display);vertical-align:1px;background:var(--c-hi);color:var(--accent-ink)}
+.mkt-t tr .ab.b{background:var(--surface);color:var(--fg);border:1.5px dashed var(--c-base)}   /* B = la serie a righe; la lettera su fondo pieno resta leggibile */
+.cmpp{display:grid;gap:8px}
+.cmpp-h{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.cmpp-h button{display:grid;gap:1px;align-content:center;text-align:left;min-height:52px;padding:6px 10px;border-radius:12px;border:0;background:var(--surface-2);color:var(--fg);font:inherit;cursor:pointer;min-width:0}
+.cmpp-h button + button{text-align:right}
+.cmpp-h b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmpp-h small{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sw-a,.sw-b{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin:0 5px 0 0}
+.cmpp-h button + button .sw-b{margin:0 0 0 5px}
+.sw-a{background:var(--c-hi)}
+.sw-b{background:var(--hatch-base);box-shadow:inset 0 0 0 1.5px var(--c-base)}
+.cmpp-r{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);grid-template-areas:"a l b" "bar bar bar";gap:5px 8px;align-items:baseline;padding:7px 0 6px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.cmpp-r .a,.cmpp-r .b{font:800 var(--fn-s)/1 var(--display)}
+.cmpp-r .a{grid-area:a}.cmpp-r .b{grid-area:b;text-align:right}
+.cmpp-r .w{color:var(--accent-text)}
+.cmpp-r .l{grid-area:l;font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:center;white-space:nowrap}
+.cmpp-bar{grid-area:bar;position:relative;height:8px;border-radius:999px;background:var(--track)}
+.cmpp-bar::after{content:"";position:absolute;left:50%;top:-4px;bottom:-4px;width:2px;margin-left:-1px;border-radius:1px;background:var(--fg);opacity:.5}
+.cmpp-bar i{position:absolute;top:0;bottom:0;width:var(--w);border-radius:999px}
+.cmpp-bar i.a{right:50%;background:var(--c-hi);transform-origin:right}
+.cmpp-bar i.b{left:50%;background:var(--hatch-base);box-shadow:inset 0 0 0 1.5px var(--c-base);transform-origin:left}
+.cmpp-x{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cmpp-hint{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:var(--fs-s);color:var(--muted)}
+.cmpp-hint .btn-o,.cmpp-x .btn-o{flex:none}
+.btn-o{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line-2);background:var(--surface);color:var(--fg);font:inherit;font-weight:600;font-size:var(--fs-s);cursor:pointer}
+.btn-o svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* ——— condividi la formazione: anteprima dell'immagine (tieni premuto per salvarla) ——— */
+.share-row{display:flex;justify-content:center;margin-top:-4px}
+.shv{position:fixed;inset:0;z-index:7;background:var(--scrim);display:grid;place-items:center;padding:16px max(16px,env(safe-area-inset-right,0px)) calc(16px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.shv-c{background:var(--surface);color:var(--fg);border-radius:18px;padding:12px;display:grid;gap:10px;width:min(440px,100%);max-height:calc(100dvh - 32px);box-shadow:0 20px 50px var(--shadow-2)}
+.shv-h{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.shv-h b{font:800 var(--fs-l)/1 var(--display);text-transform:uppercase}
+.shv img{display:block;width:100%;height:auto;max-height:calc(100dvh - 170px);object-fit:contain;border-radius:10px;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto;background:var(--board)}
+.shv p{font-size:var(--fs-s);color:var(--muted);text-align:center}
+.shv .close{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;width:44px;height:44px;cursor:pointer;display:grid;place-items:center;flex:none}
+.shv .close svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
 
 /* ——— movimento ———
    Regole: si animano solo transform e opacity (eccetto le linee del campo, disegnate una volta).
@@ -966,6 +1048,14 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
   @keyframes bounce{from{transform:translateY(-46px) rotate(-30deg)}to{transform:translateY(0) rotate(40deg)}}
   @keyframes squash{from{transform:scaleX(.45);opacity:.25}to{transform:scaleX(1);opacity:.6}}
   @keyframes flash{0%,35%{opacity:1}100%{opacity:0}}
+  /* scheda: le barre delle ultime 5 si riempiono dal basso all'apertura; confronto del mercato: barre di differenza dal centro */
+  .sheet.open .f5-b i{animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(160ms + var(--b,0) * 50ms)}
+  .sheet.open .f5-b em{animation:fade var(--d-state) backwards;animation-delay:480ms}
+  .cmpp.in .cmpp-bar i{animation:grow 480ms var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 45ms)}
+  .cmpp.in{animation:rise var(--d-enter) var(--e-out) backwards;--dx:0;--dy:8px}
+  .fav.pop svg{animation:pop 300ms var(--e-spring)}
+  .shv.in{animation:fade 180ms ease-out both}
+  .shv.in .shv-c{animation:rise 240ms var(--e-out) both;--dx:0;--dy:16px}
   @keyframes nav-pop{from{transform:scale(.6)}}
 }
 /* "Riduci movimento": nessuna animazione né transizione, nemmeno quelle fuori dal blocco qui sopra (colori dei
@@ -985,7 +1075,22 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
     <g class="bl"><circle cx="64" cy="66" r="24.2" fill="var(--board)"/><circle cx="64" cy="66" r="21" fill="#e4570f"/>
       <g fill="none" stroke="#161b22" stroke-width="2"><path d="M43 66H85M64 45V87M45.71 45.87A13.02 20.58 0 0 1 45.71 86.13M82.29 86.13A13.02 20.58 0 0 1 82.29 45.87"/><circle cx="64" cy="66" r="21"/></g></g>
     <g class="cb"><circle cx="66.5" cy="22" r="11.7" fill="var(--board)"/><circle cx="66.5" cy="22" r="9.5" fill="#c9f23a"/><path d="M69.58 25.57A4.6 4.8 0 1 1 69.58 18.43" fill="none" stroke="#1d2a00" stroke-width="2.4"/></g></g></svg><b>PolloconCurry</b><small>Playbook</small></div></div>
-<script>/* avvio: lo salta chi ha già i dati su questo telefono (pcc-seen) e chi ha chiesto meno movimento */try{if(matchMedia("(prefers-reduced-motion: reduce)").matches||localStorage.getItem("pcc-seen"))document.getElementById("boot").remove()}catch(e){document.getElementById("boot").remove()}</script>
+<script>/* avvio: lo salta chi ha chiesto meno movimento e chi ha già i dati su questo telefono. Prima si guarda la copia vera
+   salvata dal service worker (caches.match); dove non c'è un service worker o la cache non si legge si usa pcc-seen.
+   Durante il controllo (pochi millisecondi) l'avvio resta invisibile e fermo. */
+(function () {
+  var b = document.getElementById("boot"), skip = function () { if (b && b.parentNode) b.remove(); };
+  try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) { skip(); return; } } catch (e) {}
+  var seen = false; try { seen = !!localStorage.getItem("pcc-seen"); } catch (e) {}
+  var fallback = function () { if (seen) skip(); };
+  try {
+    var sw = !!(navigator.serviceWorker && navigator.serviceWorker.controller);
+    if (!sw || !window.caches) { fallback(); return; }
+    b.classList.add("chk");
+    caches.match("data.json").then(function (r) { if (r) skip(); else b.classList.remove("chk"); },
+      function () { fallback(); b.classList.remove("chk"); });
+  } catch (e) { fallback(); if (b) b.classList.remove("chk"); }
+})();</script>
 <div id="ptr" class="ptr" aria-hidden="true"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="var(--accent)"/><g fill="none" stroke="var(--strip)" stroke-width="1"><path d="M1 8h14M8 1v14"/><path d="M3 3c2.5 2.5 2.5 7.5 0 10M13 3c-2.5 2.5-2.5 7.5 0 10"/></g></svg></div>
 <span id="ptr-s" class="sr" role="status" aria-live="polite"></span>
 
@@ -1141,11 +1246,15 @@ function card(p, g) {
   const isCap = g.capitano.length && g.capitano[0].id === p.id;
   const rest = !coach && !p.turno, out = leaving.has(p.nome);
   const prob = info.assente ?? (info.infortunio ? p.p_gioca : null);   // solo assenti.txt o lista infortuni
-  const left = [
+  const left0 = [
     p.nuovo ? `<span class="badge new">NUOVO</span>` : out ? `<span class="badge esce" title="Il piano lo cambia">ESCE</span>` : "",
     info.quintetto && !coach ? `<span class="badge role ${info.quintetto.titolare ? "tit" : "pan"}${info.quintetto.confermato ? "" : " prev"}" title="${info.quintetto.titolare ? "Titolare" : "Dalla panchina"} (${info.quintetto.confermato ? "quintetto confermato" : "quintetto previsto"}) · ${esc(info.quintetto.partita)}">${info.quintetto.titolare ? "TIT" : "PAN"}</span>` : ""
-  ].join("");
-  const right = rest ? `<span class="badge rest">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}">✚ ${Math.round(prob * 100)}%</span>` : "");
+  ];
+  let right = rest ? `<span class="badge rest">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}">✚ ${Math.round(prob * 100)}%</span>` : "");
+  // sulla carta del capitano in alto a destra c'è la C (che resta dov'è): il bollino passa a sinistra, sotto gli altri.
+  // Sotto la C non c'è posto: tra la C e il nome restano meno dei 19 px del bollino fino a 375 px di schermo.
+  const left = left0.join("") + (isCap ? right : "");
+  if (isCap) right = "";
   const cls = ["pc", rest ? "out" : "", isCap ? "is-cap" : "", p.nuovo ? "is-new" : "", out ? "leaving" : ""].filter(Boolean).join(" ");
   const state = [isCap ? "capitano" : "", p.nuovo ? "nuovo" : "", out ? "esce col piano" : "", rest ? "riposa" : ""].filter(Boolean).join(", ");
   const se = seGioca(p), seTitle = se ? `Probabilità di giocare ${Math.round(p.p_gioca * 100)}%: i punti attesi sono già ridotti` : "";
@@ -1220,7 +1329,8 @@ function renderForm() {
   const pitch = `${densRow}<div class="pitch${dens === "c" ? " compact" : ""}"><div class="court">${courtLines}${courtMid(D.squadra || "")}${rows.map(r => `<div class="row">${r.map(p => card(p, g)).join("")}</div>`).join("")}</div>
     <div class="bench"><div class="col"><div><h3><b>6° uomo</b> · 100%</h3>${six ? card(six, g) : ""}</div><div><h3><b>Coach</b></h3>${coach ? card(coach, g) : ""}</div></div>
     <div class="pan"><h3><b>Panchina</b> · 50%</h3><div class="grid">${bench.map(p => card(p, g)).join("")}</div></div></div></div>
-    <p class="hint">${dens === "c" ? "In basso sulla carta: punti se gioca e punti · rimbalzi · assist a partita. " : ""}${D.piano.giornate.length > 1 ? "Scorri il campo per cambiare giornata · tocca un giocatore per i dettagli" : "Tocca un giocatore per i dettagli"}</p>`;
+    <p class="hint">${dens === "c" ? "In basso sulla carta: punti se gioca e punti · rimbalzi · assist a partita. " : ""}${D.piano.giornate.length > 1 ? "Scorri di lato per cambiare giornata · tocca un giocatore per i dettagli" : "Tocca un giocatore per i dettagli"}</p>
+    <div class="share-row"><button type="button" class="btn-o" id="share-f"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4M8 8l4-4 4 4"/><path d="M6 12H5v8h14v-8h-1"/></svg>Condividi formazione</button></div>`;
 
   // Cambi del piano rispetto alla giornata prima. Se coincidono con i "Cambi di rosa" (rispetto all'app) non li ripeto.
   const diff = mode === "mia" ? "" : diffCard(g);
@@ -1255,7 +1365,7 @@ function renderForm() {
     <button type="button" data-mode="piano" aria-pressed="${mode === "piano"}"><span>Il piano</span><b data-cnt="mp">${num(plan.punti)}</b></button>
     <button type="button" data-mode="mia" aria-pressed="${mode === "mia"}"><span>La mia rosa</span><b data-cnt="mm">${num(mine.punti)}</b></button></div>` : "";
   const top = mode === "mia" ? compareCard(day) : diff;
-  document.getElementById("v-form").innerHTML = `${todoCard()}${liveCard()}${lastDay()}<div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}${top}${mode === "mia" ? "" : changes}${cap}${turns}${subs}${rng}`;
+  document.getElementById("v-form").innerHTML = `${todayCard()}${todoCard()}${liveCard()}${lastDay()}<div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}${top}${mode === "mia" ? "" : changes}${cap}${turns}${subs}${rng}`;
 }
 
 // Rosa attuale contro piano: quanto rendono i cambi, nella giornata e su tutte quelle del piano
@@ -1275,6 +1385,43 @@ function compareCard(i) {
 function activeIdx() {
   const t = today(), i = D.piano.giornate.findIndex(g => g.al >= t);
   return i < 0 ? D.piano.giornate.length - 1 : i;
+}
+
+// Oggi: in cima a Squadra, quello che serve sapere aprendo l'app. Solo dati veri: le date dei turni ci sono, l'orario
+// della prima partita (cioè della chiusura dei cambi) in data.json non c'è, quindi il conto è in giorni e non in ore.
+const daysTo = d => Math.round((new Date(d + "T12:00:00") - new Date(today() + "T12:00:00")) / 864e5);
+function todayCard() {
+  const i = activeIdx(), g = D.piano.giornate[i], t = today();
+  const mg = hasMine() ? D.piano.attuale[i] : g;
+  const A = D.app && D.app.attuale ? D.app.attuale : null;
+  const mineNames = A ? A.map(p => p.nome) : (D.rosa || []);
+  // prossimo turno con dentro i tuoi giocatori: in questa giornata, altrimenti nella prossima
+  let tg = mg, nt = (mg.turni || []).find(x => x.data >= t);
+  if (!nt && D.piano.giornate[i + 1]) { tg = hasMine() ? D.piano.attuale[i + 1] : D.piano.giornate[i + 1]; nt = (tg.turni || [])[0]; }
+  const started = g.dal <= t;
+  const dl = started ? (nt ? nt.data : null) : g.dal, n = dl ? daysTo(dl) : null;
+  const byId = Object.fromEntries((tg.giocatori || []).map(p => [p.id, p]));
+  const inTurn = nt ? nt.giocatori.map(id => byId[id]).filter(Boolean) : [];
+  // avvisi sui tuoi: lista infortuni (non "available") o stima di assenza sotto il 100%
+  const warn = mineNames.map(nm => {
+    const info = D.giocatori[nm] || {}, inj = info.infortunio, abs = info.assente;
+    if (!((inj && !/available/i.test(inj.stato)) || (abs != null && abs < 1))) return null;
+    const pr = abs != null ? abs : inj && /out/i.test(inj.stato) && !/question/i.test(inj.stato) ? 0 : .5;
+    return {nm, pr, st: inj ? inj.stato : "in dubbio", abs};
+  }).filter(Boolean);
+  const c = g.capitano[0], cp = c && g.giocatori.find(p => p.id === c.id), capNowA = A && A.find(p => p.capitano);
+  const kDays = n == null ? "–" : n <= 0 ? "oggi" : String(n);
+  const kDaysL = started ? (nt ? `giorni al T${nt.turno}` : "giornata finita") : `giorni alla ${esc(g.label)}`;
+  return `<div class="card today">${head("Oggi", `${dow(t)} ${dmy(t)}`)}
+    <div class="kpis" style="--n:3"><div class="kpi hi"><b>${kDays}</b><span>${kDaysL}</span></div>
+      <div class="kpi"><b>${inTurn.length}</b><span>${nt ? `in campo nel T${nt.turno}` : "in campo"}</span></div>
+      <div class="kpi"><b>${warn.length}</b><span>${warn.length === 1 ? "avviso" : "avvisi"} in rosa</span></div></div>
+    <ul class="td-l">
+      ${nt ? `<li><span class="lab">Prossimo</span><span><b>${esc(tg.label)} · T${nt.turno}</b>, ${dow(nt.data)} ${dmy(nt.data)}: ${inTurn.map(p => esc(surname(p.nome))).join(", ") || "nessuno dei tuoi"}</span></li>` : ""}
+      ${!started ? `<li><span class="lab">Cambi</span><span>Entro l'inizio della ${esc(g.label)}, ${dow(g.dal)} ${dmy(g.dal)}. <span class="muted">L'orario della prima partita non è nei dati della pagina: il conto è in giorni.</span></span></li>` : ""}
+      ${cp ? `<li><span class="lab">Capitano</span><span><span class="badge-inline">C</span> <b>${esc(cp.nome)}</b> (T${c.turno})${capNowA ? capNowA.nome === cp.nome ? " · ha già la fascia" : ` · ora ce l'ha ${esc(surname(capNowA.nome))}` : ""}</span></li>` : ""}
+      <li><span class="lab">Avvisi</span>${warn.length ? `<span class="td-inj">${warn.map(w => `<span><i class="pd ${presCls(w.pr)}" aria-hidden="true"></i>${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("")}</span>` : `<span class="muted">Nessun tuo giocatore nella lista infortuni.</span>`}</li>
+    </ul></div>`;
 }
 
 // Da fare ora: cambi, capitano, titolari e notizie, nell'ordine in cui vanno fatti
@@ -1413,7 +1560,7 @@ function sourcesBlock(c) {
   return `<details${c.disaccordo ? " open" : ""}><summary><span>Altre fonti${c.disaccordo ? " · <b>il modello non è d'accordo</b>" : ""}</span></summary>
     <table class="lastday"><thead><tr><th>Fonte</th><th>Minuti</th><th>Punti</th></tr></thead><tbody>
     ${row("Modello", c.modello, true)}${row("FantasyPros", c.FantasyPros)}${row("ESPN", c.ESPN)}${c.BR ? `<tr data-tip="Basketball-Reference: ${num(c.BR.punti)} punti a partita"><td>Basketball-Reference</td><td class="muted">(minuti nostri)</td><td>${num(c.BR.punti)}${bar(c.BR)}</td></tr>` : ""}</tbody></table>
-    <p class="note">In arancio il modello. Punti Dunkest a partita senza avversario. Nel piano FantasyPros pesa il 60% a inizio stagione, il 20% fino a 9 partite, poi 0 (tarato sul 2025-26).</p></details>`;
+    <p class="note">Barra piena arancio: il modello; a righe grigie: le altre fonti. Punti Dunkest a partita senza avversario. Nel piano FantasyPros pesa il 60% a inizio stagione, il 20% fino a 9 partite, poi 0 (tarato sul 2025-26).</p></details>`;
 }
 
 function disagreements() {
@@ -1717,7 +1864,25 @@ document.getElementById("v-alt").addEventListener("click", e => {
 
 // Occasioni: giocatori economici che avranno più minuti o il posto da titolare per l'assenza di un compagno
 let occMode = "occ";
-const mkt = {role: "", team: "", max: "", sort: "punti", n: 25};
+const mkt = {role: "", team: "", max: "", sort: "punti", n: 25, fav: false};
+// Preferiti del mercato (per nome: gli id cambiano tra un aggiornamento e l'altro), solo su questo telefono
+let FAV = new Set();
+try { const a = JSON.parse(localStorage.getItem("pcc-fav") || "[]"); if (Array.isArray(a)) FAV = new Set(a.filter(x => typeof x === "string")); } catch (e) {}
+const saveFav = () => { try { localStorage.setItem("pcc-fav", JSON.stringify([...FAV])); } catch (e) {} };
+const STAR = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5l2.5 5.3 5.8.7-4.3 4 1.1 5.8L12 16.4l-5.1 2.9 1.1-5.8-4.3-4 5.8-.7z"/></svg>`;
+const favBtn = n => `<button type="button" class="fav" data-fav="${esc(n)}" aria-pressed="${FAV.has(n)}" aria-label="${FAV.has(n) ? "Togli dai preferiti" : "Aggiungi ai preferiti"}: ${esc(n)}">${STAR}</button>`;
+function toggleFav(n) {
+  if (FAV.has(n)) FAV.delete(n); else FAV.add(n);
+  saveFav(); buzz(6);
+  document.querySelectorAll("#v-occ .fav").forEach(b => { if (b.dataset.fav !== n) return; const on = FAV.has(n);
+    b.setAttribute("aria-pressed", on); b.setAttribute("aria-label", `${on ? "Togli dai preferiti" : "Aggiungi ai preferiti"}: ${n}`);
+    if (!calm) { b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop"); } });
+  const f = document.querySelector("#v-occ [data-mfav] span"); if (f) f.textContent = FAV.size;
+  if (mkt.fav && !FAV.has(n)) drawMkt(false);   // con il filtro "solo preferiti" la riga tolta sparisce
+}
+// Confronto affiancato: con "Confronta" acceso, toccare una riga la sceglie (A, poi B; la terza sostituisce la più vecchia)
+let cmpOn = false, cmpSel = [];
+const CMP_IC = `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4v16M16 4v16M4 8h4M16 16h4"/></svg>`;
 const occSeg = () => `<div class="mkt-seg" role="group" aria-label="Occasioni o mercato"><button type="button" data-occ="occ" aria-pressed="${occMode === "occ"}">Occasioni</button><button type="button" data-occ="mkt" aria-pressed="${occMode === "mkt"}">Mercato</button></div>`;
 
 // Mercato: tutti i giocatori con filtri e ordinamento, nella giornata mostrata
@@ -1731,11 +1896,11 @@ function renderMkt() {
   // Filtri compatti e sempre visibili (sticky) mentre scorri i risultati
   document.getElementById("v-occ").innerHTML = `${occSeg()}
     <div class="card mkt-f"><div class="mkt-fh"><b>Mercato</b><span class="meta" id="mkt-n">${esc(curG().label)}</span></div>
-      <div class="row chips-x" role="group" aria-label="Ruolo">${roles.map(([v, l]) => `<button type="button" class="chip-b" data-mr="${v}" aria-pressed="${mkt.role === v}">${l}</button>`).join("")}</div>
-      <div class="sel3"><select id="mt" aria-label="Squadra"><option value="">Ogni squadra</option>${teams.map(t => `<option value="${t}"${mkt.team === t ? " selected" : ""}>${t}</option>`).join("")}</select>
-        <select id="mm" aria-label="Prezzo massimo"><option value="">Ogni prezzo</option>${[5, 7, 9, 12, 15, 20].map(v => `<option value="${v}"${String(mkt.max) === String(v) ? " selected" : ""}>Fino a ${v} cr</option>`).join("")}</select>
+      <div class="row chips-x" role="group" aria-label="Filtri">${`<button type="button" class="chip-b" data-mfav aria-pressed="${mkt.fav}" aria-label="Solo preferiti">★ <span>${FAV.size}</span></button><button type="button" class="chip-b" data-mcmp aria-pressed="${cmpOn}">Confronta</button>`}${roles.map(([v, l]) => `<button type="button" class="chip-b" data-mr="${v}" aria-pressed="${mkt.role === v}">${l}</button>`).join("")}</div>
+      <div class="sel3"><select id="mt" aria-label="Squadra"><option value="">Squadre</option>${teams.map(t => `<option value="${t}"${mkt.team === t ? " selected" : ""}>${t}</option>`).join("")}</select>
+        <select id="mm" aria-label="Prezzo massimo"><option value="">Prezzo</option>${[5, 7, 9, 12, 15, 20].map(v => `<option value="${v}"${String(mkt.max) === String(v) ? " selected" : ""}>Fino a ${v} cr</option>`).join("")}</select>
         <select id="ms" aria-label="Ordina per"><option value="punti"${mkt.sort === "punti" ? " selected" : ""}>Più punti</option><option value="ptcr"${mkt.sort === "ptcr" ? " selected" : ""}>Più pt/cr</option><option value="plus"${mkt.sort === "plus" ? " selected" : ""}>Più plus</option><option value="prezzo"${mkt.sort === "prezzo" ? " selected" : ""}>Meno cari</option></select></div></div>
-    <div id="mkt-res">${mktSkeleton()}</div>`;
+    <div id="mkt-cmp"></div><div id="mkt-res">${mktSkeleton()}</div>`;
   // scheletro per un attimo mentre calcola, poi i risultati entrano a cascata
   clearTimeout(mktTimer);
   requestAnimationFrame(() => { mktTimer = setTimeout(() => drawMkt(true), calm ? 0 : 120); });
@@ -1750,6 +1915,7 @@ function drawMkt(anim) {
   if (mkt.role) L = L.filter(x => x.c.ruolo === mkt.role);
   if (mkt.team) L = L.filter(x => x.c.squadra === mkt.team);
   if (mkt.max) L = L.filter(x => x.c.crediti <= +mkt.max);
+  if (mkt.fav) L = L.filter(x => FAV.has(x.c.nome));
   const ptcr = x => x.c.crediti > 0 ? x.v.punti / x.c.crediti : 0;
   const key = {punti: x => -x.v.punti, ptcr: x => -ptcr(x), plus: x => -(x.v.plus_cr ?? -9), prezzo: x => x.c.crediti}[mkt.sort];
   L.sort((a, b) => key(a) - key(b) || b.v.punti - a.v.punti);
@@ -1757,25 +1923,87 @@ function drawMkt(anim) {
   const bar = (w, cls) => `<span class="mb${cls ? " " + cls : ""}" aria-hidden="true"><i style="width:${Math.max(2, Math.min(100, w)).toFixed(0)}%"></i></span>`;
   const rows = shown.map(({c, v}, k) => {
     const pr = v.p != null && c.ruolo !== "HC" ? v.p : null;
-    return `<tr data-mid="${c.id}" style="--k:${k}"><td><b>${esc(c.nome)}</b>${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></td>
+    const si = cmpOn ? cmpSel.indexOf(c.id) : -1;
+    return `<tr data-mid="${c.id}" style="--k:${k}"${si >= 0 ? ' class="sel" aria-selected="true"' : ""}><td><div class="mn">${favBtn(c.nome)}<span><b>${esc(c.nome)}</b>${si >= 0 ? `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>` : ""}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></span></div></td>
     <td>${cr(c.crediti)}</td><td class="flashable"><b data-cnt="m${c.id}">${num(v.punti)}</b>${v.adj ? " ✎" : ""}</td><td>${num(ptcr({c, v}), 2)}${bar(ptcr({c, v}) / top * 100)}</td><td class="${v.plus_cr > 0.05 ? "up" : v.plus_cr < -0.05 ? "down" : ""}">${v.plus_cr != null ? sign(v.plus_cr, 2) : "–"}</td><td>${pr != null ? Math.round(pr * 100) + "%" + bar(pr * 100, pr >= .8 ? "ok" : pr >= .5 ? "mid" : "lo") : "–"}</td></tr>`;
   }).join("");
   const n = document.getElementById("mkt-n"); if (n) n.textContent = `${L.length} giocatori · ${curG().label}`;
   box.innerHTML = `<div class="card">${L.length ? `<div class="scroll mkt-sc"><table class="lastday mkt-t${anim && !calm ? " cascade" : ""}"><thead><tr><th>Giocatore</th><th>Cr</th><th>Pt</th><th>Pt/cr</th><th>Plus</th><th>Pres.</th></tr></thead><tbody>${rows}</tbody></table></div>
       ${L.length > shown.length ? `<button type="button" class="mkt-more" id="mkt-more">Mostra altri ${Math.min(25, L.length - shown.length)}</button>` : ""}
-      <p class="note">Punti attesi (Pt) nella giornata scelta in alto, già ridotti dalla probabilità di giocare (Pres.). Le barre sono in scala: Pt/cr rispetto al migliore della lista, Pres. su 100%. Plus = crediti attesi. ✎ = con la tua stima di presenza.</p>` : `<div class="empty"><b>Nessun giocatore con questi filtri</b>Allarga il prezzo o la squadra.</div>`}</div>`;
+      <p class="note">Punti attesi (Pt) nella giornata scelta in alto, già ridotti dalla probabilità di giocare (Pres.). Le barre sono in scala: Pt/cr rispetto al migliore della lista, Pres. su 100%. Plus = crediti attesi. ✎ = con la tua stima di presenza. ★ o scorri di lato il nome: preferito (solo su questo telefono).</p>` : mkt.fav ? `<div class="empty"><b>${FAV.size ? "Nessun preferito con questi filtri" : "Nessun preferito"}</b>Tocca la stella accanto a un nome, o scorri il nome di lato, per tenerlo qui.</div>` : `<div class="empty"><b>Nessun giocatore con questi filtri</b>Allarga il prezzo o la squadra.</div>`}</div>`;
   tickNums(box);
+  drawCmp(false);
 }
 document.getElementById("v-occ").addEventListener("click", e => {
   const o = e.target.closest("[data-occ]");
   if (o) { occMode = o.dataset.occ; render(); return; }
   if (e.target.closest("[data-retry]")) { retry(renderMkt); return; }
+  const fv = e.target.closest("[data-fav]"); if (fv) { if (!swiped) toggleFav(fv.dataset.fav); return; }
+  if (e.target.closest("[data-mfav]")) { mkt.fav = !mkt.fav; mkt.n = 25; e.target.closest("[data-mfav]").setAttribute("aria-pressed", mkt.fav); drawMkt(true); return; }
+  if (e.target.closest("[data-mcmp]") || e.target.closest("[data-cmpoff]")) { cmpOn = !cmpOn; if (!cmpOn) cmpSel = []; buzz(6);
+    document.querySelector("#v-occ [data-mcmp]")?.setAttribute("aria-pressed", cmpOn); drawMkt(false); drawCmp(true); return; }
+  const co = e.target.closest("[data-cmpopen]"); if (co) { const c = (D.cerca || []).find(x => x.id === +co.dataset.cmpopen); if (c) { document.getElementById("sheet").dataset.from = ""; showSheet(srchPlayer(c), co); } return; }
+  if (e.target.closest("[data-cmpswap]")) { cmpSel.reverse(); markSel(); drawCmp(true); return; }
   const r = e.target.closest("[data-mr]");
   if (r) { mkt.role = r.dataset.mr; mkt.n = 25; document.querySelectorAll("#v-occ [data-mr]").forEach(b => b.setAttribute("aria-pressed", b === r)); drawMkt(true); return; }
   if (e.target.closest("#mkt-more")) { mkt.n += 25; drawMkt(); return; }
   const row = e.target.closest("[data-mid]");
+  if (row && swiped) return;   // fine di uno scorrimento sul nome (preferito): niente scheda
+  if (row && cmpOn) { pickCmp(+row.dataset.mid); return; }
   if (row) { const c = (D.cerca || []).find(x => x.id === +row.dataset.mid); if (c) { document.getElementById("sheet").dataset.from = ""; showSheet(srchPlayer(c), row); } }
 });
+function pickCmp(id) {
+  const i = cmpSel.indexOf(id);
+  if (i >= 0) cmpSel.splice(i, 1); else { cmpSel.push(id); if (cmpSel.length > 2) cmpSel.shift(); }
+  buzz(6); markSel(); drawCmp(true);
+  const box = document.getElementById("mkt-cmp"), f = document.querySelector("#v-occ .mkt-f");
+  if (cmpSel.length === 2 && box && f) {   // il confronto è sopra la tabella: ci si torna se è nascosto
+    const top = box.getBoundingClientRect().top, under = f.getBoundingClientRect().bottom;
+    if (top < under || top > innerHeight - 120) scrollBy({top: top - under - 10, behavior: calm ? "auto" : "smooth"});
+  }
+}
+function markSel() {
+  document.querySelectorAll("#mkt-res tr[data-mid]").forEach(tr => {
+    const si = cmpOn ? cmpSel.indexOf(+tr.dataset.mid) : -1;
+    tr.classList.toggle("sel", si >= 0); if (si >= 0) tr.setAttribute("aria-selected", "true"); else tr.removeAttribute("aria-selected");
+    tr.querySelector(".ab")?.remove();
+    if (si >= 0) tr.querySelector(".mn > span > b")?.insertAdjacentHTML("afterend", `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>`);
+  });
+}
+// Il confronto: due colonne (A pieno arancio, B a righe), una riga per voce con la barra della differenza che parte dal
+// centro verso chi è meglio (lunga quanto la differenza rispetto al più grande dei due). Solo numeri già nei dati.
+function drawCmp(anim) {
+  const box = document.getElementById("mkt-cmp");
+  if (!box) return;
+  if (!cmpOn) { box.innerHTML = ""; return; }
+  const C = cmpSel.map(id => (D.cerca || []).find(x => x.id === id)).filter(Boolean);
+  if (C.length < 2) {
+    box.innerHTML = `<div class="card cmpp-hint"><span>${C.length ? `A: <b style="color:var(--fg)">${esc(C[0].nome)}</b>. Tocca un secondo giocatore.` : "Tocca due righe della tabella per confrontarle."}</span><button type="button" class="btn-o" data-cmpoff>Chiudi</button></div>`;
+    return;
+  }
+  const [a, b] = C, va = rowVals(a), vb = rowVals(b);
+  const hc = a.ruolo === "HC" || b.ruolo === "HC";
+  const M = [["Punti attesi", va.punti, vb.punti, 1], ["Se gioca", va.se, vb.se, 1], hc ? null : ["Presenza %", va.p != null ? va.p * 100 : null, vb.p != null ? vb.p * 100 : null, 0],
+    ["Crediti", a.crediti, b.crediti, 1, true], ["Pt per credito", a.crediti ? va.punti / a.crediti : null, b.crediti ? vb.punti / b.crediti : null, 2],
+    ["Crediti attesi", va.plus_cr, vb.plus_cr, 2], hc ? null : ["Minuti", va.min, vb.min, 1], hc ? null : ["Punti NBA", va.pts, vb.pts, 1],
+    hc ? null : ["Rimbalzi", va.reb, vb.reb, 1], hc ? null : ["Assist", va.ast, vb.ast, 1]].filter(m => m && m[1] != null && m[2] != null);
+  const rows = M.map(([l, x, y, d, low], k) => {
+    const g = low ? y - x : x - y, big = Math.max(Math.abs(x), Math.abs(y)), w = big ? Math.min(50, Math.abs(x - y) / big * 50) : 0;
+    const fx = v => (l === "Crediti attesi" ? sign(v, d) : num(v, d));
+    return `<div class="cmpp-r" style="--k:${k}"><span class="a${g > 1e-9 ? " w" : ""}" data-cnt="ca${k}">${fx(x)}</span><span class="l">${l}${low ? " ↓" : ""}</span><span class="b${g < -1e-9 ? " w" : ""}" data-cnt="cb${k}">${fx(y)}</span>
+      <span class="cmpp-bar" aria-hidden="true">${w > .2 ? `<i class="${g > 0 ? "a" : "b"}" style="--w:${w.toFixed(1)}%;--k:${k}"></i>` : ""}</span></div>`;
+  }).join("");
+  const who = (c, v, cls) => `<button type="button" data-cmpopen="${c.id}" aria-label="Scheda di ${esc(c.nome)}">${cls === "a" ? `<b><span class="sw-a" aria-hidden="true"></span>A · ${esc(surname(c.nome))}</b>` : `<b>${esc(surname(c.nome))} · B<span class="sw-b" aria-hidden="true"></span></b>`}<small>${esc(c.squadra)} · ${ROLE[c.ruolo]} · ${v.partita ? esc(v.partita) : "non gioca"}</small></button>`;
+  box.innerHTML = `<div class="card cmpp${anim && !calm ? " in" : ""}">${head("Confronto", esc(curG().label))}
+    <div class="cmpp-h">${who(a, va, "a")}${who(b, vb, "b")}</div>${rows}
+    <p class="note">La barra parte dal centro verso chi è meglio (↓ = meno è meglio), lunga quanto la differenza rispetto al più grande dei due. Valori della giornata scelta, con la tua stima di presenza se l'hai data.</p>
+    <div class="cmpp-x"><button type="button" class="btn-o" data-cmpswap>Scambia A e B</button><button type="button" class="btn-o" data-cmpoff>Chiudi</button></div></div>`;
+  box.querySelectorAll("[data-cnt]").forEach(el => {   // i numeri scorrono: dal valore di prima, o da zero al primo confronto
+    const m = parse(el.textContent); if (!m) return;
+    const prev = lastNum[el.dataset.cnt]; lastNum[el.dataset.cnt] = m.v;
+    if (anim && !calm) countUp(el, prev ?? 0);
+  });
+}
 document.getElementById("v-occ").addEventListener("change", e => {
   if (e.target.id === "mt") mkt.team = e.target.value; else if (e.target.id === "mm") mkt.max = e.target.value; else if (e.target.id === "ms") mkt.sort = e.target.value; else return;
   mkt.n = 25; drawMkt(true);
@@ -1870,12 +2098,14 @@ function renderCalc() {
 // Ultime partite: barre dei punti Dunkest, linea dei punti attesi per la giornata
 function spark(G, expv, ifPlays) {
   if (!G || !G.length) return "";
-  const W = 320, H = 124, top = 18, base = 98, n = G.length, bw = (W - 8) / n;
+  const W = 320, H = 124, top = 18, base = 98, n = G.length, bw = (W - 8) / n, hid = "hatch" + (++jid);
+  const defs = `<defs><pattern id="${hid}" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><rect width="5" height="5" fill="var(--c-base)" fill-opacity=".3"/><rect width="2.2" height="5" fill="var(--c-base)"/></pattern></defs>`;
   const mx = Math.max(...G.map(x => x.punti), expv || 0, 10), Y = v => base - Math.max(0, v) / mx * (base - top);
   const avg = G.reduce((s, x) => s + x.punti, 0) / n;
   const tipOf = x => `${dmy(x.data)} ${x.casa ? "vs" : "@"} ${x.avv}: ${num(x.punti)} punti in ${x.min} min`;
   const bars = G.map((x, k) => { const h = base - Y(x.punti), X = 4 + k * bw;
-    return `<rect class="b" data-k="${k}" style="--b:${k}" x="${(X + bw * .18).toFixed(1)}" y="${Y(x.punti).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" rx="3" fill="${expv && x.punti >= expv ? "var(--c-hi)" : "var(--c-base)"}"><title>${esc(tipOf(x))}</title></rect>`; }).join("");
+    const up = expv && x.punti >= expv;   // sotto gli attesi: barra a righe con il bordo, non solo un altro colore
+    return `<rect class="b" data-k="${k}" style="--b:${k}" x="${(X + bw * .18).toFixed(1)}" y="${Y(x.punti).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" rx="3" fill="${up ? "var(--c-hi)" : !expv ? "var(--c-base)" : `url(#${hid})`}"${expv && !up ? ` stroke="var(--c-base)" stroke-width="1.5"` : ""}><title>${esc(tipOf(x))}</title></rect>`; }).join("");
   // colonne trasparenti alte quanto il grafico: si tocca la colonna intera, non solo la barra
   const hits = G.map((x, k) => `<rect class="hit" data-hl="${k}" data-tip="${esc(tipOf(x))}" x="${(4 + k * bw).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H}" fill="transparent"/>`).join("");
   const labels = G.map((x, k) => { const X = 4 + k * bw + bw / 2;
@@ -1883,10 +2113,24 @@ function spark(G, expv, ifPlays) {
       <text x="${X.toFixed(1)}" y="${base + 15}" text-anchor="middle" font-size="9" fill="var(--muted)">${x.casa ? "" : "@"}${esc(x.avv)}</text>`; }).join("");
   const line = expv ? `<line class="ref" x1="2" x2="${W - 2}" y1="${Y(expv).toFixed(1)}" y2="${Y(expv).toFixed(1)}" stroke="var(--c-ref)" stroke-opacity=".8" stroke-dasharray="4 3" stroke-width="1.4"/>` : "";
   return `<div class="spark"><div class="spark-h"><b>Ultime ${n} partite</b><span class="muted num" style="font-size:var(--fs-s)">media ${num(avg)}</span></div>
-    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="base"></i>sotto</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
+    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Punti Dunkest nelle ultime ${n} partite, media ${num(avg)}">
-    <line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
-    <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}In arancio le partite sopra i punti attesi; @ = in trasferta. Tocca una barra per il dettaglio.</span></div>`;
+    ${defs}<line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
+    <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}Piene in arancio le partite sopra i punti attesi, a righe quelle sotto; @ = in trasferta. Tocca una barra per il dettaglio.</span></div>`;
+}
+
+// Ultime 5 partite in una striscia (Panoramica della scheda): punti, avversario e una barretta in scala che si riempie
+// all'apertura; la tacca è il valore atteso. Solo se le partite ci sono davvero (in data.json/cerca.json: "partite").
+function formStrip(G, expv) {
+  if (!G || !G.length) return "";
+  const L = G.slice(-5), mx = Math.max(...L.map(x => x.punti), expv || 0, 10), avg = L.reduce((s, x) => s + x.punti, 0) / L.length;
+  const pct = v => (Math.max(0, v) / mx * 100).toFixed(1) + "%";
+  const lab = D.partite_stagione ? ` <span style="text-transform:none;letter-spacing:0">· ${/passat/i.test(D.partite_stagione) ? "stagioni passate" : esc(D.partite_stagione)}</span>` : "";
+  return `<div class="f5"><div class="f5-h"><span class="lab">Ultime ${L.length} partite${lab}</span><span class="muted num" style="font-size:var(--fs-s)">media <b data-cnt="f5m" style="color:var(--fg)">${num(avg)}</b></span></div>
+    <ol class="f5-l">${L.map((x, k) => { const hi = expv && x.punti >= expv;
+      return `<li class="${hi ? "hi" : ""}" data-tip="${esc(`${dmy(x.data)} ${x.casa ? "vs" : "@"} ${x.avv}: ${num(x.punti)} punti in ${x.min} min${expv ? (hi ? ", sopra" : ", sotto") + " gli attesi " + num(expv) : ""}`)}">
+        <small>${dmy(x.data)}</small><span class="f5-b" aria-hidden="true"><i style="--h:${pct(x.punti)};--b:${k}"></i>${expv ? `<em style="--e:${pct(expv)}"></em>` : ""}</span><b>${num(x.punti, 0)}</b><small>${x.casa ? "" : "@"}${esc(x.avv)}</small></li>`; }).join("")}</ol>
+    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>tacca: attesi ${num(expv)}</span></p>` : ""}</div>`;
 }
 
 function formBlock(f) {
@@ -1997,6 +2241,7 @@ function showSheet(p0, src) {
   const panels = [
     ["pan", "Panoramica", `<div class="facts main" style="grid-template-columns:repeat(2,1fr)"><div><b>${p.plus_cr != null ? sign(p.plus_cr, 2) : sign(p.plus)}</b><span>${p.plus_cr != null ? "crediti attesi" : p.ruolo === "HC" ? "plus stimata (pt)" : "plus attesa (pt)"}</span></div><div><b>${cr(p.crediti)}</b><span>crediti</span></div></div>
       <dl class="dl">${dl.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl>
+      ${p.ruolo !== "HC" ? formStrip(info.partite, se ?? p.punti) : ""}
       ${news}
       ${p.ruolo !== "HC" ? ovrBlock(p) : ""}
       ${p.note ? `<p class="note">${esc(p.note)}</p>` : ""}`],
@@ -2398,7 +2643,7 @@ function countUp(b, from = 0) {
   const t0 = performance.now(), dur = 300 + Math.min(200, Math.abs(m.v - from) * 2);   // rapido: 0,3-0,5 s
   const fmt = v => (v < 0 ? "−" : m.plus && v > 0 ? "+" : "") + Math.abs(v).toLocaleString("it-IT", {minimumFractionDigits: m.dec, maximumFractionDigits: m.dec}) + m.rest;
   const step = t => {
-    const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+    const k = Math.max(0, Math.min(1, (t - t0) / dur)), e = 1 - Math.pow(1 - k, 3);   // il primo frame può avere t < t0: niente valori sotto il punto di partenza
     b.textContent = k < 1 ? fmt(from + (m.v - from) * e) : txt;
     if (k < 1) requestAnimationFrame(step);
   };
@@ -2502,6 +2747,7 @@ function render() {
   day = Math.min(Math.max(day, 0), D.piano.giornate.length - 1);
   document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === view));
   VIEWS.forEach(v => document.getElementById("v-" + v).hidden = v !== view);
+  document.documentElement.classList.toggle("swipe-x", view === "form" || view === "occ");
   const strip = document.querySelector("#v-form .days"), scroll = strip ? strip.scrollLeft : 0;
   ({form: renderForm, alt: renderAlt, occ: renderOcc, prezzi: renderPrezzi, inf: renderInf, calc: renderCalc, mod: renderMod})[view]();
   if (keepDays) { const s = document.querySelector("#v-form .days"); if (s) s.scrollLeft = scroll; }
@@ -2559,10 +2805,13 @@ document.addEventListener("click", e => {
   }
   const mb = e.target.closest("[data-mode]"); if (mb) { if (mb.dataset.mode === mode) return; buzz(); morph(() => { prevMode = mode; mode = mb.dataset.mode; dir = mode === "mia" ? 1 : -1; keepDays = true; save(); render(); }); return; }
   const d = e.target.closest("[data-day]"); if (d) { if (+d.dataset.day === day) return; goDay(+d.dataset.day); return; }
+  if (e.target.closest("#share-f")) { shareLineup(e.target.closest("#share-f")); return; }
   const c = e.target.closest(".pc"); if (c) { if (swiped) return; document.getElementById("sheet").dataset.from = c.dataset.id; openSheet(+c.dataset.id, c); return; }
   if (e.target.closest(".close") || e.target.id === "scrim") closeSheet();
 });
 document.addEventListener("keydown", e => {
+  const shv = document.getElementById("shv");
+  if (e.key === "Escape" && shv && !shv.hidden) { closeShare(); return; }
   if (e.key === "Escape") closeSheet();
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".sh-tabs")) {
     const btns = [...e.target.closest(".sh-tabs").querySelectorAll("[data-shtab]")], i = btns.indexOf(e.target.closest("[data-shtab]"));
@@ -2575,6 +2824,161 @@ document.addEventListener("keydown", e => {
   }
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".days")) { e.preventDefault(); goDay(day + (e.key === "ArrowRight" ? 1 : -1)); requestAnimationFrame(() => document.querySelector(`.days [data-day="${day}"]`)?.focus()); }
 });
+
+// ——— Condividi formazione: il campo disegnato su un'immagine (carte, capitano, punti attesi, giornata) ———
+// Prima si prova la condivisione del telefono (navigator.share con il file); se non c'è, non accetta file o il browser
+// la rifiuta (Safari vuole il tocco "fresco"), si apre l'anteprima: tieni premuto per salvarla, e lì c'è anche
+// "Condividi" se il telefono lo permette. Mai download automatici. Font: quelli incorporati nella pagina.
+const SH = {board: "#161b22", boardLine: "#2b333d", ink: "#f4f6f8", muted: "#9aa6b2", woodA: "#e6bb84", woodB: "#d6a165", line: "rgba(255,255,255,.88)",
+  paint: "rgba(184,80,28,.62)", apron: "#7c2d0e", card: "#ffffff", cardInk: "#151a21", cardMuted: "#56616d", strip: "#151a21", pts: "#b2420a",
+  cap: "#c9f23a", capInk: "#1d2a00", bench: "#1c2128", bench2: "#262c35", orange: "#ff8c4d"};
+const F_D = '"Big Shoulders Display", Impact, "Arial Narrow", sans-serif', F_B = '"Barlow Semi Condensed", "Arial Narrow", sans-serif';
+async function shareFonts() {
+  if (!document.fonts || !document.fonts.load) return false;
+  const want = [`900 72px ${F_D}`, `800 48px ${F_D}`, `700 28px ${F_B}`, `600 26px ${F_B}`];
+  try { await Promise.race([Promise.all(want.map(f => document.fonts.load(f))), new Promise(r => setTimeout(r, 1500))]); } catch (e) {}
+  try { return want.every(f => document.fonts.check(f)); } catch (e) { return false; }
+}
+function rrect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function fitText(c, t, max, font, size) { let s = size; c.font = `${font.replace("SZ", s)}`; while (s > 12 && c.measureText(t).width > max) { s -= 1; c.font = font.replace("SZ", s); } return s; }
+async function drawLineup() {
+  const fontsOk = await shareFonts();
+  const g = curG(), P = g.giocatori.map(adj), W = 1080, H = 1300, cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const c = cv.getContext("2d"); if (!c) return null;
+  const capId = g.capitano.length ? g.capitano[0].id : null;
+  // tabellone in testa: squadra, giornata, punti attesi
+  c.fillStyle = SH.board; c.fillRect(0, 0, W, H);
+  c.textBaseline = "alphabetic"; c.fillStyle = SH.ink;
+  fitText(c, (D.squadra || "").toUpperCase(), 640, `900 SZpx ${F_D}`, 84); c.fillText((D.squadra || "").toUpperCase(), 56, 112);
+  c.font = `600 30px ${F_B}`; c.fillStyle = SH.muted;
+  c.fillText(`${g.label} · ${dmy(g.dal)}–${dmy(g.al)} · ${mode === "mia" && hasMine() ? "la mia rosa" : "il piano"}`, 58, 160);
+  c.textAlign = "right"; c.fillStyle = SH.orange; c.font = `900 108px ${F_D}`; c.fillText(num(g.punti), W - 56, 128);
+  c.fillStyle = SH.muted; c.font = `600 26px ${F_B}`; c.fillText("PUNTI ATTESI", W - 58, 166); c.textAlign = "left";
+  // campo: parquet, area, arco da tre, ferro
+  const cx0 = 32, cy0 = 200, cw = W - 64, ch = 760;
+  c.fillStyle = SH.apron; rrect(c, cx0 - 12, cy0 - 12, cw + 24, ch + 12, 26); c.fill();
+  const wood = c.createLinearGradient(0, cy0, 0, cy0 + ch); wood.addColorStop(0, SH.woodA); wood.addColorStop(1, SH.woodB);
+  c.fillStyle = wood; rrect(c, cx0, cy0, cw, ch, 16); c.fill();
+  c.save(); rrect(c, cx0, cy0, cw, ch, 16); c.clip();
+  c.strokeStyle = "rgba(70,35,0,.10)"; c.lineWidth = 1; for (let x = cx0; x < cx0 + cw; x += 26) { c.beginPath(); c.moveTo(x + .5, cy0); c.lineTo(x + .5, cy0 + ch); c.stroke(); }
+  const sx = cw / 500, mid = cx0 + cw / 2;
+  c.fillStyle = SH.paint; c.fillRect(mid - 80 * sx, cy0, 160 * sx, 190 * sx);
+  c.strokeStyle = SH.line; c.lineWidth = 4;
+  c.strokeRect(mid - 80 * sx, cy0 - 4, 160 * sx, 190 * sx + 4);
+  c.beginPath(); c.arc(mid, cy0 + 190 * sx, 60 * sx, 0, Math.PI); c.stroke();
+  c.beginPath(); c.moveTo(cx0 + 30 * sx, cy0); c.lineTo(cx0 + 30 * sx, cy0 + 140 * sx);
+  c.arc(mid, cy0 + 52.5 * sx, 237.5 * sx, Math.PI - Math.acos((220) / 237.5), Math.acos(220 / 237.5), true); c.lineTo(cx0 + 470 * sx, cy0); c.stroke();
+  c.fillStyle = SH.line; c.fillRect(mid - 32 * sx, cy0 + 36 * sx, 64 * sx, 6);
+  c.strokeStyle = "#ff7a33"; c.lineWidth = 5; c.beginPath(); c.arc(mid, cy0 + 52.5 * sx, 7.5 * sx, 0, Math.PI * 2); c.stroke();
+  c.restore();
+  // carte
+  const card = (p, x, y, w, h) => {
+    const coach = p.ruolo === "HC", tone = teamTone(p.squadra), isCap = p.id === capId;
+    c.save(); c.shadowColor = "rgba(0,0,0,.35)"; c.shadowBlur = 18; c.shadowOffsetY = 8; c.fillStyle = SH.card; rrect(c, x, y, w, h, 14); c.fill(); c.restore();
+    c.save(); rrect(c, x, y, w, h, 14); c.clip();
+    const nh = Math.round(h * .3);
+    c.fillStyle = SH.strip; c.fillRect(x, y, w, nh); c.fillStyle = tone; c.fillRect(x, y + nh - 6, w, 6);
+    const role = ROLE[p.ruolo] || p.ruolo; c.font = `700 ${Math.round(h * .12)}px ${F_B}`;
+    const rw = c.measureText(role).width + 12;
+    c.fillStyle = "rgba(255,255,255,.2)"; rrect(c, x + 10, y + nh * .2, rw, nh * .52, 5); c.fill();
+    c.fillStyle = "#fff"; c.textBaseline = "middle"; c.fillText(role, x + 16, y + nh * .47);
+    const capR = Math.round(Math.min(30, h * .17));
+    fitText(c, surname(p.nome), w - rw - 28 - (isCap ? capR * 2.2 : 0), `700 SZpx ${F_B}`, Math.round(Math.min(34, h * .17))); c.fillText(surname(p.nome), x + rw + 18, y + nh * .47);
+    c.textBaseline = "alphabetic";
+    const big = w >= 220, pad = big ? 14 : 10;
+    c.fillStyle = SH.pts; c.font = `800 ${Math.round(h * (big ? .38 : .34))}px ${F_D}`; c.fillText(num(p.punti), x + pad, y + h - (big ? 18 : 14));
+    const pw = c.measureText(num(p.punti)).width;
+    if (big) { c.fillStyle = SH.cardMuted; c.font = `600 ${Math.round(h * .12)}px ${F_B}`; c.fillText("pt", x + 20 + pw, y + h - 20); }
+    c.textAlign = "right"; c.fillStyle = SH.cardInk; c.font = `700 ${Math.round(h * .15)}px ${F_D}`;
+    c.fillText(`${cr(p.crediti)} cr`, x + w - pad, y + nh + h * (big ? .22 : .2));
+    c.fillStyle = SH.cardMuted; c.font = `600 ${Math.round(h * .11)}px ${F_B}`;
+    const opp = (p.partita || "").replace(/^\d\d\/\d\d\s*/, "").toUpperCase() || (coach ? "" : "RIPOSO");
+    const ot = coach ? `HC ${opp}` : `${p.turno ? "T" + p.turno + " " : ""}${opp}`;
+    if (big) c.fillText(ot, x + w - pad, y + h - 20);
+    else { const room = w - pw - pad * 2 - 4; let fs = Math.round(h * .11); while (fs > 11 && c.measureText(ot).width > room) { fs--; c.font = `600 ${fs}px ${F_B}`; } c.fillText(ot, x + w - pad, y + nh + h * .38); }
+    c.textAlign = "left"; c.restore();
+    if (isCap) {   // la C del capitano in alto a destra della carta, sul bordo, con l'anello
+      const r = capR, ccx = x + w - r - 6, ccy = y - r * .25;
+      c.fillStyle = "rgba(0,0,0,.3)"; c.beginPath(); c.arc(ccx, ccy + 3, r + 3, 0, Math.PI * 2); c.fill();
+      c.fillStyle = SH.cap; c.beginPath(); c.arc(ccx, ccy, r, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = SH.cap; c.lineWidth = 3; c.globalAlpha = .55; c.beginPath(); c.arc(ccx, ccy, r + 7, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+      c.fillStyle = SH.capInk; c.font = `900 ${Math.round(r * 1.25)}px ${F_D}`; c.textAlign = "center"; c.textBaseline = "middle"; c.fillText("C", ccx, ccy + 1);
+      c.textAlign = "left"; c.textBaseline = "alphabetic";
+    }
+  };
+  const st = P.filter(p => p.slot === "titolare").sort((a, b) => ROLE_ORDER[a.ruolo] - ROLE_ORDER[b.ruolo]);
+  const rows = [0, 1, 2].map(r => st.filter(p => ROLE_ORDER[p.ruolo] === r)).filter(r => r.length);
+  const CW = 280, CH = 170, gap = 48, rowY = rows.length === 3 ? [cy0 + 60, cy0 + 310, cy0 + 560] : rows.map((_, i) => cy0 + 100 + i * 300);
+  rows.forEach((r, i) => { const tw = r.length * CW + (r.length - 1) * gap; r.forEach((p, j) => card(p, (W - tw) / 2 + j * (CW + gap), rowY[i], CW, CH)); });
+  // panchina: sesto uomo, coach, poi gli altri
+  const by = cy0 + ch + 24;
+  c.fillStyle = SH.bench; c.fillRect(0, by, W, H - by);
+  c.fillStyle = SH.line; c.fillRect(0, by, W, 4);
+  const six = P.find(p => p.slot === "sesto uomo"), coach = P.find(p => p.ruolo === "HC");
+  const bench = P.filter(p => p.slot === "panchina").sort((a, b) => (a.turno || 9) - (b.turno || 9));
+  const B = [six, coach, ...bench].filter(Boolean), bw = Math.min(160, (W - 48 - (B.length - 1) * 14) / Math.max(1, B.length)), bh = 136;
+  const btw = B.length * bw + (B.length - 1) * 14;
+  c.font = `700 22px ${F_B}`; c.fillStyle = SH.muted; c.textAlign = "center";
+  B.forEach((p, j) => { const x = (W - btw) / 2 + j * (bw + 14); c.fillStyle = SH.muted; c.font = `700 22px ${F_B}`;
+    c.fillText(p === six ? "6° UOMO" : p === coach ? "COACH" : "PANCHINA", x + bw / 2, by + 52); });
+  c.textAlign = "left";
+  B.forEach((p, j) => card(p, (W - btw) / 2 + j * (bw + 14), by + 74, bw, bh));
+  c.fillStyle = SH.muted; c.font = `600 22px ${F_B}`; c.textAlign = "center";
+  c.fillText("PolloconCurry Playbook · punti attesi, non risultati", W / 2, H - 28); c.textAlign = "left";
+  // l'immagine non deve uscire vuota: si guardano 400 punti sparsi, servono colori diversi e del testo chiaro sul tabellone
+  try {
+    const px = c.getImageData(0, 0, W, H).data, seen = new Set();
+    for (let i = 0; i < 400; i++) { const x = (i * 97) % W, y = Math.floor(i * 3.37) % H, k = (y * W + x) * 4; seen.add(px[k] >> 4 << 8 | px[k + 1] >> 4 << 4 | px[k + 2] >> 4); }
+    const head = c.getImageData(56, 40, 600, 90).data; let light = 0; for (let k = 0; k < head.length; k += 4) if (head[k] > 200 && head[k + 1] > 200) light++;
+    if (seen.size < 6 || light < 200) return null;
+  } catch (e) { return null; }
+  cv._fontsOk = fontsOk;
+  return cv;
+}
+let shareBack = null, shareFile = null;
+async function shareLineup(btn) {
+  if (btn.getAttribute("aria-busy") === "true") return;
+  btn.setAttribute("aria-busy", "true"); buzz(6);
+  const g = curG(), st = document.getElementById("ptr-s");
+  try {
+    const cv = await drawLineup();
+    if (!cv) throw new Error("immagine vuota");
+    const url = cv.toDataURL("image/png");
+    const blob = await new Promise(r => cv.toBlob(r, "image/png"));
+    shareFile = null;
+    try { if (blob) shareFile = new File([blob], `formazione-${g.label}.png`, {type: "image/png"}); } catch (e) {}
+    const can = shareFile && navigator.share && navigator.canShare && (() => { try { return navigator.canShare({files: [shareFile]}); } catch (e) { return false; } })();
+    if (can) {
+      try { await navigator.share({files: [shareFile], title: `${D.squadra} · ${g.label}`}); return; }
+      catch (err) { if (err && err.name === "AbortError") return; }   // annullata da te: niente anteprima
+    }
+    openShare(url, g, can);
+  } catch (err) {
+    st.textContent = `Non riesco a preparare l'immagine (${err.message || err}).`;
+    document.getElementById("upd").textContent = st.textContent;
+  } finally { btn.removeAttribute("aria-busy"); }
+}
+function openShare(url, g, can) {
+  let el = document.getElementById("shv");
+  if (!el) { el = document.createElement("div"); el.id = "shv"; el.className = "shv"; el.hidden = true; el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-labelledby", "shv-t"); document.body.appendChild(el);
+    el.addEventListener("click", e => {
+      if (e.target === el || e.target.closest(".close")) { closeShare(); return; }
+      if (e.target.closest("[data-shgo]") && shareFile) navigator.share({files: [shareFile], title: `${D.squadra}`}).catch(() => {});
+    }); }
+  shareBack = document.activeElement;
+  el.innerHTML = `<div class="shv-c"><div class="shv-h"><b id="shv-t">Formazione ${esc(g.label)}</b><button type="button" class="close" aria-label="Chiudi"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13"/></svg></button></div>
+    <img src="${url}" alt="Campo della ${esc(g.label)}: carte, capitano e punti attesi">
+    <p>Tieni premuto sull'immagine per salvarla o condividerla.</p>${can ? `<button type="button" class="btn" data-shgo>Condividi…</button>` : ""}</div>`;
+  el.hidden = false;
+  if (!calm) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); }
+  el.querySelector(".close").focus({preventScroll: true});
+}
+function closeShare() {
+  const el = document.getElementById("shv"); if (!el || el.hidden) return;
+  el.hidden = true; el.classList.remove("in"); el.innerHTML = "";
+  if (shareBack && shareBack.focus) shareBack.focus({preventScroll: true});
+}
 
 // Cambio di giornata o di rosa: chi resta scivola al nuovo posto, chi esce sparisce, chi entra compare (View Transitions)
 let vtActive = false, litOnce = false;
@@ -2621,10 +3025,31 @@ function landCap(before, viaVT) {
 }
 function morph(fn) {
   const before = view === "form" ? capNow() : null, root = document.documentElement;
-  if (calm || view !== "form" || !document.startViewTransition) { fn(); landCap(before, false); return; }
+  if (calm || view !== "form") { fn(); landCap(before, false); return; }
+  if (!document.startViewTransition) { flipCards(fn); landCap(before, false); return; }
   vtActive = true; root.classList.add("vt-cap");
   const t = document.startViewTransition(() => { fn(); });
   t.finished.finally(() => { vtActive = false; root.classList.remove("vt-cap"); landCap(before, true); });
+}
+// Senza View Transitions (cambio di giornata, Piano/La mia rosa, Compatta/Completa): il campo non rifà l'entrata.
+// Si muovono solo le carte che cambiano: chi resta ma cambia posto scivola dal posto di prima (FLIP, solo transform),
+// chi entra compare dal basso; chi resta dov'era sta ferma (cambia solo il numero, che conta e lampeggia).
+function flipCards(fn) {
+  const sel = "#v-form .pc[data-id]", old = new Map();
+  document.querySelectorAll(sel).forEach(c => { if (!old.has(c.dataset.id)) old.set(c.dataset.id, c.getBoundingClientRect()); });
+  vtActive = true;
+  try { fn(); } finally { vtActive = false; }
+  if (calm || !old.size) return;
+  let k = 0;
+  document.querySelectorAll(sel).forEach(c => {
+    const r = c.getBoundingClientRect(), o = old.get(c.dataset.id);
+    if (r.bottom < 0 || r.top > innerHeight) return;   // fuori schermo: niente da vedere
+    if (!o) { c.animate([{opacity: 0, transform: "translateY(16px) scale(.94)"}, {opacity: 1, transform: "none"}],
+      {duration: 320, delay: 40 * Math.min(k++, 6), easing: "cubic-bezier(.34,1.45,.64,1)", fill: "backwards"}); return; }
+    const dx = o.left - r.left, dy = o.top - r.top;
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1)
+      c.animate([{transform: `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`}, {transform: "none"}], {duration: 380, easing: "cubic-bezier(.22,1,.36,1)"});
+  });
 }
 function countOnly(el) {
   [...el.children].forEach(c => { c.classList.remove("play"); reveal && reveal.unobserve(c); });
@@ -2636,7 +3061,9 @@ function goDay(n) {
   n = Math.min(Math.max(n, 0), D.piano.giornate.length - 1);
   if (n === day) return;
   morph(() => { dir = Math.sign(n - day); day = n; keepDays = true; save(); render(); });
-  const b = document.querySelector(`.days [data-day="${n}"]`); if (b) b.scrollIntoView({block: "nearest", inline: "nearest", behavior: calm ? "auto" : "smooth"});
+  // la striscia delle giornate scorre solo di lato fino alla giornata scelta: la pagina non salta su o giù
+  const b = document.querySelector(`.days [data-day="${n}"]`), strip = b && b.parentElement;
+  if (b && strip) { const l = b.offsetLeft - strip.offsetLeft, v = strip.scrollLeft; if (l < v + 8 || l + b.offsetWidth > v + strip.clientWidth - 8) strip.scrollTo({left: Math.max(0, l - 16), behavior: calm ? "auto" : "smooth"}); }
 }
 
 // Aggiorna tirando giù: il pallone scende col dito (con resistenza); oltre la soglia vibra e, lasciato, ricarica data.json
@@ -2665,12 +3092,20 @@ function refreshData() {
     .finally(() => setTimeout(() => { ptrBusy = false; ptrBack(); }, Math.max(0, 450 - (performance.now() - t0))));
 }
 
-// Gesti: scorrere il campo cambia giornata (il campo segue il dito)
+// Gesti: scorrere il campo cambia giornata (il campo segue il dito); in Squadra lo stesso gesto funziona anche fuori
+// dal campo (non dentro tabelle, strisce che scorrono di lato, campi di testo, scheda, ricerca e dai bordi dello schermo,
+// che sul telefono sono del sistema). Nel Mercato scorrere di lato il nome di una riga la mette o la toglie dai preferiti.
+const NO_SWIPE = "#qres,.scroll,.days,.jump,.chips-x,.tabs,.mode,.dens,input,select,textarea,.mini,.sheet,.shv,.seg";
 let touch = null, swiped = false;
+document.addEventListener("pointerdown", () => { swiped = false; }, {passive: true, capture: true});   // anche col mouse o la penna
 document.addEventListener("touchstart", e => {
-  const t = e.touches[0];
+  const t = e.touches[0], tg = e.target.closest ? e.target : document.body;
   swiped = false;
-  touch = {x: t.clientX, y: t.clientY, court: e.target.closest(".pitch"), dx: 0, axis: null,
+  const sheetOpen = !document.getElementById("sheet").hidden;
+  const favCell = view === "occ" && occMode === "mkt" && !sheetOpen ? tg.closest(".mkt-t tbody td:first-child") : null;
+  touch = {x: t.clientX, y: t.clientY, court: tg.closest(".pitch"), dx: 0, axis: null,
+    page: !!D && view === "form" && !sheetOpen && !tg.closest(".pitch") && !tg.closest(NO_SWIPE) && t.clientX > 24 && t.clientX < innerWidth - 24,
+    fav: favCell ? {cell: favCell, mn: favCell.querySelector(".mn"), name: favCell.querySelector("[data-fav]")?.dataset.fav, armed: false} : null,
     // tirare giù dalla cima della pagina ricarica i dati; non dentro scheda, ricerca, tabelle e strisce che scorrono di lato
     ptr: !!D && !ptrBusy && scrollY <= 0 && document.getElementById("sheet").hidden && !(e.target.closest && e.target.closest("#qres,.scroll,.days,.jump,.chips-x,input,select,textarea,.mini")),
     pull: 0, armed: false};
@@ -2687,15 +3122,31 @@ document.addEventListener("touchmove", e => {
     touch.dx = dx;
     touch.court.classList.add("drag"); touch.court.style.transform = `translateX(${(dx * (edge ? .08 : .22)).toFixed(1)}px)`;
   }
+  if (touch.fav && touch.fav.mn && touch.axis === "x") {   // il nome segue il dito; oltre la soglia vibra (si può ancora tornare indietro)
+    const f = touch.fav, arm = Math.abs(dx) > 56;
+    if (!calm) f.mn.style.transform = `translateX(${Math.max(-72, Math.min(72, dx * .6)).toFixed(1)}px)`;
+    if (arm !== f.armed) { f.armed = arm; if (arm) buzz(6); }
+  }
 }, {passive: true});
 document.addEventListener("touchend", e => {
   if (!touch) return;
   const t = e.changedTouches[0], dx = t.clientX - touch.x, dy = t.clientY - touch.y;
   if (touch.court) { touch.court.classList.remove("drag"); touch.court.style.transform = ""; }
   if (touch.pull) { if (touch.armed) refreshData(); else ptrBack(); }
-  if (touch.court && view === "form" && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) { swiped = true; const was = day; goDay(day + (dx < 0 ? 1 : -1)); if (day !== was) buzz(); }
+  if ((touch.court || touch.page) && view === "form" && touch.axis === "x" && Math.abs(dx) > (touch.court ? 60 : 72) && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    swiped = true; const was = day; goDay(day + (dx < 0 ? 1 : -1)); if (day !== was) buzz();
+  }
+  if (touch.fav && touch.fav.mn) {
+    const f = touch.fav;
+    if (touch.axis === "x" && Math.abs(dx) > 56 && f.name) { swiped = true; toggleFav(f.name); }
+    if (f.mn.style.transform) {
+      const from = f.mn.style.transform; f.mn.style.transform = "";
+      if (!calm) f.mn.animate([{transform: from}, {transform: "none"}], {duration: 220, easing: "cubic-bezier(.34,1.45,.64,1)"});
+    }
+  }
   touch = null;
 });
+document.addEventListener("touchcancel", () => { if (touch && touch.fav && touch.fav.mn) touch.fav.mn.style.transform = ""; if (touch && touch.court) { touch.court.classList.remove("drag"); touch.court.style.transform = ""; } touch = null; }, {passive: true});
 
 // Trascinare giù la scheda per chiuderla (pointer events, solo transform). Si prende dall'intestazione fissa
 // (maniglia, nome, schede) oppure dal contenuto quando è già in cima. Lasciata sotto la soglia torna su con un

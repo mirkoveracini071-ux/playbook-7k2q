@@ -1,9 +1,11 @@
-/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione 0f0c032b44 */
-const V = '0f0c032b44', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
+/* PolloconCurry: pagina e icone in memoria, dati dalla rete con ultima copia come riserva. Versione f94069b692 */
+const V = 'f94069b692', SHELL = 'shell-' + V, DATA = 'dati', FONTS = 'font';
 const FILES = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'apple-touch-icon.png', 'favicon-32.png'];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // anche una prima copia dei dati: dalla visita dopo la pagina sa che i dati sono sul telefono (salta l'avvio, funziona offline)
+  const data = caches.open(DATA).then(c => fetch('data.json', {cache: 'no-store'}).then(r => r.ok ? c.put('data.json', r) : null)).catch(() => {});
+  e.waitUntil(Promise.all([caches.open(SHELL).then(c => c.addAll(FILES)), data]).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k.startsWith('shell-') && k !== SHELL).map(k => caches.delete(k))))
