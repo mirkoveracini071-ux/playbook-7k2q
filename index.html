@@ -67,6 +67,7 @@
   /* atmosfera per contesto (Squadra / mercato / analisi): solo un velo di colore in cima alla pagina */
   --atm-sq:rgba(201,74,10,.10); --atm-mk:rgba(18,108,160,.11); --atm-an:rgba(40,120,88,.10);
   --ghost:rgba(255,255,255,.13); --ic-w:1.75; --focus:var(--accent);
+  --dots:rgba(19,24,32,.2);   /* griglia di puntini della testata */
   color-scheme:light;
 }
 :root[data-theme="light"]{color-scheme:light}
@@ -81,7 +82,7 @@
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
   --warn-bar:#f0b429; --c-base:#7b8692;
   --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
-  --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
+  --dots:rgba(232,236,240,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
@@ -93,7 +94,7 @@
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
   --warn-bar:#f0b429; --c-base:#7b8692;
   --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
-  --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
+  --dots:rgba(232,236,240,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -863,7 +864,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .td-l .lab{padding-top:1px}
 .td-l b{font-weight:700}
 .td-inj{display:flex;flex-wrap:wrap;gap:6px}
-.td-inj span{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px 2px 7px;background:var(--surface-2);white-space:nowrap}
+.td-inj .ti{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px 2px 7px;background:var(--surface-2);white-space:nowrap}
 /* ——— scheda: ultime 5 partite e mini-grafico di forma ——— */
 .f5{display:grid;gap:6px}
 .f5-h{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
@@ -1015,6 +1016,56 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 .inj-more{justify-self:center;margin-top:10px}
 .inj-list .more:not([hidden]){animation:fade var(--d-state) var(--e-out) backwards}
 
+/* ——— testata: griglia di puntini ferma, sfumata verso il basso e a destra (solo sfondo, nessun movimento) ——— */
+.top{position:relative;isolation:isolate}
+.top::before{content:"";position:absolute;z-index:-1;inset:-20px calc(-1 * var(--pad-x)) -8px;pointer-events:none;
+  background:radial-gradient(circle at 1.5px 1.5px,var(--dots) 1.1px,transparent 1.6px) 0 0/13px 13px;
+  -webkit-mask-image:radial-gradient(85% 120% at 12% 0%,#000 25%,transparent 72%);mask-image:radial-gradient(85% 120% at 12% 0%,#000 25%,transparent 72%)}
+
+/* ——— bordo luminoso: un riflesso fa UN giro del bordo (carta del capitano nella scheda, formazione consigliata).
+   Anello ritagliato con la maschera (contenuto escluso); l'angolo è una variabile registrata che si interpola. ——— */
+@property --beam{syntax:"<angle>";inherits:false;initial-value:0deg}
+.cc::before,.alt.rec::before{content:"";position:absolute;inset:0;z-index:3;border-radius:inherit;padding:2.5px;pointer-events:none;opacity:0;
+  background:conic-gradient(from var(--beam),transparent 0deg 250deg,color-mix(in srgb,var(--beam-c) 40%,transparent) 300deg,var(--beam-c) 345deg,transparent 360deg);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.cc{--beam-c:var(--cap)}
+.alt.rec{--beam-c:var(--accent)}
+.alt.rec::before{inset:-1px}
+/* dove la maschera composta non c'è: niente riflesso, il capitano ha un bordo fermo del colore della C */
+@supports not ((mask-composite:exclude) or (-webkit-mask-composite:xor)){.cc::before,.alt.rec::before{display:none}.cc.cap{outline:2px solid var(--cap);outline-offset:-2px}}
+
+/* ——— carta da collezione: bagliore che segue il dito o il puntatore (si muove solo con transform) ——— */
+.cc{--spot:color-mix(in srgb,var(--t2) 20%,transparent)}
+:root[data-theme="dark"] .cc{--spot:rgba(255,255,255,.2)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cc{--spot:rgba(255,255,255,.2)}}
+/* il bagliore sta sotto maglia e testo (nel corpo della carta), così non sporca le lettere */
+.cc-b{position:relative;overflow:hidden}
+.cc-b > :not(.cc-sp){position:relative;z-index:1}
+.cc-sp{position:absolute;left:0;top:0;z-index:0;width:240px;height:240px;margin:-120px 0 0 -120px;border-radius:50%;pointer-events:none;opacity:0;
+  background:radial-gradient(closest-side,var(--spot),transparent);will-change:transform}
+.cc-sp.on{opacity:1}
+
+/* ——— luce che attraversa "Condividi formazione": una passata alla prima comparsa e a ogni tocco, mai di continuo ——— */
+.share-row .btn-o{position:relative;overflow:hidden;isolation:isolate}
+.share-row .btn-o::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transform:translateX(-110%);
+  background:linear-gradient(105deg,transparent 30%,color-mix(in srgb,var(--accent) var(--shine-k,30%),transparent) 50%,transparent 70%)}
+:root[data-theme="dark"] .share-row .btn-o{--shine-k:48%}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .share-row .btn-o{--shine-k:48%}}
+
+/* ——— liste a catena (Da fare ora, avvisi, occasioni): le voci entrano una dopo l'altra ——— */
+.chain{--dx:0;--dy:8px}
+
+/* ——— striscia degli avvisi sui tuoi (Oggi): scorre solo se sono più di uno e non stanno nella riga ——— */
+.mq{display:block;overflow:hidden;min-width:0}
+.mq-t{display:flex;width:max-content}
+.mq-g{display:flex;gap:6px;padding-right:6px;flex:none}
+.mq-g[aria-hidden]{display:none}
+.mq.run{-webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent);cursor:pointer}
+.mq.run .mq-g[aria-hidden]{display:flex}
+.mq.st .mq-t{width:auto;flex-wrap:wrap}
+.mq.st .mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0}
+
 /* ——— movimento ———
    Regole: si animano solo transform e opacity (eccetto le linee del campo, disegnate una volta).
    press 110 ms · cambi di stato 200 ms · entrate 380 ms · spostamenti 520 ms. Le entrate vengono dalla parte
@@ -1065,7 +1116,7 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   /* nella vista appena arrivata non c'è la cascata delle schede: entra tutta insieme. Restano le barre che si
      riempiono e i numeri che contano */
   .quiet.play,.quiet .pc,.quiet .court svg.lines *,.quiet .badges-l > *,.quiet .badges-r > *,
-  .quiet .sw-p > *,.quiet .sw-p .arrow *,.quiet .chip,.quiet .todo li,.quiet.todo li,.quiet .cmp-row,.quiet .src-grid li,.quiet .bar em,.quiet .chart .ar,.quiet .chart .pt{animation:none!important}
+  .quiet .sw-p > *,.quiet .sw-p .arrow *,.quiet .chip,.quiet .cmp-row,.quiet .src-grid li,.quiet .bar em,.quiet .chart .ar,.quiet .chart .pt{animation:none!important}
   /* barre del confronto fonti (scheda, Statistiche > Altre fonti): si riempiono una dopo l'altra */
   details[open] .sb i{animation:grow 420ms var(--e-out) backwards;animation-delay:calc(60ms + var(--k,0) * 90ms)}
   @keyframes vt-fade-out{to{opacity:0}}
@@ -1103,7 +1154,6 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   @keyframes sw-line{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
   @keyframes sw-head{from{opacity:0;transform:translateX(-6px)}}
   @keyframes sw-i{from{opacity:0;transform:translateX(-18px) scale(.96)}}
-  .play .todo li,.todo.play li{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 60ms)}
   .play .sc-bar i{transform-origin:left;animation:grow .8s var(--e-out) backwards;animation-delay:calc(200ms + var(--b,0) * 100ms)}
   .sheet.open .spark rect.b{transform-box:fill-box;transform-origin:bottom;animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(220ms + var(--b,0) * 35ms)}
   .sheet.open .spark .v{animation:fade var(--d-state) backwards;animation-delay:calc(480ms + var(--b,0) * 35ms)}
@@ -1180,12 +1230,34 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   @keyframes toast-out{to{opacity:0;transform:translate(-50%,8px)}}
   /* carta da collezione: entra con la scheda (una volta, 220 ms) */
   .sheet.entering .cc{animation:rise 220ms var(--e-out) 60ms backwards;--dx:0;--dy:8px}
+  /* bordo luminoso: un giro solo (850 ms) all'apertura della scheda del capitano e quando la consigliata entra in vista */
+  .cc.beam::before{animation:beam 850ms cubic-bezier(.45,.05,.35,1) 140ms both}
+  .alt-list.play .alt.rec::before{animation:beam 850ms cubic-bezier(.45,.05,.35,1) 180ms both}
+  @keyframes beam{0%{--beam:0deg;opacity:0}12%{opacity:1}82%{opacity:1}100%{--beam:360deg;opacity:0}}
+  /* bagliore della carta: compare e sparisce in 200 ms, la posizione la scrive il JS nel frame di animazione */
+  .cc-sp{transition:opacity 200ms var(--e-out)}
+  /* luce sul pulsante: una passata (760 ms) */
+  .share-row .btn-o.shine::after{animation:shine 760ms var(--e-io) both}
+  @keyframes shine{from{opacity:1;transform:translateX(-110%)}to{opacity:1;transform:translateX(110%)}}
+  /* liste a catena: 240 ms ciascuna, 45 ms tra una voce e l'altra (al massimo 8 di attesa). Restano anche nella vista
+     appena arrivata (lì le schede entrano tutte insieme, le voci di queste liste no) */
+  .play .chain > *,.play.chain > *,.avv.chain.play > *{animation:rise 240ms var(--e-out) backwards;animation-delay:calc(60ms + min(var(--k,0),8) * 45ms)}
+  .chain.play{animation:none}
+  /* striscia degli avvisi: l'unica animazione continua, lenta (circa 32 px al secondo); ferma al tocco, sotto il puntatore,
+     fuori dallo schermo e a pagina nascosta */
+  .mq.run .mq-t{animation:mq var(--mq-d,14s) linear infinite}
+  .mq.run:hover .mq-t,.mq.run.paused .mq-t,.mq.run.off .mq-t,:root.bg .mq-t{animation-play-state:paused}
+  @keyframes mq{to{transform:translateX(-50%)}}
+  /* a pagina nascosta si fermano anche le altre animazioni che girano di continuo */
+  .mini:not(.on) .mini-b svg,:root.bg .clock svg,:root.bg .mini-b svg,:root.bg .live-dot::after,:root.bg .sk::after,:root.bg .loader .ball,:root.bg .loader .shadow,:root.bg .ptr.busy svg{animation-play-state:paused}
 }
 /* "Riduci movimento": nessuna animazione né transizione, nemmeno quelle fuori dal blocco qui sopra (colori dei
    pulsanti, freccia dei dettagli, comparsa della barra di avanzamento). Anche il JS lo controlla (calm). */
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+  /* striscia degli avvisi: diventa una riga ferma che va a capo */
+  .mq-t{width:auto;flex-wrap:wrap}.mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0}.mq-g[aria-hidden]{display:none!important}.mq{-webkit-mask-image:none!important;mask-image:none!important}
 }
 </style>
 </head>
@@ -1583,8 +1655,16 @@ function todayCard() {
       ${nt ? `<li><span class="lab">Prossimo</span><span><b>${esc(tg.label)} · T${nt.turno}</b>, ${dow(nt.data)} ${dmy(nt.data)}: ${inTurn.map(p => esc(surname(p.nome))).join(", ") || "nessuno dei tuoi"}</span></li>` : ""}
       ${!started ? `<li><span class="lab">Cambi</span><span>Entro l'inizio della ${esc(g.label)}, ${dow(g.dal)} ${dmy(g.dal)}. <span class="muted">L'orario della prima partita non è nei dati della pagina: il conto è in giorni.</span></span></li>` : ""}
       ${cp ? `<li><span class="lab">Capitano</span><span><span class="badge-inline">C</span> <b>${esc(cp.nome)}</b> (T${c.turno})${capNowA ? capNowA.nome === cp.nome ? " · ha già la fascia" : ` · ora ce l'ha ${esc(surname(capNowA.nome))}` : ""}</span></li>` : ""}
-      <li><span class="lab">Avvisi</span>${warn.length ? `<span class="td-inj">${warn.map(w => `<span><i class="pd ${presCls(w.pr)}" aria-hidden="true"></i>${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("")}</span>` : `<span class="muted">Nessun tuo giocatore nella lista infortuni.</span>`}</li>
+      <li><span class="lab">Avvisi</span>${warn.length ? warnStrip(warn) : `<span class="muted">Nessun tuo giocatore nella lista infortuni.</span>`}</li>
     </ul></div>`;
+}
+
+// Avvisi sui tuoi in Oggi: con uno solo una pillola ferma; con più di uno una striscia che scorre piano se non sta nella
+// riga (la decide mqSetup dopo il disegno), con una seconda copia nascosta al lettore di schermo per il giro senza salti.
+function warnStrip(warn) {
+  const items = warn.map((w, k) => `<span class="ti" style="--k:${k}"><i class="pd ${presCls(w.pr)}" aria-hidden="true"></i>${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("");
+  if (warn.length < 2) return `<span class="td-inj chain">${items}</span>`;
+  return `<span class="td-inj mq" title="Tocca per fermare o far ripartire"><span class="mq-t"><span class="mq-g chain">${items}</span><span class="mq-g" aria-hidden="true">${items}</span></span></span>`;
 }
 
 // Da fare ora: cambi, capitano, titolari e notizie, nell'ordine in cui vanno fatti
@@ -1620,7 +1700,7 @@ function todoCard() {
       items.push(it("warn", `${esc(n)}: ${esc(inj ? inj.stato : "in dubbio")}${abs != null ? ` <span class="muted">(gioca al ${Math.round(abs * 100)}%)</span>` : ""}`,
         `${inj ? esc(inj.motivo) + " · " : ""}${g.giocatori.some(p => p.nome === n) ? "nel piano" : "nella tua rosa"}`));
   });
-  return `<div class="card todo">${head(`Da fare ora`, `${esc(g.label)} · ${when}`)}<ol>${items.join("")}</ol></div>`;
+  return `<div class="card todo">${head(`Da fare ora`, `${esc(g.label)} · ${when}`)}<ol class="chain">${items.join("")}</ol></div>`;
 }
 
 // In diretta: punti veri dall'app Dunkest (alla data dell'ultimo aggiornamento) e consigli su capitano e cambi
@@ -2192,7 +2272,7 @@ function renderOcc() {
   const cards = occ.map((o, k) => {
     const same = myRole(o.ruolo).filter(p => p.crediti <= o.crediti + 1.5).sort((a, b) => a.crediti - b.crediti)
       .map(p => surname(p.nome));
-    return `<article class="occ">
+    return `<article class="occ" style="--k:${k}">
       <div class="occ-j">${jersey(o.squadra, o.maglia, false)}</div>
       <div class="occ-b">
         <div class="occ-h"><b>${esc(o.nome)}</b>${mine.has(o.nome) ? '<span class="pill q">già in rosa</span>' : ""}</div>
@@ -2206,7 +2286,7 @@ function renderOcc() {
   document.getElementById("v-occ").innerHTML = `${occSeg()}
     <div class="card">${head("Occasioni da pochi crediti", `${occ.length} giocatori`)}
       <p class="note">Giocatori fino a 6 crediti che avranno più minuti, o il posto da titolare, per l'assenza di un compagno (infortuni da app Dunkest e basketballmonster). Ordinati per punti attesi a giornata.</p></div>
-    ${occ.length ? `<div class="occ-list">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
+    ${occ.length ? `<div class="occ-list chain">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
 }
 
 function renderInf() {
@@ -2424,9 +2504,9 @@ function showSheet(p0, src) {
   // numero, nome e tre dati già presenti (presenza, turno, avversario). Riflesso fermo, nessun effetto continuo.
   const [t1, t2] = TEAM[p.squadra] || ["#4a5561", "#d5dbe1"], hc = p.ruolo === "HC";
   const opp = (p.partita || "").replace(/^\d\d\/\d\d\s*/, "").toUpperCase() || "riposo";
-  const band = bandOf(t1), ccard = `<div class="cc" style="--t1:${band};--t2:${t2};--ti:${inkOn(band)}">
+  const band = bandOf(t1), ccard = `<div class="cc${isCap ? " cap" : ""}" style="--t1:${band};--t2:${t2};--ti:${inkOn(band)}">
     <div class="cc-h"><span>${esc(p.squadra)}</span><span>${ic("r-" + (ROLE[p.ruolo] ? p.ruolo : "C"), "ic-s")}<small>${esc(ROLE_LONG[p.ruolo] || p.ruolo)}</small></span></div>
-    <div class="cc-b"><div class="cc-j">${jersey(p.squadra, info.maglia, hc)}</div><div class="cc-n">${!hc && info.maglia != null ? `<b><small>#</small>${esc(info.maglia)}</b>` : ""}<span>${esc(p.nome)}</span>
+    <div class="cc-b"><i class="cc-sp" aria-hidden="true"></i><div class="cc-j">${jersey(p.squadra, info.maglia, hc)}</div><div class="cc-n">${!hc && info.maglia != null ? `<b><small>#</small>${esc(info.maglia)}</b>` : ""}<span>${esc(p.nome)}</span>
       <div class="cc-st"><span><b>${hc || p.p_gioca == null ? "–" : Math.round(p.p_gioca * 100) + "%"}</b><small>presenza</small></span><span><b>${p.turno ? "T" + p.turno : "–"}</b><small>turno</small></span><span><b>${esc(opp)}</b><small>partita</small></span></div></div></div></div>`;
   // Quattro schede interne: le stesse sezioni di prima, una alla volta
   const panels = [
@@ -2467,17 +2547,24 @@ function showSheet(p0, src) {
       src.classList.remove("vt-src"); closeSearch();
       scrim.hidden = false; el.hidden = false; el.scrollTop = 0; el.classList.add("open"); scrim.classList.add("on");
     });
-    t.finished.finally(() => { el.classList.remove("vt"); document.documentElement.classList.remove("vt-sheet"); src.classList.remove("vt-src"); });
+    t.finished.finally(() => { el.classList.remove("vt"); document.documentElement.classList.remove("vt-sheet"); src.classList.remove("vt-src"); beamCap(el); });
     t.updateCallbackDone.then(finish, finish);
     return;
   }
   closeSearch();
   scrim.hidden = false; el.hidden = false; el.scrollTop = 0;
   if (!calm) { el.classList.add("entering"); setTimeout(() => el.classList.remove("entering"), 700); }
+  beamCap(el);
   requestAnimationFrame(() => requestAnimationFrame(() => { el.classList.add("open"); scrim.classList.add("on"); }));
   finish();
 }
 const inView = n => { const r = n.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight && r.width > 0; };
+// Scheda del capitano: un riflesso fa un giro del bordo della carta, una volta per apertura (solo se la carta si vede)
+function beamCap(el) {
+  const c = el.querySelector(".sh-pan:not([hidden]) .cc.cap");
+  if (!c || calm) return;
+  c.classList.remove("beam"); void c.offsetWidth; c.classList.add("beam");
+}
 
 // Schede interne della scheda giocatore: la scelta resta per tutta la sessione
 let shTab = "pan";
@@ -2760,7 +2847,56 @@ const buzz = (ms = 8) => { try { if (navigator.vibrate) navigator.vibrate(ms); }
 // ——— movimento ———
 const calmQ = matchMedia("(prefers-reduced-motion: reduce)");
 let calm = calmQ.matches;
-if (calmQ.addEventListener) calmQ.addEventListener("change", e => { calm = e.matches; });
+if (calmQ.addEventListener) calmQ.addEventListener("change", e => { calm = e.matches; mqSetup(); });
+// Pagina nascosta (altra app, schermo spento): si fermano le animazioni continue (striscia degli avvisi, pallone, scheletri)
+const bgSync = () => document.documentElement.classList.toggle("bg", document.hidden);
+document.addEventListener("visibilitychange", bgSync); bgSync();
+
+// Striscia degli avvisi: scorre solo se ci sono più avvisi di quanti ne stanno nella riga; altrimenti (o con "riduci
+// movimento") è una riga ferma che va a capo. Velocità fissa (~32 px/s); ferma fuori dallo schermo (IntersectionObserver).
+let mqIO = null, mqEl = null;
+function mqSetup() {
+  const m = document.querySelector("#v-form:not([hidden]) .mq");
+  if (mqIO && mqEl && mqEl !== m) { mqIO.unobserve(mqEl); mqEl = null; }
+  if (!m) return;
+  m.classList.remove("run", "st", "paused", "off");
+  const g = m.querySelector(".mq-g");
+  const run = !calm && g.offsetWidth > m.clientWidth + 1;
+  m.classList.add(run ? "run" : "st");
+  if (!run) return;
+  m.style.setProperty("--mq-d", (g.offsetWidth / 32).toFixed(1) + "s");
+  if ("IntersectionObserver" in window) {
+    mqIO = mqIO || new IntersectionObserver(es => es.forEach(e => e.target.classList.toggle("off", !e.isIntersecting)));
+    mqIO.observe(m); mqEl = m;
+  }
+}
+let mqW = 0;
+addEventListener("resize", () => { if (innerWidth !== mqW) { mqW = innerWidth; requestAnimationFrame(mqSetup); } });
+document.addEventListener("click", e => { const m = e.target.closest && e.target.closest(".mq.run"); if (m) m.classList.toggle("paused"); });
+
+// Luce sul pulsante "Condividi formazione": una passata quando compare la prima volta e a ogni tocco
+let shone = false, shineIO = null;
+function shine(b) {
+  if (!b || calm) return;
+  b.classList.remove("shine"); void b.offsetWidth; b.classList.add("shine");
+}
+// a passata finita la classe si toglie (riparte al tocco dopo); vale anche per il bordo luminoso
+document.addEventListener("animationend", e => {
+  if (e.animationName === "shine") e.target.classList.remove("shine");
+  else if (e.animationName === "beam" && e.target.classList.contains("cc")) e.target.classList.remove("beam");
+});
+function shineFirst() {
+  const b = document.getElementById("share-f");
+  if (shone || !b || calm) return;
+  if (!("IntersectionObserver" in window)) { shone = true; setTimeout(() => shine(b), 500); return; }
+  if (shineIO) shineIO.disconnect();
+  shineIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting || shone) return;
+    shone = true; shineIO.disconnect(); setTimeout(() => shine(e.target), 450);
+  }), {threshold: 1});
+  shineIO.observe(b);
+}
+document.addEventListener("pointerdown", e => { const b = e.target.closest && e.target.closest("#share-f"); if (b) shine(b); }, {passive: true});
 let keepDays = false;
 
 let dir = 0;            // -1 / +1: da che parte entra il contenuto (vista o giornata precedente/successiva)
@@ -2976,8 +3112,10 @@ function avvisi() {
   const days = Math.round((new Date(D.piano.giornate[0].dal + "T12:00:00") - today) / 864e5);
   if (age > 30 && days <= 2) out.push(`<b>Dati vecchi di ${Math.round(age)} ore.</b> L'aggiornamento automatico potrebbe essersi fermato: il piano può non essere più valido.`);
   if (D.token && D.token.ok === false) out.push(`<b>Token Dunkest:</b> ${esc(D.token.motivo)} (ultimo tentativo ${esc(D.token.quando)}). Va rinnovato nelle impostazioni dell'ambiente.`);
-  el.innerHTML = out.map(t => `<span>${ic("warn")}<span>${t}</span></span>`).join("");
+  el.innerHTML = out.map((t, k) => `<span style="--k:${k}">${ic("warn")}<span>${t}</span></span>`).join("");
   el.hidden = !out.length;
+  el.classList.add("chain"); el.classList.remove("play");
+  if (out.length && !calm) { void el.offsetWidth; el.classList.add("play"); }
 }
 
 function render() {
@@ -3001,6 +3139,7 @@ function render() {
   if (dd) requestAnimationFrame(() => requestAnimationFrame(() => { dd.dataset.d = dens; }));
   prevMode = prevDens = null;
   moveIndicator();
+  if (view === "form") { mqSetup(); shineFirst(); }
 }
 
 // Schede interne di "Chi cambia squadra"
@@ -3236,6 +3375,28 @@ if (!calm && matchMedia("(hover: hover) and (pointer: fine)").matches) {
     c.style.transform = `perspective(520px) rotateX(${(-y * 12).toFixed(1)}deg) rotateY(${(x * 14).toFixed(1)}deg) translateY(-4px)`;
   }, {passive: true});
 }
+// Carta da collezione nella scheda: un bagliore segue il dito o il puntatore. Solo transform del bagliore, scritto nel frame
+// di animazione; la posizione della carta si legge una volta (al primo movimento o dopo uno scorrimento della scheda).
+// Spento con "riduci movimento" e dove non c'è né un puntatore fine né il tocco; sul telefono si spegne appena parte lo scorrimento.
+(() => {
+  const sh = document.getElementById("sheet"), anyPtr = matchMedia("(any-pointer: fine), (any-pointer: coarse)");
+  let cc = null, sp = null, r = null, x = 0, y = 0, raf = 0;
+  const off = () => { if (sp) sp.classList.remove("on"); cc = sp = r = null; };
+  const paint = () => { raf = 0; if (!sp) return; sp.style.transform = `translate3d(${(x - r.left).toFixed(1)}px,${(y - r.top).toFixed(1)}px,0)`; sp.classList.add("on"); };
+  const move = e => {
+    if (calm || !anyPtr.matches || (sheetDrag && sheetDrag.on)) { off(); return; }
+    const c = e.target.closest && e.target.closest(".cc");
+    if (!c) { off(); return; }
+    if (c !== cc) { off(); cc = c; sp = c.querySelector(".cc-sp"); }
+    if (!r) r = sp.parentElement.getBoundingClientRect();
+    x = e.clientX; y = e.clientY;
+    if (!raf) raf = requestAnimationFrame(paint);
+  };
+  sh.addEventListener("pointermove", move, {passive: true});
+  sh.addEventListener("pointerdown", move, {passive: true});
+  ["pointerup", "pointercancel", "pointerleave"].forEach(t => sh.addEventListener(t, e => { if (e.pointerType !== "mouse" || t === "pointerleave") off(); }, {passive: true}));
+  sh.addEventListener("scroll", () => { r = null; }, {passive: true});
+})();
 // Cambio di vista: View Transitions dove ci sono (solo la vista si muove, 200 ms), altrimenti la vista nuova entra
 // con un'animazione CSS della stessa durata. Con "riduci movimento" cambia e basta.
 function switchView(nv) {
