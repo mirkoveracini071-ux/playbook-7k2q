@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#edf0f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0f1318" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f3f0ef" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141110" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex, nofollow">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,19 +31,20 @@
    sono gli unici materiali "forti". */
 :root{
   /* colore */
-  --bg:#edf0f3; --surface:#ffffff; --surface-2:#f4f6f8; --fg:#131820; --muted:#56616d; --line:#d7dde3; --line-2:#bcc5ce;
+  /* neutri con una tinta leggera dell'accento (OKLCH: stessa luminosità di prima, tinta 41°, croma 0,0035): contrasti uguali o migliori */
+  --bg:#f3f0ef; --surface:#ffffff; --surface-2:#f9f6f5; --fg:#1a1716; --muted:#625f5e; --line:#dedbda; --line-2:#c6c3c2;
   --accent:#c94a0a; --accent-text:#b2420a; --accent-ink:#ffffff;
   --good:#1b7d45; --good-ink:#ffffff; --bad:#c22c2c; --warn:#d69300; --warn-text:#875800; --warn-ink:#1a1200;
   --cap:#c9f23a; --cap-ink:#1d2a00;
   --wood-a:#e6bb84; --wood-b:#d6a165; --wood-line:rgba(255,255,255,.88); --paint:#b8501c; --apron:#7c2d0e;
   --bench:#1c2128; --bench-2:#262c35; --bench-fg:#e9edf1; --bench-muted:#a3adb8;
-  --card:#ffffff; --card-ink:#151a21; --card-muted:#56616d; --card-line:#e2e6ea; --strip:#151a21; --strip-ink:#ffffff;
+  --card:#ffffff; --card-ink:#1b1918; --card-muted:#625f5e; --card-line:#e8e5e4; --strip:#151a21; --strip-ink:#ffffff;
   --card-edge:rgba(0,0,0,.08); --card-shadow:0 1px 0 rgba(0,0,0,.08),0 6px 14px -4px rgba(0,0,0,.35); --jersey-shadow:rgba(30,15,0,.32);
   --flash:color-mix(in srgb,var(--accent) 22%,transparent);
   --solid-bad:#c22c2c; --solid-good:#1b7d45; --solid-grey:#4b5560; --solid-ink:#ffffff;
   --on-dark-up:#5fd08f; --on-dark-down:#ff8a8a; --on-dark-muted:#9aa6b2;
   --board:#161b22; --board-line:#2b333d; --board-ink:#f4f6f8; --board-muted:#9aa6b2; --glow:rgba(255,122,51,.4);
-  --sk:#dde2e7; --track:#e4e9ee; --tab-on:#ffffff; --noise:rgba(86,97,109,.14); --scrim:rgba(8,10,14,.5); --shadow:rgba(20,32,48,.10); --shadow-2:rgba(20,32,48,.18);
+  --sk:#e3e1e0; --track:#ebe8e7; --tab-on:#ffffff; --noise:rgba(98,95,94,.14); --scrim:rgba(8,10,14,.5); --shadow:rgba(20,32,48,.10); --shadow-2:rgba(20,32,48,.18);
   /* tipografia */
   --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
   --body:"Barlow Semi Condensed","Arial Narrow",system-ui,sans-serif;
@@ -54,9 +55,15 @@
   /* grafici: un colore per il segno messo in evidenza, uno neutro per gli altri, uno per la riga di riferimento.
      Contrasto misurato >= 3 contro la superficie e il binario in tutti e due i temi */
   --c-hi:var(--accent); --c-base:#6b7581; --c-ref:var(--fg); --c-area:color-mix(in srgb,var(--accent) 14%,transparent);
+  /* polarità (meglio / peggio, sopra / sotto lo zero) e grigio del centro: validati con validate_palette.js a coppie (tutte),
+     anche per daltonismo rosso-verde (ΔE ≥ 9). --c-zero è il "dentro il rumore", più chiaro dei due poli */
+  --pos:#0d744d; --neg:#c22824; --c-zero:#a5a19f;
+  /* scala sequenziale (una tinta, chiaro → scuro) per la Mappa dei turni: validata come scala ordinata (--ordinal) */
+  --seq-1:#eda382; --seq-2:#e48559; --seq-3:#d46a34; --seq-4:#bf4f04; --seq-5:#a13b00;
+  --seq-ink-1:#1a1716; --seq-ink-2:#1a1716; --seq-ink-3:#1a1716; --seq-ink-4:#ffffff; --seq-ink-5:#ffffff;
   /* la seconda serie (e i valori negativi) è anche a righe: si distingue senza colore */
   --hatch-base:repeating-linear-gradient(135deg,var(--c-base) 0 2px,color-mix(in srgb,var(--c-base) 30%,transparent) 2px 4.5px);
-  --hatch-bad:repeating-linear-gradient(135deg,var(--bad) 0 2.5px,color-mix(in srgb,var(--bad) 35%,transparent) 2.5px 5px);
+  --hatch-bad:repeating-linear-gradient(135deg,var(--neg) 0 2.5px,color-mix(in srgb,var(--neg) 35%,transparent) 2.5px 5px);
   /* movimento: quattro durate e tre curve per tutta la pagina */
   --d-press:110ms; --d-state:200ms; --d-enter:380ms; --d-move:520ms;
   --e-out:cubic-bezier(.22,1,.36,1); --e-io:cubic-bezier(.65,0,.35,1); --e-spring:cubic-bezier(.34,1.45,.64,1);
@@ -69,40 +76,46 @@
   --d-snap:220ms; --d-sheet:240ms;
   --nav-h:0px;
   /* stato di presenza (gioca / in dubbio / fuori): pieni, con testo leggibile sopra, uguali nei due temi */
-  --pres-ok:#1b7d45; --pres-ok-ink:#ffffff; --pres-mid:#e3a008; --pres-mid-ink:#1a1200; --pres-lo:#c22c2c; --pres-lo-ink:#ffffff;
+  --pres-ok:#0d744d; --pres-ok-ink:#ffffff; --pres-mid:#e3a120; --pres-mid-ink:#1a1200; --pres-lo:#c22824; --pres-lo-ink:#ffffff;
   --warn-bar:#a86f00;   /* barra "in dubbio" su sfondo chiaro: il giallo pieno non si vede sul binario grigio */
   --pad-x:max(16px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
   /* atmosfera per contesto (Squadra / mercato / analisi): solo un velo di colore in cima alla pagina */
   --atm-sq:rgba(201,74,10,.10); --atm-mk:rgba(18,108,160,.11); --atm-an:rgba(40,120,88,.10);
   --ghost:rgba(255,255,255,.13); --ic-w:1.75; --focus:var(--accent);
-  --dots:rgba(19,24,32,.2);   /* griglia di puntini della testata */
+  --dots:rgba(26,23,22,.2);   /* griglia di puntini della testata */
   color-scheme:light;
 }
 :root[data-theme="light"]{color-scheme:light}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
+  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --board:#07090c; --board-line:#1f262e;
-  --card:#1f252d; --card-ink:#eef1f4; --card-muted:#aab4bf; --card-line:#353e49; --strip:#0a0d11; --strip-ink:#ffffff;
+  --card:#272422; --card-ink:#f3eeec; --card-muted:#b8b3b1; --card-line:#403c3b; --strip:#0a0d11; --strip-ink:#ffffff;
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
-  --warn-bar:#f0b429; --c-base:#7b8692;
-  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
-  --dots:rgba(232,236,240,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
+  --warn-bar:#f0b429; --c-base:#7b8692; --c-hi:#e26b1b; --pos:#209485; --neg:#d2494c; --c-zero:#afaba9;
+  --seq-1:#874213; --seq-2:#b35713; --seq-3:#dd6f23; --seq-4:#f39762; --seq-5:#fdc2a2;
+  --seq-ink-1:#ffffff; --seq-ink-2:#ffffff; --seq-ink-3:#1a1716; --seq-ink-4:#1a1716; --seq-ink-5:#1a1716;
+  --pres-ok:#209485; --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:#d2494c; --pres-lo-ink:#1a0000;
+  --sk:#302d2b; --track:#322e2d; --tab-on:#3d3938; --noise:rgba(170,165,162,.16); --line-2:#524f4d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
+  --dots:rgba(241,236,233,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0e1217; --surface:#171c23; --surface-2:#1e242c; --fg:#e8ecf0; --muted:#9ba6b1; --line:#2a313a;
+  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --board:#07090c; --board-line:#1f262e;
-  --card:#1f252d; --card-ink:#eef1f4; --card-muted:#aab4bf; --card-line:#353e49; --strip:#0a0d11; --strip-ink:#ffffff;
+  --card:#272422; --card-ink:#f3eeec; --card-muted:#b8b3b1; --card-line:#403c3b; --strip:#0a0d11; --strip-ink:#ffffff;
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
   --wood-a:#8f6b42; --wood-b:#765433; --wood-line:rgba(255,246,232,.55); --paint:#7a3312;
-  --warn-bar:#f0b429; --c-base:#7b8692;
-  --sk:#272e38; --track:#28303a; --tab-on:#323b46; --noise:rgba(155,166,177,.16); --line-2:#46515d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
-  --dots:rgba(232,236,240,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
+  --warn-bar:#f0b429; --c-base:#7b8692; --c-hi:#e26b1b; --pos:#209485; --neg:#d2494c; --c-zero:#afaba9;
+  --seq-1:#874213; --seq-2:#b35713; --seq-3:#dd6f23; --seq-4:#f39762; --seq-5:#fdc2a2;
+  --seq-ink-1:#ffffff; --seq-ink-2:#ffffff; --seq-ink-3:#1a1716; --seq-ink-4:#1a1716; --seq-ink-5:#1a1716;
+  --pres-ok:#209485; --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:#d2494c; --pres-lo-ink:#1a0000;
+  --sk:#302d2b; --track:#322e2d; --tab-on:#3d3938; --noise:rgba(170,165,162,.16); --line-2:#524f4d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
+  --dots:rgba(241,236,233,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
 
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -426,8 +439,9 @@ details b{color:var(--accent-text)}
 .badge.inj{background:var(--pres-lo);color:var(--pres-lo-ink);letter-spacing:.02em}
 .badge.inj.ok{background:var(--pres-ok);color:var(--pres-ok-ink)}.badge.inj.mid{background:var(--pres-mid);color:var(--pres-mid-ink)}
 /* pallino di presenza accanto alla percentuale (ricerca, sostituti) */
-.pd{display:inline-block;width:8px;height:8px;border-radius:var(--r-pill);margin-right:4px;vertical-align:1px;background:var(--muted)}
-.pd.ok{background:var(--good)}.pd.mid{background:var(--warn-bar)}.pd.lo{background:var(--bad)}
+/* stato di presenza fuori dalle carte: sempre icona (spunta / punto di domanda / croce) + numero, mai solo un pallino colorato */
+.ps{width:14px;height:14px;margin-right:3px;vertical-align:-2px;stroke-width:2.2}
+.ps.ok{color:var(--pres-ok)}.ps.mid{color:var(--pres-mid)}.ps.lo{color:var(--pres-lo)}
 .badge.rest{background:var(--solid-grey);color:var(--solid-ink)}
 .badge.role{border:1.5px solid transparent;padding:3px 5px}
 .badge.role.tit{background:var(--solid-good);color:var(--solid-ink)}
@@ -517,7 +531,7 @@ details b{color:var(--accent-text)}
 .mkt-t td:first-child + td{padding-left:10px}
 .mb{display:block;width:44px;height:4px;margin:4px 0 0 auto;border-radius:2px;background:var(--track);overflow:hidden}
 .mb i{display:block;height:100%;border-radius:2px;background:var(--accent)}
-.mb.ok i{background:var(--good)}.mb.mid i{background:var(--warn-bar)}.mb.lo i{background:var(--bad)}
+.mb.ok i{background:var(--pres-ok)}.mb.mid i{background:var(--pres-mid)}.mb.lo i{background:var(--pres-lo)}
 .mkt-sk{gap:var(--sp-2h)}
 .sk-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:var(--sp-2)}
 .mkt-t tbody tr{cursor:pointer}
@@ -718,9 +732,9 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .cmp-bar .cmp-noise{position:absolute;top:-3px;bottom:-3px;background:var(--noise);border-radius:4px}
 .cmp-bar .cmp-zero{position:absolute;left:50%;top:-5px;bottom:-5px;width:2px;margin-left:-1px;background:var(--fg);opacity:.55;border-radius:1px}
 .cmp-bar i{position:absolute;top:0;bottom:0;border-radius:var(--r-pill)}
-.cmp-bar i.p{background:var(--good);transform-origin:left}
-.cmp-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--bad);transform-origin:right}
-.cmp-bar i.z{background:var(--c-base)}
+.cmp-bar i.p{background:var(--pos);transform-origin:left}
+.cmp-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--neg);transform-origin:right}
+.cmp-bar i.z{background:var(--c-zero)}
 .cmp-bar em{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:var(--r-pill);background:var(--accent);box-shadow:0 0 0 3px var(--surface)}
 .cmp-scale{display:grid;grid-template-columns:28px 1fr;gap:var(--sp-2h);font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
 .cmp-scale > span{grid-column:2;display:flex;justify-content:space-between}
@@ -773,10 +787,10 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .tm-g{font:600 var(--fs-xs)/1.2 var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);padding:6px 0 2px}
 .tm{display:grid;grid-template-columns:3.1em minmax(0,1fr) 3em;grid-template-areas:"c bar v" ". who who";gap:2px 10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
 .tm:last-child{border-bottom:0}
-.tm-c{grid-area:c;font:800 1.05rem/1 var(--display);letter-spacing:.03em;border-left:3px solid var(--tc,var(--line-2));padding-left:6px}
+.tm-c{grid-area:c;font:800 1.05rem/1 var(--display);letter-spacing:.03em;border-left:3px solid var(--tcl,var(--line-2));padding-left:6px}
 .tm-bar{grid-area:bar;height:8px;border-radius:var(--r-pill);background:var(--track);overflow:hidden}
 .tm-bar i{display:block;height:100%;width:var(--w);border-radius:var(--r-pill);transform-origin:left}
-.tm-bar i.p{background:var(--good)}.tm-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--bad)}
+.tm-bar i.p{background:var(--pos)}.tm-bar i.n{background:var(--hatch-bad);box-shadow:inset 0 0 0 1.5px var(--neg)}
 .tm-v{grid-area:v;text-align:right;font-variant-numeric:tabular-nums}
 .tm-who{grid-area:who;font-size:var(--fs-xs);color:var(--muted);line-height:1.35}
 .tm-who em{font-style:normal;font-weight:700;color:var(--fg)}
@@ -842,6 +856,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .legend i.hi{background:var(--c-hi);border-color:var(--c-hi)}
 .legend i.base{background:var(--c-base);border-color:var(--c-base)}
 .legend i.hatch{background:var(--hatch-base);border:1.5px solid var(--c-base)}
+.legend i.neg-l{background:var(--hatch-bad);border:1.5px solid var(--neg)}
 .legend i.ref-pt{width:10px;height:10px;border-radius:2px;transform:rotate(45deg);background:var(--c-hi);border-color:var(--c-hi)}
 .legend i.dash{border:0;height:0;border-top:2px dashed var(--c-ref);border-radius:0;vertical-align:3px}
 .spark rect.hit,.chart .hit{cursor:pointer}
@@ -1117,9 +1132,10 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 .fresh{display:inline-flex;align-items:center;min-height:44px;margin-block:-8px;padding:0;border:0;background:none;color:var(--fg)}
 .fp{display:inline-flex;align-items:center;gap:var(--sp-1h);min-height:28px;padding:0 var(--sp-2h) 0 var(--sp-2);border:1px solid var(--line);border-radius:var(--r-pill);
   background:var(--surface);font:600 var(--fs-xs)/1.2 var(--body);white-space:nowrap;font-variant-numeric:tabular-nums}
-.fd{width:9px;height:9px;border-radius:50%;background:var(--pres-ok);flex:none}
-.fresh[data-l="mid"] .fd{background:var(--pres-mid)}
-.fresh[data-l="lo"] .fd{background:var(--pres-lo)}
+/* età dei dati: icona (spunta / punto di domanda / croce) nel colore dello stato, non un pallino solo colorato */
+.fd{width:15px;height:15px;stroke-width:2.4;color:var(--pres-ok);flex:none}
+.fresh[data-l="mid"] .fd{color:var(--pres-mid)}
+.fresh[data-l="lo"] .fd{color:var(--pres-lo)}
 .fresh[data-l="lo"] .fp{border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}
 .fresh[aria-expanded="true"] .fp{background:var(--surface-2)}
 .fresh-d{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:var(--sp-2h) var(--sp-3);font-size:var(--fs-s);line-height:1.4}
@@ -1137,7 +1153,10 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 .srch-hx{display:flex;justify-content:space-between;align-items:center;gap:var(--sp-2)}
 .srch-clr{min-height:44px;margin:-12px -6px -10px 0;padding:0 var(--sp-2h);border:0;background:none;color:var(--accent-text);font:700 var(--fs-xs)/1 var(--body);text-transform:uppercase;letter-spacing:.06em}
 .srch-g{display:grid}
-.srch-t > b{border-left:3px solid var(--tc,var(--line-2));padding-left:var(--sp-2)}
+.srch-t > b{border-left:3px solid var(--tcl,var(--line-2));padding-left:var(--sp-2)}
+/* colore della squadra accanto alla sigla: nel tema scuro la versione schiarita (almeno 3:1 sulla superficie) */
+:root[data-theme="dark"] :is(.tm-c,.srch-t > b){border-left-color:var(--tcd,var(--line-2))}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) :is(.tm-c,.srch-t > b){border-left-color:var(--tcd,var(--line-2))}}
 .mkt-t tr[tabindex]:focus-visible{outline:2.5px solid var(--focus);outline-offset:-2px}
 
 /* ——— guida al primo avvio ——— */
@@ -1186,6 +1205,87 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   .alt-list,.occ-list{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}
   .seg button{grid-auto-flow:column;align-content:center;justify-content:center;gap:var(--sp-2)}
 }
+
+/* ——— grafici: titoli bilanciati, interruttore Grafico / Tabella (stessi numeri, ricordato per grafico) ——— */
+h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
+.viz{display:grid;gap:var(--sp-2h);min-width:0}
+.vz-sw{justify-self:end;display:flex;margin-block:-10px -6px;margin-right:-6px}
+.vz-sw button{position:relative;isolation:isolate;min-height:44px;min-width:44px;padding:0 11px;border:0;background:none;color:var(--muted);font:600 var(--fs-xs)/1 var(--body);text-transform:uppercase;letter-spacing:.06em}
+.vz-sw button::before{content:"";position:absolute;inset:9px 2px;z-index:-1;border-radius:var(--r-pill);border:1px solid transparent}
+.vz-sw button[aria-pressed="true"]{color:var(--fg)}
+.vz-sw button[aria-pressed="true"]::before{background:var(--surface-2);border-color:var(--line)}
+.vz-sw button:focus-visible{outline-offset:-6px}
+.vz-g,.vz-t{min-width:0;display:grid;gap:var(--sp-2h)}
+.vz-g[hidden],.vz-t[hidden]{display:none}
+.vz-tab td{white-space:nowrap}.vz-tab th{white-space:normal;line-height:1.2}
+.scroll .vz-tab td:first-child{min-width:0;white-space:normal}
+.vz-tab th,.vz-tab td{padding-inline:6px}.vz-tab th:first-child,.vz-tab td:first-child{padding-left:0}
+/* punteggio realistico: fascia 10°–90° percentile, punto = punti attesi, riga verticale = il piano; alternative sulla stessa scala */
+.rr{position:relative;display:grid;--lw:6.6em;--vw:3.4em}
+.rr-r{display:grid;grid-template-columns:var(--lw) minmax(0,1fr) var(--vw);align-items:center;gap:0 var(--sp-2);min-height:44px;border-radius:var(--r-s)}
+.rr-n{display:grid;line-height:1.15;min-width:0}
+.rr-n b{font-weight:700;font-size:var(--fs-s);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr-n small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr-v{font:800 var(--fn-s)/1 var(--display);text-align:right}
+.rr-t{position:relative;align-self:stretch;min-height:44px}
+.rr-t::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.rr-ref{position:absolute;top:0;bottom:0;width:0;border-left:1px solid var(--c-ref);opacity:.55}
+.rr-b{position:absolute;top:calc(50% - 5px);height:10px;border-radius:var(--r-pill);background:color-mix(in srgb,var(--c-hi) 34%,transparent)}
+.rr-r.base .rr-b{background:color-mix(in srgb,var(--c-base) 34%,transparent)}
+.rr-d{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--c-hi);box-shadow:0 0 0 2px var(--surface)}
+.rr-r.base .rr-d{background:var(--c-base)}
+.rr-r.ra .rr-d{width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--surface);box-shadow:inset 0 0 0 2px var(--c-base),0 0 0 2px var(--surface)}
+.rr-l{position:absolute;bottom:1px;font-size:.7rem;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.rr-ax{display:grid;grid-template-columns:var(--lw) minmax(0,1fr) var(--vw);gap:0 var(--sp-2);font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.rr-ax > span{position:relative;height:16px;border-top:1px solid var(--line-2);grid-column:2}
+.rr-ax i{position:absolute;top:2px;font-style:normal;transform:translateX(-50%)}
+.rr-ax i:first-child{transform:none}.rr-ax i:last-child{transform:translateX(-100%)}
+.rr-more{display:grid}
+.rr-more[hidden]{display:none}
+.rr-r:focus-visible{outline-offset:1px}
+.legend i.rr-lb{background:color-mix(in srgb,var(--c-hi) 34%,transparent);border-color:transparent}
+.legend i.rr-ld{width:10px;height:10px;border-radius:50%;background:var(--c-hi);border-color:var(--c-hi)}
+.legend i.rr-lr{width:0;height:12px;border:0;border-left:1px solid var(--c-ref);border-radius:0;vertical-align:-2px}
+.legend i.rr-la{width:10px;height:10px;border-radius:50%;background:var(--surface);border:2px solid var(--c-base)}
+/* le quattro giornate: tre piccoli grafici (una misura ciascuno, stessa scala per G1–G4), la giornata scelta in evidenza */
+.gm-w{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-3)}
+.gm{display:grid;gap:var(--sp-1h);min-width:0}
+.gm-h{display:grid;gap:2px;min-height:2.6em;align-content:start}
+.gm-h .lab{line-height:1.2}
+.gm-h b{font:800 var(--fn-s)/1 var(--display);font-variant-numeric:tabular-nums}
+.gm-h b small{font:600 var(--fs-xs)/1 var(--body);color:var(--muted);margin-left:3px}
+.gm-p{position:relative;height:76px;display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:2px;border-bottom:1px solid var(--line-2)}
+.gm-c{position:relative;min-width:0;cursor:pointer}
+.gm-c i{position:absolute;left:50%;width:min(24px,72%);transform:translateX(-50%);background:var(--c-base);border-radius:4px 4px 0 0}
+.gm-c i.neg{border-radius:0 0 4px 4px}
+.gm-c.on i{background:var(--c-hi)}
+.gm-z{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line-2)}
+.gm-x{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:2px;font-size:var(--fs-xs);color:var(--muted);text-align:center}
+.gm-x .on{color:var(--fg);font-weight:700}
+@media (max-width:380px){.gm-w{gap:var(--sp-2)}.gm-h .lab{font-size:.68rem;letter-spacing:.04em}}
+/* mappa dei turni: giocatori × turni, celle di una sola tinta (chiaro = pochi punti attesi, scuro = tanti) */
+.tmap-d > summary{font-weight:600}
+.cmpp .vz-g{gap:0}
+.tmap-d b{color:var(--fg)}
+.tmap-d .tq{color:inherit}
+.tmap{display:grid;grid-template-columns:minmax(6.5em,1.25fr) repeat(var(--n,3),minmax(44px,1fr));gap:2px;font-variant-numeric:tabular-nums}
+.tmap .th{font:600 var(--fs-xs)/1.15 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:2px 0 4px}
+.tmap .th small{display:block;text-transform:none;letter-spacing:0;font-weight:500}
+.tmap .tn{display:grid;align-content:center;line-height:1.15;min-height:44px;min-width:0;padding-right:4px}
+.tmap .tn b{font-weight:700;font-size:var(--fs-s);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmap .tn small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmap .tn.st b{font-weight:800}
+.tq{display:grid;place-items:center;min-height:44px;border-radius:var(--r-xs);font:800 var(--fn-s)/1 var(--display)}
+.tq.e{background:none;box-shadow:inset 0 0 0 1px var(--line)}
+.tq.s1{background:var(--seq-1);color:var(--seq-ink-1)}.tq.s2{background:var(--seq-2);color:var(--seq-ink-2)}.tq.s3{background:var(--seq-3);color:var(--seq-ink-3)}
+.tq.s4{background:var(--seq-4);color:var(--seq-ink-4)}.tq.s5{background:var(--seq-5);color:var(--seq-ink-5)}
+.tq[data-tip]:focus-visible{outline-offset:1px}
+.tq.lit{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--fg)}
+.sq-l{display:flex;align-items:center;gap:var(--sp-1h);flex-wrap:wrap;font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.sq-l > span.sc{display:inline-grid;grid-template-columns:repeat(5,18px);gap:2px}
+.sq-l > span.sc i{height:12px;border-radius:2px}
+.sq-l i.s1{background:var(--seq-1)}.sq-l i.s2{background:var(--seq-2)}.sq-l i.s3{background:var(--seq-3)}.sq-l i.s4{background:var(--seq-4)}.sq-l i.s5{background:var(--seq-5)}
+.gm-c.lit i,.rr-r.lit .rr-d{outline:2px solid var(--fg);outline-offset:1px}
 
 /* ——— movimento ———
    Regole: si animano solo transform e opacity (eccetto le linee del campo, disegnate una volta).
@@ -1279,6 +1379,13 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   .sheet.open .spark rect.b{transform-box:fill-box;transform-origin:bottom;animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(var(--d-snap) + var(--b,0) * 35ms)}
   .sheet.open .spark .v{animation:fade var(--d-state) backwards;animation-delay:calc(480ms + var(--b,0) * 35ms)}
   .sheet.open .spark .ref{transform-box:fill-box;transform-origin:left;animation:grow 420ms var(--e-out) 260ms backwards}
+  /* grafici nuovi: entrano quando la scheda è in vista (classe play), al massimo 240 ms; il cambio grafico/tabella sfuma in 160 ms */
+  .play .gm-c i{transform-origin:bottom;animation:rise-bar var(--d-sheet) var(--e-out) backwards;animation-delay:calc(var(--k,0) * 30ms)}
+  .play .gm-c i.neg{transform-origin:top}
+  .play .rr-b{transform-origin:left;animation:grow var(--d-sheet) var(--e-out) backwards}
+  .play .rr-d{animation:fade var(--d-state) 120ms backwards}
+  .vz-in{animation:fade 160ms ease-out}
+  .vz-sw button::before{transition:background-color 160ms,border-color 160ms}
   .tip{animation:tip-in 140ms var(--e-out)}
   @keyframes tip-in{from{opacity:0;transform:translateY(4px)}}
   .play .cmp-row{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 55ms)}
@@ -1444,7 +1551,7 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 <div class="app">
   <header class="top">
     <div class="brand"><h1 id="team">PolloconCurry</h1><button type="button" class="thm" id="thm" aria-label="Tema: come il sistema. Tocca per cambiare" title="Tema: come il sistema"></button></div>
-    <div class="brand-r"><span id="clock" class="clock" hidden></span><small id="upd">Carico i dati…</small><button type="button" class="fresh" id="fresh" hidden aria-expanded="false" aria-controls="fresh-d"><span class="fp"><i class="fd" aria-hidden="true"></i><span id="fresh-t"></span></span></button></div>
+    <div class="brand-r"><span id="clock" class="clock" hidden></span><small id="upd">Carico i dati…</small><button type="button" class="fresh" id="fresh" hidden aria-expanded="false" aria-controls="fresh-d"><span class="fp"><svg class="ic fd" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ok"/></svg><span id="fresh-t"></span></span></button></div>
     <div id="fresh-d" class="fresh-d" hidden></div>
   </header>
   <div id="avv" class="avv" hidden role="status"></div>
@@ -1540,6 +1647,42 @@ const head = (title, meta = "") => `<div class="card-h"><h2>${title}</h2>${meta 
 const ic = (n, cls = "") => `<svg class="ic${cls ? " " + cls : ""}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 // Testata di ogni vista: la stessa icona del menu, il titolo e una riga su cosa c'è
 const vhead = (icon, title, lede = "") => `<header class="vh"><span class="vh-i">${ic(icon)}</span><div><h2>${title}</h2>${lede ? `<p>${lede}</p>` : ""}</div></header>`;
+// ——— grafici: ogni grafico ha la sua tabella con gli stessi numeri. Interruttore "Grafico / Tabella" sopra il grafico,
+// ricordato per grafico su questo telefono (pcc-vz); il cambio va al lettore di schermo (riga di stato educata).
+let VZ = {};
+try { const o = JSON.parse(localStorage.getItem("pcc-vz") || "{}"); if (o && typeof o === "object") VZ = o; } catch (e) { VZ = {}; }
+const viz = (id, label, chart, table) => { const t = VZ[id] === "t";
+  return `<div class="viz" data-viz="${id}" data-vzl="${esc(label)}"><div class="vz-sw" role="group" aria-label="${esc(label)}: mostra come grafico o come tabella"><button type="button" data-vz="g" aria-pressed="${!t}">Grafico</button><button type="button" data-vz="t" aria-pressed="${t}">Tabella</button></div>
+    <div class="vz-g"${t ? " hidden" : ""}>${chart}</div><div class="vz-t"${t ? "" : " hidden"}>${table}</div></div>`; };
+// tabella della vista: le celle arrivano già pronte (testi passati da esc, numeri da num/sign)
+const vtab = (cap, hd, rows) => `<div class="scroll"><table class="lastday vz-tab"><caption class="sr">${esc(cap)}</caption><thead><tr>${hd.map(h => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+function setViz(b) {
+  const box = b.closest(".viz"); if (!box) return;
+  const t = b.dataset.vz === "t", id = box.dataset.viz;
+  if ((VZ[id] === "t") === t && !box.querySelector(t ? ".vz-t[hidden]" : ".vz-g[hidden]")) return;
+  box.querySelector(":scope > .vz-g").hidden = t; box.querySelector(":scope > .vz-t").hidden = !t;
+  box.querySelectorAll(":scope > .vz-sw [data-vz]").forEach(x => x.setAttribute("aria-pressed", x.dataset.vz === b.dataset.vz));
+  if (t) VZ[id] = "t"; else delete VZ[id];
+  try { localStorage.setItem("pcc-vz", JSON.stringify(VZ)); } catch (e) {}
+  buzz(6); say(`${box.dataset.vzl}: ${t ? "tabella" : "grafico"}`);
+  const shown = box.querySelector(t ? ":scope > .vz-t" : ":scope > .vz-g");
+  if (!calm) { shown.classList.remove("vz-in"); void shown.offsetWidth; shown.classList.add("vz-in"); }
+}
+// Stato di presenza fuori dalle carte: icona (spunta, punto di domanda, croce) + parola per il lettore di schermo; il numero
+// lo scrive chi chiama. Mai solo un pallino colorato.
+const presIc = p => { const c = presCls(p); return `<svg class="ic ps ${c}" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-${c}"/></svg><span class="sr">${PRES_TXT[c]}, </span>`; };
+// Colore della squadra come segno accanto alla sigla (Squadre, ricerca): il più leggibile dei due colori sociali sulla
+// superficie, scurito (tema chiaro) o schiarito (tema scuro) quanto basta per 3:1. L'identità è la sigla scritta: con 30
+// squadre nessuna palette regge il confronto colore per colore (validato: fallisce per costruzione), il colore accompagna.
+const mixHex = (a, b, k) => { const p = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)), x = p(a), y = p(b);
+  return "#" + x.map((v, i) => Math.round(v + (y[i] - v) * k).toString(16).padStart(2, "0")).join(""); };
+function teamOn(t, surf, dark) {
+  const c = TEAM[t] || ["#4a5561", "#d5dbe1"];
+  let h = (contrast(c[0], surf) >= contrast(c[1], surf) ? c[0] : c[1]).toLowerCase();
+  for (let k = 0; k < 24 && contrast(h, surf) < 3; k++) h = mixHex(h, dark ? "#ffffff" : "#000000", .08);
+  return h;
+}
+const teamVars = t => `--tcl:${teamOn(t, "#ffffff", false)};--tcd:${teamOn(t, "#1e1b1a", true)}`;
 // Testo sul colore della squadra: bianco o quasi nero, quello con più contrasto
 const contrast = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + .05) / (Math.min(x, y) + .05); };
 const inkOn = hex => contrast(hex, "#ffffff") >= contrast(hex, "#111418") ? "#ffffff" : "#111418";
@@ -1636,7 +1779,7 @@ function card(p, g) {
     body = `<span class="info"><span><b>${cr(p.crediti)}</b><small>cr</small></span><span><b>${turno || "HC"}</b><small>${esc(opp)}</small></span></span>
     <span class="pts" style="display:block"><b data-cnt="c${p.id}">${num(p.punti)}</b> pt attesi${se ? `<small class="se" title="${seTitle}">${num(se)} se gioca${p._adj ? " ✎" : ""}</small>` : ""}</span>${cardStats(p)}`;
   }
-  return `<button type="button" class="${cls}" style="--tc:${teamTone(p.squadra)};view-transition-name:p${p.id}" data-id="${p.id}" aria-label="${esc(p.nome)}${state ? ", " + state : ""}: ${num(p.punti)} punti attesi, dettagli">
+  return `<button type="button" class="${cls}" style="--tc:${teamTone(p.squadra)};view-transition-name:p${p.id}" data-id="${p.id}" aria-label="${esc(p.nome)}${state ? ", " + state : ""}${!rest && prob != null && prob < 1 ? `, presenza ${Math.round(prob * 100)}% (${PRES_TXT[presCls(prob)]})` : ""}: ${num(p.punti)} punti attesi, dettagli">
     ${left ? `<span class="badges-l">${left}</span>` : ""}${right ? `<span class="badges-r">${right}</span>` : ""}${isCap ? `<span class="cap-b" title="Capitano">C</span>` : ""}${jersey(p.squadra, info.maglia, coach)}
     <span class="tag"><span class="nm" style="display:block"><i>${ROLE[p.ruolo]}</i>${esc(surname(p.nome))}${formArrow(info.forma)}</span>
     ${body}</span></button>`;
@@ -1682,7 +1825,6 @@ function renderForm() {
   const coach = P.find(p => p.ruolo === "HC");
   const byId = Object.fromEntries(P.map(p => [p.id, p]));
   const nm = id => esc(byId[id]?.nome ?? "?");
-  const range = g.p90 - g.p10, lo = Math.max(0, g.p10 - range * .25), hi = g.p90 + range * .25, x = v => ((v - lo) / (hi - lo) * 100).toFixed(1);
   const now = activeIdx();
 
   const days = D.piano.giornate.map((d, i) => `<button type="button" data-day="${i}" aria-pressed="${i === day}"${i === now ? ` class="now" title="Giornata in corso o prossima"` : ""}><b>${esc(d.label)}</b><span>${dmy(d.dal)}–${dmy(d.al)}</span></button>`).join("");
@@ -1713,7 +1855,7 @@ function renderForm() {
   const turns = `<div class="card">${head("Turni", `${g.turni.length} ${g.turni.length === 1 ? "turno" : "turni"}`)}<div class="turns">${g.turni.map(t => `<div class="turn"><div class="t">T${t.turno}<small>${dow(t.data)} ${dmy(t.data)}</small></div>
     <div class="chips">${t.giocatori.map(id => `<span class="chip${starters.has(id) ? " st" : ""}">${esc(surname(byId[id]?.nome ?? "?"))}</span>`).join("")}</div></div>`).join("")}
     ${g.riposo.length ? `<div class="turn"><div class="t">—<small>riposo</small></div><div class="chips">${g.riposo.map(id => `<span class="chip">${esc(surname(byId[id]?.nome ?? "?"))}</span>`).join("")}</div></div>` : ""}
-    </div><p class="legend"><span><i class="st"></i>Pieni = titolari a inizio giornata</span><span><i></i>Vuoti = panchina</span></p></div>`;
+    </div><p class="legend"><span><i class="st"></i>Pieni = titolari a inizio giornata</span><span><i></i>Vuoti = panchina</span></p>${turnMap(g, starters)}</div>`;
 
   const cap = `<div class="card">${head("Capitano", "fascia ×1,5")}<ol class="steps">${g.capitano.map((c, k) => `<li><span class="dot">T${c.turno}</span>
     <div><div class="who">${nm(c.id)}</div><div class="thr">${c.soglia != null ? `Tienilo se fa almeno <b>${c.soglia}</b> punti, altrimenti la fascia passa a ${nm(g.capitano[k + 1].id)}.` : "Ultimo candidato: tienilo."}</div></div></li>`).join("")}</ol></div>`;
@@ -1723,9 +1865,7 @@ function renderForm() {
     <ol>${s.opzioni.map(o => `<li>${nm(o.entra)} (T${o.turno}) se il titolare ${o.ruoli.map(r => ROLE[r]).join("/")} fa meno di <b>${o.soglia}</b></li>`).join("")}</ol></div>`).join("")}
     <p class="note">Se un titolare è dato out prima della partita, sostituiscilo subito con il miglior panchinaro che non ha ancora giocato.</p></div></div>` : "";
 
-  const rng = `<div class="card">${head("Punteggio realistico", "8 giornate su 10 qui dentro")}<div class="range">
-    <div class="bar"><i style="left:${x(g.p10)}%;right:${(100 - x(g.p90)).toFixed(1)}%"></i><em style="left:calc(${x(g.punti)}% - 2px)"></em></div>
-    <div class="bar-l"><span>${g.p10} <small>(10%)</small></span><span>atteso <b>${num(g.punti)}</b></span><span>${g.p90} <small>(90%)</small></span></div></div></div>`;
+  const rng = realCard(day) + daysCard(day);
 
   const mine = hasMine() ? D.piano.attuale[day] : null;
   const toggle = mine ? `<div class="mode" data-m="${prevMode || mode}" role="group" aria-label="Quale rosa"><i aria-hidden="true"></i>
@@ -1745,6 +1885,94 @@ function renderForm() {
   const fa = `${todayCard()}${todoCard()}${liveCard()}${lastDay()}`;
   el.classList.add("cols");
   el.innerHTML = `${fa ? `<div class="fcol f-a">${fa}</div>` : ""}<div class="fcol f-b"><div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}</div><div class="fcol f-c">${top}${mode === "mia" ? "" : changes}${cap}${turns}${subs}${rng}</div>`;
+}
+
+
+// ——— Punteggio realistico: barra intervallo. Fascia = 10°–90° percentile delle simulazioni della giornata (8 giornate su
+// 10), punto = punti attesi (la media delle simulazioni: la mediana NON è in data.json e non la invento), riga verticale =
+// il piano. Sulla stessa scala la tua rosa senza cambi (ha anche lei la fascia) e, nella giornata delle alternative, le
+// formazioni di Opzioni: per loro data.json ha solo i punti attesi, quindi solo il punto, senza fascia.
+let rrMore = false;
+function realCard(i) {
+  const g = D.piano.giornate[i], m = hasMine() ? D.piano.attuale[i] : null, A = D.alternative;
+  const alts = A && A.opzioni && String(A.giornata || "").split(" ")[0] === g.label ? A.opzioni.filter(o => o.tag !== "consigliata" && o.punti != null) : [];
+  const vals = [g.p10, g.p90, g.punti, ...(m ? [m.p10, m.p90, m.punti] : []), ...alts.map(o => o.punti)].filter(v => v != null && isFinite(v));
+  const vmn = Math.min(...vals), vmx = Math.max(...vals);
+  const st = [10, 20, 25, 50, 100].find(k => Math.ceil(vmx / k) - Math.floor(vmn / k) <= 6) || 100;   // tacche tonde, al massimo 6 intervalli
+  const lo = Math.floor(vmn / st) * st, hi = Math.max(lo + st, Math.ceil(vmx / st) * st), X = v => ((v - lo) / (hi - lo) * 100).toFixed(2);
+  const ticks = []; for (let v = lo; v <= hi + 1e-9; v += st) ticks.push(v);
+  const ref = `<i class="rr-ref" style="left:${X(g.punti)}%" aria-hidden="true"></i>`;
+  const row = (cls, name, sub, r, ends) => `<div class="rr-r ${cls}" tabindex="0" role="img" data-tip="${esc(`${name}: ${r.p10 != null ? `${r.p10}–${r.p90} in 8 giornate su 10, ` : ""}${num(r.punti)} punti attesi`)}" aria-label="${esc(`${name}: ${r.p10 != null ? `tra ${r.p10} e ${r.p90} punti in 8 giornate su 10, ` : ""}${num(r.punti)} punti attesi`)}">
+    <span class="rr-n"><b>${esc(name)}</b>${sub ? `<small>${sub}</small>` : ""}</span>
+    <span class="rr-t">${ref}${r.p10 != null ? `<i class="rr-b" style="left:${X(r.p10)}%;width:${(X(r.p90) - X(r.p10)).toFixed(2)}%"></i>` : ""}<em class="rr-d" style="left:${X(r.punti)}%"></em>${ends ? `<span class="rr-l" style="left:${X(r.p10)}%">${r.p10}</span><span class="rr-l" style="left:${X(r.p90)}%">${r.p90}</span>` : ""}</span>
+    <b class="rr-v">${num(r.punti)}</b></div>`;
+  const rows = row("hi", "Il piano", esc(g.label), g, true) + (m ? row("base", "La tua rosa", "senza cambi", m, false) : "");
+  const altRows = alts.map(o => row("ra", o.nome, `${o.fuori.length} ${o.fuori.length === 1 ? "cambio" : "cambi"}`, {punti: o.punti}, false)).join("");
+  const chart = `<div class="rr">${rows}${alts.length ? `<div class="rr-more" id="rr-more"${rrMore ? "" : " hidden"}>${altRows}</div>` : ""}
+      <div class="rr-ax" aria-hidden="true"><span>${ticks.map((v, k) => `<i style="left:${X(v)}%">${ticks.length > 6 && k % 2 ? "" : v}</i>`).join("")}</span></div></div>
+    ${alts.length ? `<button type="button" class="more-btn" data-rrmore aria-expanded="${rrMore}" aria-controls="rr-more">${rrMore ? "Nascondi le alternative" : `Le ${alts.length} alternative sulla stessa scala`}</button>` : ""}
+    <p class="legend"><span><i class="rr-lb"></i>8 giornate su 10 (10°–90° percentile)</span><span><i class="rr-ld"></i>punti attesi</span>${m ? `<span><i class="base"></i>la tua rosa</span>` : ""}<span><i class="rr-lr"></i>il piano</span>${alts.length ? `<span><i class="rr-la"></i>alternative</span>` : ""}</p>`;
+  const tr = (n, r) => [esc(n), r.p10 != null ? String(r.p10) : "–", num(r.punti), r.p90 != null ? String(r.p90) : "–"];
+  const table = vtab(`Punteggio realistico, ${g.label}`, ["Formazione", "10° perc.", "Attesi", "90° perc."],
+    [tr("Il piano", g), ...(m ? [tr("La tua rosa senza cambi", m)] : []), ...alts.map(o => tr(o.nome, {punti: o.punti}))]);
+  return `<div class="card">${head("Punteggio realistico", "8 giornate su 10 dentro la fascia")}
+    ${viz("rr", "Punteggio realistico", chart, table)}
+    <p class="note">Il punto è la media delle simulazioni (i punti attesi): la mediana non è nei dati della pagina.${alts.length ? ` Per le alternative di Opzioni ci sono solo i punti attesi, non la fascia: per questo hanno solo il punto.` : ""}</p></div>`;
+}
+
+// ——— Le quattro giornate affiancate: tre piccoli grafici, una misura ciascuno (punti attesi, malus, crediti attesi).
+// Dentro ogni grafico G1–G4 hanno la stessa scala, che parte da zero; le tre misure hanno scale diverse (e i crediti un'altra
+// unità), quindi tre grafici e mai un doppio asse. La giornata scelta in alto è in evidenza, le altre in grigio.
+// Prezzi mostra i prezzi veri (fotografie); qui ci sono le previsioni del piano per giornata, che lì non ci sono.
+function daysCard(i) {
+  const G = D.piano.giornate; if (G.length < 2) return "";
+  const useCr = G.every(g => g.plus_cr != null);
+  const M = [["punti", "Punti attesi", g => g.punti, v => num(v), "punti"],
+    ["malus", "Malus cambi", g => g.malus || 0, v => v ? "−" + num(v, 0) : "0", "punti"],
+    useCr ? ["cr", "Crediti attesi", g => g.plus_cr, v => sign(v, 2), "crediti"] : ["plus", "Plus attesa", g => g.plus, v => sign(v), "punti sopra il pareggio"]];
+  const panel = ([k, t, f, fmt, u]) => {
+    const vs = G.map(f), mn = Math.min(0, ...vs), mx = Math.max(0, ...vs), span = (mx - mn) || 1, z = (0 - mn) / span * 100;
+    const cols = G.map((g, j) => { const v = vs[j], y = (v - mn) / span * 100, b = Math.min(z, y), h = Math.abs(y - z);
+      return `<span class="gm-c${j === i ? " on" : ""}" style="--k:${j}" data-tip="${esc(`${g.label}: ${fmt(v)} ${u}`)}"><i${v < 0 ? ' class="neg"' : ""} style="bottom:${b.toFixed(1)}%;height:${Math.max(h, v ? 1.5 : 0).toFixed(1)}%"></i></span>`; }).join("");
+    return `<div class="gm"><div class="gm-h"><span class="lab">${t}</span><b>${fmt(vs[i])}<small>${esc(G[i].label)}</small></b></div>
+      <div class="gm-p" style="--n:${G.length}" aria-hidden="true">${mn < 0 ? `<span class="gm-z" style="bottom:${z.toFixed(1)}%"></span>` : ""}${cols}</div>
+      <div class="gm-x" style="--n:${G.length}" aria-hidden="true">${G.map((g, j) => `<span${j === i ? ' class="on"' : ""}>${esc(g.label)}</span>`).join("")}</div></div>`;
+  };
+  const chart = `<div class="gm-w" role="img" aria-label="${esc(G.map(g => `${g.label}: ${num(g.punti)} punti attesi, malus ${num(g.malus || 0, 0)}, ${useCr ? `${sign(g.plus_cr, 2)} crediti attesi` : `plus ${sign(g.plus)}`}`).join("; "))}">${M.map(panel).join("")}</div>`;
+  const table = vtab("Le quattro giornate del piano", ["Giornata", "Punti attesi", "8 su 10", "Malus", useCr ? "Crediti attesi" : "Plus (pt)"],
+    G.map(g => [`${esc(g.label)}<br><small class="muted">${dmy(g.dal)}–${dmy(g.al)}</small>`, num(g.punti), `${g.p10}–${g.p90}`, g.malus ? "−" + num(g.malus, 0) : "0", useCr ? sign(g.plus_cr, 2) : sign(g.plus)]));
+  return `<div class="card">${head(`Le ${G.length} giornate del piano`, "affiancate")}
+    ${viz("gm", `Le ${G.length} giornate`, chart, table)}
+    <p class="note">Tre grafici perché le misure hanno scale diverse: ognuno parte da zero e ha la stessa scala per tutte le giornate. In arancio la giornata scelta in alto. I prezzi veri, fotografia per fotografia, sono in Prezzi.</p></div>`;
+}
+
+// ——— Mappa dei turni: giocatori × turni della giornata. In data.json ogni giocatore ha un solo turno (quello della sua
+// partita) e i punti attesi della giornata: la cella del suo turno ha quel valore, le altre sono vuote. Una sola tinta,
+// chiaro → scuro in 5 classi tra il minimo e il massimo della giornata; il numero è scritto solo nel migliore di ogni turno.
+let tmapOpen = false;
+function turnMap(g, starters) {
+  const T = (g.turni || []).map(t => t.turno); if (!T.length) return "";
+  const ord = {titolare: 0, "sesto uomo": 1, panchina: 2};
+  const P = g.giocatori.filter(p => p.ruolo !== "HC").sort((a, b) => (ord[a.slot] ?? 3) - (ord[b.slot] ?? 3) || (a.turno || 9) - (b.turno || 9) || b.punti - a.punti);
+  const on = P.filter(p => p.turno && T.includes(p.turno));
+  if (!on.length) return "";
+  const mn = Math.min(...on.map(p => p.punti)), mx = Math.max(...on.map(p => p.punti));
+  const cls = v => mx > mn ? Math.min(5, 1 + Math.floor((v - mn) / (mx - mn) * 5)) : 5;
+  const best = Object.fromEntries(T.map(t => [t, Math.max(...on.filter(p => p.turno === t).map(p => p.punti), -1)]));
+  const tInfo = Object.fromEntries((g.turni || []).map(t => [t.turno, t]));
+  const slotS = {titolare: "titolare", "sesto uomo": "6° uomo", panchina: "panchina"};
+  const head2 = `<span></span>${T.map(t => `<span class="th">T${t}<small>${dow(tInfo[t].data)} ${dmy(tInfo[t].data)}</small></span>`).join("")}`;
+  const rows = P.map(p => `<span class="tn${starters.has(p.id) ? " st" : ""}"><b>${esc(surname(p.nome))}</b><small>${ROLE[p.ruolo]} · ${p.turno ? slotS[p.slot] || esc(p.slot) : "riposa"}</small></span>${T.map(t => {
+    if (p.turno !== t) return `<span class="tq e" aria-hidden="true"></span>`;
+    const lab = `${p.nome}, T${t} ${dow(tInfo[t].data)} ${dmy(tInfo[t].data)}: ${num(p.punti)} punti attesi${p.p_gioca != null && p.p_gioca < 1 ? `, presenza ${Math.round(p.p_gioca * 100)}%` : ""}`;
+    return `<span class="tq s${cls(p.punti)}" role="img" tabindex="0" data-tip="${esc(lab)}" aria-label="${esc(lab)}">${p.punti === best[t] ? num(p.punti) : ""}</span>`; }).join("")}`).join("");
+  const step = (mx - mn) / 5;
+  const chart = `<div class="tmap" style="--n:${T.length}">${head2}${rows}</div>
+    <div class="sq-l"><span>${num(mn)}</span><span class="sc" aria-hidden="true">${[1, 2, 3, 4, 5].map(k => `<i class="s${k}" title="${num(mn + step * (k - 1))}–${num(mn + step * k)}"></i>`).join("")}</span><span>${num(mx)} punti attesi</span></div>
+    <p class="note">Ogni giocatore gioca un solo turno della ${esc(g.label)}: la cella colorata è quella. La scala qui sopra va da pochi punti attesi (a sinistra) a tanti (a destra); i punti attesi sono quelli della carta (già ridotti dalla presenza; nel punteggio della giornata la panchina vale poi il 50%). Il numero è scritto nel migliore di ogni turno; tocca una cella per gli altri.</p>`;
+  const table = vtab(`Mappa dei turni, ${g.label}`, ["Giocatore", ...T.map(t => `T${t}`)],
+    P.map(p => [`${esc(p.nome)}<br><small class="muted">${ROLE_LONG[p.ruolo] || p.ruolo} · ${esc(p.slot)}</small>`, ...T.map(t => p.turno === t ? num(p.punti) : "–")]));
+  return `<details class="tmap-d"${tmapOpen ? " open" : ""}><summary><span>Mappa dei turni</span></summary>${viz("tmap", "Mappa dei turni", chart, table)}</details>`;
 }
 
 // Rosa attuale contro piano: quanto rendono i cambi, nella giornata e su tutte quelle del piano
@@ -1811,7 +2039,7 @@ function todayCard(frag) {
 // Avvisi sui tuoi in Oggi: con uno solo una pillola ferma; con più di uno una striscia che scorre piano se non sta nella
 // riga (la decide mqSetup dopo il disegno), con una seconda copia nascosta al lettore di schermo per il giro senza salti.
 function warnStrip(warn) {
-  const items = warn.map((w, k) => `<span class="ti" style="--k:${k}"><i class="pd ${presCls(w.pr)}" aria-hidden="true"></i>${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("");
+  const items = warn.map((w, k) => `<span class="ti" style="--k:${k}">${presIc(w.pr)}${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("");
   if (warn.length < 2) return `<span class="td-inj chain">${items}</span>`;
   return `<span class="td-inj mq" title="Tocca per fermare o far ripartire"><span class="mq-t"><span class="mq-g chain">${items}</span><span class="mq-g" aria-hidden="true">${items}</span></span></span>`;
 }
@@ -2022,11 +2250,13 @@ function swapsCard() {
   const T = S.squadre || [], lose = T.filter(t => t.netto < 0).slice(0, 7), gain = T.filter(t => t.netto > 0).slice(-7).reverse();
   const mx = Math.max(1, ...[...lose, ...gain].map(t => Math.abs(t.netto)));
   const who = L => L.map(x => esc(surname(x.nome))).join(", ");
-  const tm = (t, k) => `<li class="tm" style="--k:${k}"><b class="tm-c" style="--tc:${teamTone(t.squadra)}">${esc(t.squadra)}</b>
+  const tm = (t, k) => `<li class="tm" style="--k:${k}"><b class="tm-c" style="${teamVars(t.squadra)}">${esc(t.squadra)}</b>
     <span class="tm-bar" aria-hidden="true"><i class="${t.netto > 0 ? "p" : "n"}" style="--w:${(Math.abs(t.netto) / mx * 100).toFixed(1)}%"></i></span><b class="tm-v ${t.netto > 0 ? "up" : "down"}">${sign(t.netto, 0)}</b>
     <small class="tm-who">${t.partiti.length ? `<em>Escono</em> ${who(t.partiti)}` : ""}${t.partiti.length && t.arrivati.length ? " · " : ""}${t.arrivati.length ? `<em>Entrano</em> ${who(t.arrivati)}` : ""}</small></li>`;
-  const teams = lose.length || gain.length ? `${lose.length ? `<div class="tm-g">Perdono più azioni</div><ul class="tm-l">${lose.map(tm).join("")}</ul>` : ""}
-    ${gain.length ? `<div class="tm-g">Ne guadagnano di più</div><ul class="tm-l">${gain.map((t, k) => tm(t, k + lose.length)).join("")}</ul>` : ""}
+  const tmTable = vtab("Saldo di azioni per squadra", ["Squadra", "Saldo", "Escono", "Entrano"],
+    [...lose, ...gain].map(t => [esc(t.squadra), sign(t.netto, 0), who(t.partiti) || "–", who(t.arrivati) || "–"]));
+  const teams = lose.length || gain.length ? `${viz("tm", "Saldo per squadra", `${lose.length ? `<div class="tm-g">Perdono più azioni</div><ul class="tm-l">${lose.map(tm).join("")}</ul>` : ""}
+    ${gain.length ? `<div class="tm-g">Ne guadagnano di più</div><ul class="tm-l">${gain.map((t, k) => tm(t, k + lose.length)).join("")}</ul>` : ""}`, tmTable)}
     <p class="note">Saldo = azioni a partita degli arrivati meno quelle dei partiti. Una squadra con saldo alto ha più giocatori che si contendono i tiri.</p>` : "";
   const tabs = [["movers", "Più usati", movers], ["mine", "Tua rosa", mineH], ["teams", "Squadre", teams]].filter(t => t[2]);
   if (!tabs.length) return "";
@@ -2096,7 +2326,9 @@ function seasonCard() {
     <div class="sc-h"><span>${esc(r.strategia)}</span><b>${r.punti.toLocaleString("it-IT")}</b></div>
     <div class="sc-bar"><i style="--w:${(r.punti / mx * 100).toFixed(1)}%;--b:${k}"></i></div>
     <small class="muted">${num(r.punti / r.giornate, 0)} a giornata · ${r.cambi} cambi · valore rosa ${num(r.valore)}</small></div>`).join("");
-  return `<div class="card">${head(`La stagione ${esc(c.stagione)} giocata dal modello`)}<div class="sc">${rows}</div><p class="note">${esc(c.note)}</p></div>`;
+  const table = vtab(`La stagione ${c.stagione} giocata dal modello`, ["Strategia", "Punti", "A giornata", "Cambi", "Valore rosa"],
+    c.righe.map(r => [esc(r.strategia), r.punti.toLocaleString("it-IT"), num(r.punti / r.giornate, 0), String(r.cambi), num(r.valore)]));
+  return `<div class="card">${head(`La stagione ${esc(c.stagione)} giocata dal modello`)}${viz("sc", "Stagione giocata dal modello", `<div class="sc">${rows}</div>`, table)}<p class="note">${esc(c.note)}</p></div>`;
 }
 
 // Cambi di rosa consigliati per la giornata (la formazione la decidi tu turno per turno)
@@ -2134,19 +2366,20 @@ function renderPrezzi() {
     const W = 320, H = 140, pl = 34, pr = 10, top = 26, base = H - 22, mn = Math.min(...tot) - .5, mx = Math.max(...tot) + .5, gid = "pz" + (++jid);
     const X = i => pl + 14 + i * (W - pl - pr - 28) / (snaps.length - 1), Y = v => base - (v - mn) / (mx - mn) * (base - top);
     const pts = tot.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
-    // asse: base piena, due righe tratteggiate leggere, valori a sinistra fuori dal disegno
+    // asse: base piena, due righe sottili continue (mai tratteggiate: il tratteggio vuol dire "previsione"), valori a sinistra
     const grid = [0, .5, 1].map(f => { const v = mn + (mx - mn) * f, y = Y(v).toFixed(1);
-      return `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="${f ? "var(--line)" : "var(--line-2)"}"${f ? ` stroke-dasharray="2 4"` : ""}/>
+      return `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="${f ? "var(--line)" : "var(--line-2)"}"/>
       <text x="${pl - 6}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--muted)">${num(v)}</text>`; }).join("");
     const lx = X(tot.length - 1), anchor = snaps.length > 1 ? "end" : "middle";
     chart = `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Valore della rosa per giornata">
       <defs><linearGradient id="${gid}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" style="stop-color:var(--c-hi);stop-opacity:.26"/><stop offset="1" style="stop-color:var(--c-hi);stop-opacity:0"/></linearGradient></defs>${grid}
       <polygon class="ar" points="${X(0).toFixed(1)},${base} ${pts} ${lx.toFixed(1)},${base}" fill="url(#${gid})"/>
-      <polyline class="ln" pathLength="1" points="${pts}" fill="none" stroke="var(--c-hi)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-      ${tot.map((v, i) => `<circle class="pt" data-k="${i}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${i === tot.length - 1 ? 5 : 3}" fill="${i === tot.length - 1 ? "var(--c-hi)" : "var(--surface)"}" stroke="var(--c-hi)" stroke-width="2"/>
+      <polyline class="ln" pathLength="1" points="${pts}" fill="none" stroke="var(--c-hi)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      ${tot.map((v, i) => `<circle class="pt" data-k="${i}" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${i === tot.length - 1 ? 5 : 4}" fill="${i === tot.length - 1 ? "var(--c-hi)" : "var(--surface)"}" stroke="${i === tot.length - 1 ? "var(--surface)" : "var(--c-hi)"}" stroke-width="2"/>
       <circle class="hit" data-hl="${i}" data-tip="${esc(snaps[i])}: ${num(v)} crediti" cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="16" fill="transparent"/>
       <text x="${X(i).toFixed(1)}" y="${H - 4}" text-anchor="middle" font-size="11"${i === tot.length - 1 ? ` font-weight="700" fill="var(--fg)"` : ` fill="var(--muted)"`}>${esc(snaps[i])}</text>`).join("")}
       <text class="pt" x="${lx.toFixed(1)}" y="${(tot.at(-1) < tot.at(-2) ? Math.min(Y(tot.at(-1)) + 22, base - 5) : Y(tot.at(-1)) - 11).toFixed(1)}" text-anchor="${anchor}" font-size="13" font-weight="700" fill="var(--fg)">${num(tot.at(-1))} cr</text></svg></div>`;
+    chart = viz("pz", "Valore della rosa", chart, vtab("Valore della rosa per fotografia", ["Fotografia", "Valore (cr)", "Variazione"], tot.map((v, i) => [esc(snaps[i]), num(v), i ? sign(v - tot[i - 1]) : "–"])));
   }
   const t = D.taratura;
   const src = t ? Object.entries(t.stagioni || {}).map(([k, v]) => `${k}: ${v} giornate`).join(", ") : "";
@@ -2209,11 +2442,13 @@ function renderAlt() {
         <label><span class="lab">Colonna B</span><select id="pb">${O.filter(o => o.rosa).map(o => `<option value="${o.id}">${o.id} · ${esc(o.nome)}</option>`).join("")}</select></label></div>
       <div id="pair-b"></div>
       <p class="legend"><span><i class="lg-out"></i>esce passando da A a B</span><span><i class="lg-in"></i>entra</span><span><i class="lg-mv"></i>in tutte e due, in un altro slot</span></p></div>` : "";
+  const cmpTable = vtab(`Formazioni alternative, ${A.giornata}`, ["Formazione", "Punti attesi", "Sulla consigliata", "Cambi", "Crediti attesi"],
+    O.map(o => [`${o.id} · ${esc(o.nome)}`, num(o.punti), o === rec ? "riferimento" : sign(dl(o)), String(o.fuori.length), o.prezzi != null ? sign(o.prezzi, 2) : "–"]));
   el.innerHTML = `${vh}
     <div class="card">${head("Formazioni alternative", esc(A.giornata))}
-      <div class="cmp-list">${rows}</div>
+      ${viz("alt", "Formazioni alternative", `<div class="cmp-list">${rows}</div>
       <div class="cmp-scale" aria-hidden="true"><span><span>−${span}</span><span>consigliata</span><span>+${span}</span></span></div>
-      <p class="legend"><span><i style="background:var(--noise);border-color:transparent"></i>±${num(ALT_NOISE)} punti: differenza di rumore</span></p>
+      <p class="legend"><span><i style="background:var(--pos);border-color:var(--pos)"></i>meglio della consigliata</span><span><i class="neg-l"></i>peggio</span><span><i style="background:var(--c-zero);border-color:var(--c-zero)"></i>dentro il rumore</span><span><i style="background:var(--noise);border-color:transparent"></i>±${num(ALT_NOISE)} punti: differenza di rumore</span></p>`, cmpTable)}
       <p class="note">${esc(A.nota)}</p>
       ${age > 2 ? `<p class="note" style="color:var(--warn-text)">Calcolate il ${esc(A.calcolato.split("-").reverse().join("/"))}: potrebbero non essere più aggiornate.</p>` : ""}</div>
     ${pair}
@@ -2354,7 +2589,7 @@ function drawMkt(anim) {
     const pr = v.p != null && c.ruolo !== "HC" ? v.p : null;
     const si = cmpOn ? cmpSel.indexOf(c.id) : -1;
     return `<tr data-mid="${c.id}" tabindex="0" aria-label="${esc(c.nome)}, ${esc(c.squadra)}, ${cr(c.crediti)} crediti, ${num(v.punti)} punti attesi. ${cmpOn ? "Scegli per il confronto" : "Apri la scheda"}" style="--k:${k}"${si >= 0 ? ' class="sel" aria-selected="true"' : ""}><td><div class="mn">${favBtn(c.nome)}<span><b>${esc(c.nome)}</b>${si >= 0 ? `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>` : ""}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></span></div></td>
-    <td>${cr(c.crediti)}</td><td class="flashable"><b data-cnt="m${c.id}">${num(v.punti)}</b>${v.adj ? " ✎" : ""}</td><td>${num(ptcr({c, v}), 2)}${bar(ptcr({c, v}) / top * 100)}</td><td class="${v.plus_cr > 0.05 ? "up" : v.plus_cr < -0.05 ? "down" : ""}">${v.plus_cr != null ? sign(v.plus_cr, 2) : "–"}</td><td>${pr != null ? Math.round(pr * 100) + "%" + bar(pr * 100, pr >= .8 ? "ok" : pr >= .5 ? "mid" : "lo") : "–"}</td></tr>`;
+    <td>${cr(c.crediti)}</td><td class="flashable"><b data-cnt="m${c.id}">${num(v.punti)}</b>${v.adj ? " ✎" : ""}</td><td>${num(ptcr({c, v}), 2)}${bar(ptcr({c, v}) / top * 100)}</td><td class="${v.plus_cr > 0.05 ? "up" : v.plus_cr < -0.05 ? "down" : ""}">${v.plus_cr != null ? sign(v.plus_cr, 2) : "–"}</td><td>${pr != null ? presIc(pr) + Math.round(pr * 100) + "%" + bar(pr * 100, presCls(pr)) : "–"}</td></tr>`;
   }).join("");
   const n = document.getElementById("mkt-n"); if (n) n.textContent = `${L.length} giocatori · ${curG().label}`;
   box.innerHTML = `<div class="card">${L.length ? `<div class="scroll mkt-sc"><table class="lastday mkt-t${anim && !calm ? " cascade" : ""}"><thead><tr><th>Giocatore</th><th>Cr</th><th>Pt</th><th>Pt/cr</th><th>Plus</th><th>Pres.</th></tr></thead><tbody>${rows}</tbody></table></div>
@@ -2425,7 +2660,8 @@ function drawCmp(anim) {
   }).join("");
   const who = (c, v, cls) => `<button type="button" data-cmpopen="${c.id}" aria-label="Scheda di ${esc(c.nome)}">${cls === "a" ? `<b><span class="sw-a" aria-hidden="true"></span>A · ${esc(surname(c.nome))}</b>` : `<b>${esc(surname(c.nome))} · B<span class="sw-b" aria-hidden="true"></span></b>`}<small>${esc(c.squadra)} · ${ROLE[c.ruolo]} · ${v.partita ? esc(v.partita) : "non gioca"}</small></button>`;
   box.innerHTML = `<div class="card cmpp${anim && !calm ? " in" : ""}">${head("Confronto", esc(curG().label))}
-    <div class="cmpp-h">${who(a, va, "a")}${who(b, vb, "b")}</div>${rows}
+    <div class="cmpp-h">${who(a, va, "a")}${who(b, vb, "b")}</div>${viz("cmpp", "Confronto tra due giocatori", rows,
+      vtab(`Confronto: ${a.nome} contro ${b.nome}`, ["Voce", `A · ${esc(surname(a.nome))}`, `B · ${esc(surname(b.nome))}`], M.map(([l, x, y, d]) => [esc(l), l === "Crediti attesi" ? sign(x, d) : num(x, d), l === "Crediti attesi" ? sign(y, d) : num(y, d)])))}
     <p class="note">La barra parte dal centro verso chi è meglio (↓ = meno è meglio), lunga quanto la differenza rispetto al più grande dei due. Valori della giornata scelta, con la tua stima di presenza se l'hai data.</p>
     <div class="cmpp-x"><button type="button" class="btn-o" data-cmpswap>Scambia A e B</button><button type="button" class="btn-o" data-cmpoff>Chiudi</button></div></div>`;
   box.querySelectorAll("[data-cnt]").forEach(el => {   // i numeri scorrono: dal valore di prima, o da zero al primo confronto
@@ -2550,15 +2786,19 @@ function spark(G, expv, ifPlays) {
     return `<rect class="b" data-k="${k}" style="--b:${k}" x="${(X + bw * .18).toFixed(1)}" y="${Y(x.punti).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${Math.max(1, h).toFixed(1)}" rx="3" fill="${up ? "var(--c-hi)" : !expv ? "var(--c-base)" : `url(#${hid})`}"${expv && !up ? ` stroke="var(--c-base)" stroke-width="1.5"` : ""}><title>${esc(tipOf(x))}</title></rect>`; }).join("");
   // colonne trasparenti alte quanto il grafico: si tocca la colonna intera, non solo la barra
   const hits = G.map((x, k) => `<rect class="hit" data-hl="${k}" data-tip="${esc(tipOf(x))}" x="${(4 + k * bw).toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H}" fill="transparent"/>`).join("");
+  // numeri solo dove servono: l'ultima partita e la migliore (gli altri al tocco e nella tabella)
+  const kMax = G.reduce((b, x, k) => x.punti > G[b].punti ? k : b, 0), lab = k => k === n - 1 || k === kMax;
   const labels = G.map((x, k) => { const X = 4 + k * bw + bw / 2;
-    return `<text class="v" style="--b:${k}" x="${X.toFixed(1)}" y="${(Y(x.punti) - 4).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--fg)" stroke="var(--surface)" stroke-width="3" paint-order="stroke">${Math.round(x.punti)}</text>
+    return `${lab(k) ? `<text class="v" style="--b:${k}" x="${X.toFixed(1)}" y="${(Y(x.punti) - 4).toFixed(1)}" text-anchor="middle" font-size="10" font-weight="700" fill="var(--fg)" stroke="var(--surface)" stroke-width="3" paint-order="stroke">${Math.round(x.punti)}</text>` : ""}
       <text x="${X.toFixed(1)}" y="${base + 15}" text-anchor="middle" font-size="9" fill="var(--muted)">${x.casa ? "" : "@"}${esc(x.avv)}</text>`; }).join("");
   const line = expv ? `<line class="ref" x1="2" x2="${W - 2}" y1="${Y(expv).toFixed(1)}" y2="${Y(expv).toFixed(1)}" stroke="var(--c-ref)" stroke-opacity=".8" stroke-dasharray="4 3" stroke-width="1.4"/>` : "";
+  const table = vtab(`Ultime ${n} partite`, ["Partita", "Punti", "Minuti", ...(expv ? ["Rispetto agli attesi"] : [])],
+    G.map(x => [`${dmy(x.data)} ${x.casa ? "vs" : "@"} ${esc(x.avv)}`, num(x.punti), String(x.min ?? "–"), ...(expv ? [sign(x.punti - expv)] : [])]));
   return `<div class="spark"><div class="spark-h"><b>Ultime ${n} partite</b><span class="muted num" style="font-size:var(--fs-s)">media ${num(avg)}</span></div>
-    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
+    ${viz("spark", `Ultime ${n} partite`, `${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>attesi ${ifPlays ? "se gioca " : ""}${num(expv)}</span></p>` : ""}
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Punti Dunkest nelle ultime ${n} partite, media ${num(avg)}">
-    ${defs}<line x1="2" x2="${W - 2}" y1="${Y(mx / 2).toFixed(1)}" y2="${Y(mx / 2).toFixed(1)}" stroke="var(--line)" stroke-dasharray="2 4"/><line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
-    <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}Piene in arancio le partite sopra i punti attesi, a righe quelle sotto; @ = in trasferta. Tocca una barra per il dettaglio.</span></div>`;
+    ${defs}<line x1="2" x2="${W - 2}" y1="${Y(mx / 2).toFixed(1)}" y2="${Y(mx / 2).toFixed(1)}" stroke="var(--line)"/><line x1="2" x2="${W - 2}" y1="${base}" y2="${base}" stroke="var(--line-2)"/>${bars}${line}${labels}${hits}</svg>
+    <span class="note" style="font-size:.8rem">${D.partite_stagione ? `${esc(D.partite_stagione)} (${dmy(G[0].data)}/${G[0].data.slice(2, 4)} – ${dmy(G.at(-1).data)}/${G.at(-1).data.slice(2, 4)}). ` : ""}Piene in arancio le partite sopra i punti attesi, a righe quelle sotto; @ = in trasferta. Numeri sulla migliore e sull'ultima: tocca una barra per le altre.</span>`, table)}</div>`;
 }
 
 // Ultime 5 partite in una striscia (Panoramica della scheda): punti, avversario e una barretta in scala che si riempie
@@ -2569,10 +2809,12 @@ function formStrip(G, expv) {
   const pct = v => (Math.max(0, v) / mx * 100).toFixed(1) + "%";
   const lab = D.partite_stagione ? ` <span style="text-transform:none;letter-spacing:0">· ${/passat/i.test(D.partite_stagione) ? "stagioni passate" : esc(D.partite_stagione)}</span>` : "";
   return `<div class="f5"><div class="f5-h"><span class="lab">Ultime ${L.length} partite${lab}</span><span class="muted num" style="font-size:var(--fs-s)">media <b data-cnt="f5m" style="color:var(--fg)">${num(avg)}</b></span></div>
-    <ol class="f5-l">${L.map((x, k) => { const hi = expv && x.punti >= expv;
+    ${viz("f5", `Ultime ${L.length} partite`, `<ol class="f5-l">${L.map((x, k) => { const hi = expv && x.punti >= expv;
       return `<li class="${hi ? "hi" : ""}" data-tip="${esc(`${dmy(x.data)} ${x.casa ? "vs" : "@"} ${x.avv}: ${num(x.punti)} punti in ${x.min} min${expv ? (hi ? ", sopra" : ", sotto") + " gli attesi " + num(expv) : ""}`)}">
         <small>${dmy(x.data)}</small><span class="f5-b" aria-hidden="true"><i style="--h:${pct(x.punti)};--b:${k}"></i>${expv ? `<em style="--e:${pct(expv)}"></em>` : ""}</span><b>${num(x.punti, 0)}</b><small>${x.casa ? "" : "@"}${esc(x.avv)}</small></li>`; }).join("")}</ol>
-    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>tacca: attesi ${num(expv)}</span></p>` : ""}</div>`;
+    ${expv ? `<p class="legend"><span><i class="hi"></i>sopra gli attesi</span><span><i class="hatch"></i>sotto</span><span><i class="dash"></i>tacca: attesi ${num(expv)}</span></p>` : ""}`,
+    vtab(`Ultime ${L.length} partite`, ["Partita", "Punti", "Minuti", ...(expv ? ["Rispetto agli attesi"] : [])],
+      L.map(x => [`${dmy(x.data)} ${x.casa ? "vs" : "@"} ${esc(x.avv)}`, num(x.punti), String(x.min ?? "–"), ...(expv ? [sign(x.punti - expv)] : [])])))}</div>`;
 }
 
 function formBlock(f) {
@@ -2645,7 +2887,7 @@ function subsBlock(p) {
     const dp = v.punti - base, dc = c.crediti - p.crediti;
     return `<button type="button" class="sbs" data-sub="${c.id}"><b>${esc(c.nome)}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}</b>
       <span class="d"><b>${num(v.punti)}</b><small class="${dp > 0.05 ? "up" : dp < -0.05 ? "down" : ""}">${sign(dp, 1)} pt</small></span>
-      <span class="m">${esc(c.squadra)} · ${cr(c.crediti)} cr (${sign(dc, 1)})${v.p != null && v.p < 0.95 ? ` · <i class="pd ${presCls(v.p)}" aria-hidden="true"></i>${Math.round(v.p * 100)}% presenza` : ""}${v.plus_cr != null ? " · plus " + sign(v.plus_cr, 2) + " cr" : ""}</span></button>`;
+      <span class="m">${esc(c.squadra)} · ${cr(c.crediti)} cr (${sign(dc, 1)})${v.p != null && v.p < 0.95 ? ` · ${presIc(v.p)}${Math.round(v.p * 100)}% presenza` : ""}${v.plus_cr != null ? " · plus " + sign(v.plus_cr, 2) + " cr" : ""}</span></button>`;
   }).join("");
   return `<div><div class="lab" style="margin-bottom:6px">Sostituti simili</div><div class="subs">${rows}</div>
     <p class="note" style="margin:6px 0 0">Stesso ruolo, fino a 1,5 crediti in più di ${esc(surname(p.nome))}, i migliori per punti attesi (${esc(curG().label)}). Differenza rispetto ai suoi ${num(base)}.</p></div>`;
@@ -2876,14 +3118,14 @@ function runSearch() {
   const pRow = c => {
     const d = rowVals(c), k = i++;
     const tag = mine.has(c.nome) ? '<span class="pill mine-tag">in rosa</span>' : planIds.has(c.id) ? '<span class="pill q">nel piano</span>' : "";
-    const lab = `${c.nome}, ${c.squadra}, ${ROLE_LONG[c.ruolo] || c.ruolo}, ${cr(c.crediti)} crediti, ${d.punti != null ? num(d.punti) + " punti attesi" : "non gioca"}${mine.has(c.nome) ? ", in rosa" : planIds.has(c.id) ? ", nel piano" : ""}`;
+    const lab = `${c.nome}, ${c.squadra}, ${ROLE_LONG[c.ruolo] || c.ruolo}, ${cr(c.crediti)} crediti, ${d.punti != null ? num(d.punti) + " punti attesi" : "non gioca"}${d.partita && d.p != null && c.ruolo !== "HC" ? `, presenza ${Math.round(d.p * 100)}% (${PRES_TXT[presCls(d.p)]})` : ""}${mine.has(c.nome) ? ", in rosa" : planIds.has(c.id) ? ", nel piano" : ""}`;
     return `<button type="button" class="srch-r${k === 0 ? " on" : ""}" data-i="${k}" style="--k:${k}" aria-label="${esc(lab)}"><b>${esc(c.nome)}</b>
-      <span class="pt"><b>${d.punti != null ? num(d.punti) : "–"}</b><small>${d.partita ? (d.p != null && c.ruolo !== "HC" ? `<i class="pd ${presCls(d.p)}" aria-hidden="true"></i>${Math.round(d.p * 100)}% · ` : "") + "punti" : "non gioca"}</small></span>
+      <span class="pt"><b>${d.punti != null ? num(d.punti) : "–"}</b><small>${d.partita ? (d.p != null && c.ruolo !== "HC" ? `${presIc(d.p)}${Math.round(d.p * 100)}% · ` : "") + "punti" : "non gioca"}</small></span>
       <span class="m">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo} · ${cr(c.crediti)} cr ${tag}</span></button>`;
   };
   const tRow = t => {
     const L = srchIdx.filter(c => c.squadra === t && c.ruolo !== "HC"), best = L.map(c => [c, rowVals(c).punti || 0]).sort((a, b) => b[1] - a[1])[0], k = i++;
-    return `<button type="button" class="srch-r srch-t${k === 0 ? " on" : ""}" data-i="${k}" style="--k:${k};--tc:${teamTone(t)}" aria-label="Squadra ${esc(t)}: ${L.length} giocatori. Mostra solo i suoi"><b>${esc(t)}</b>
+    return `<button type="button" class="srch-r srch-t${k === 0 ? " on" : ""}" data-i="${k}" style="--k:${k};${teamVars(t)}" aria-label="Squadra ${esc(t)}: ${L.length} giocatori. Mostra solo i suoi"><b>${esc(t)}</b>
       <span class="pt"><small>filtra</small></span><span class="m">${L.length} giocatori${best ? ` · il migliore: ${esc(surname(best[0].nome))} (${num(best[1])})` : ""}</span></button>`;
   };
   const chip = (k, v, l, al) => `<button type="button" class="srch-c" data-sf="${k}:${v}" aria-pressed="${F[k] === v}"${al ? ` aria-label="${al}"` : ""}>${l}</button>`;
@@ -3023,13 +3265,20 @@ function closeSheet(fling) {
 (() => {
   const tip = document.getElementById("tip");
   let timer = 0, lit = null;
-  const hide = () => { if (tip.hidden) return; tip.hidden = true; clearTimeout(timer); if (lit) { lit.classList.remove("on"); lit = null; } };
+  const hide = () => { if (tip.hidden) return; tip.hidden = true; clearTimeout(timer); if (lit) { lit.classList.remove("on", "lit"); lit = null; } };
+  // stesso valore al tocco e al fuoco da tastiera (celle della mappa, colonne delle giornate, righe del punteggio)
+  document.addEventListener("focusin", e => { const t = e.target.closest && e.target.closest("[data-tip][tabindex]"); if (t && t.matches(":focus-visible")) show(t); });
+  document.addEventListener("focusout", e => { if (e.target.closest && e.target.closest("[data-tip][tabindex]")) hide(); });
   document.addEventListener("click", e => {
     const t = e.target.closest && e.target.closest("[data-tip]");
     if (!t) { hide(); return; }
+    show(t);
+  });
+  function show(t) {
     hide();
     const svg = t.ownerSVGElement, hl = t.dataset.hl;
     if (svg && hl != null) { lit = svg.querySelector(`[data-k="${hl}"]`); if (lit) lit.classList.add("on"); }
+    else if (t.matches(".tq,.gm-c,.rr-r")) { lit = t; lit.classList.add("lit"); }
     const a = (lit || t.querySelector(".sb") || t).getBoundingClientRect();
     tip.textContent = t.dataset.tip; tip.hidden = false;
     const w = tip.offsetWidth, h = tip.offsetHeight;
@@ -3038,10 +3287,13 @@ function closeSheet(fling) {
     const x = Math.min(innerWidth - w - 8, Math.max(8, a.left + a.width / 2 - w / 2)), y = top - h - 6 < 8 ? a.bottom + 8 : top - h - 6;
     tip.style.transform = ""; tip.style.left = x.toFixed(0) + "px"; tip.style.top = y.toFixed(0) + "px";
     timer = setTimeout(hide, 3000);
-  });
+  }
   addEventListener("scroll", hide, {passive: true, capture: true});
   addEventListener("resize", hide);
 })();
+
+// la Mappa dei turni resta aperta (o chiusa) quando cambi giornata o rosa
+document.addEventListener("toggle", e => { if (e.target.classList && e.target.classList.contains("tmap-d")) tmapOpen = e.target.open; }, true);
 
 // Vibrazione leggera dove il telefono la ha (Android; iPhone non la espone): solo sulle azioni che cambiano qualcosa
 const buzz = (ms = 8) => { try { if (navigator.vibrate) navigator.vibrate(ms); } catch (e) {} };
@@ -3393,6 +3645,12 @@ function pickTab(k, focus) {
 }
 
 document.addEventListener("click", e => {
+  const vz = e.target.closest("[data-vz]"); if (vz) { setViz(vz); return; }
+  const rm = e.target.closest("[data-rrmore]"); if (rm) {
+    rrMore = rm.getAttribute("aria-expanded") !== "true"; const box = document.getElementById("rr-more"); if (box) box.hidden = !rrMore;
+    rm.setAttribute("aria-expanded", rrMore); rm.textContent = rrMore ? "Nascondi le alternative" : `Le ${box ? box.children.length : ""} alternative sulla stessa scala`; buzz(6);
+    return;
+  }
   const tb = e.target.closest("[data-tab]"); if (tb) { pickTab(tb.dataset.tab); return; }
   const mo = e.target.closest("[data-more]"); if (mo) {
     const open = mo.getAttribute("aria-expanded") !== "true", box = mo.parentElement;
@@ -4012,7 +4270,7 @@ function freshness() {
   const h = dataAge(), off = offline || navigator.onLine === false;
   const lvl = h <= FRESH_OK ? "ok" : h <= FRESH_MID ? "mid" : "lo";
   const prob = (D.token && D.token.ok === false) || lastFail || (D.fonti || []).some(f => !f.ok);
-  b.dataset.l = lvl;
+  b.dataset.l = lvl; b.querySelector(".fd use")?.setAttribute("href", "#i-" + lvl);
   document.getElementById("fresh-t").textContent = `${off ? "Offline · " : ""}dati di ${ageTxt(h)}${prob ? " · da controllare" : ""}`;
   b.setAttribute("aria-label", `${off ? "Sei offline. " : ""}Dati di ${ageTxt(h)}, ${lvl === "ok" ? "freschi" : lvl === "mid" ? "da aggiornare presto" : "vecchi"}${prob ? ", c'è qualcosa da controllare" : ""}. Dettagli`);
   b.hidden = false;
