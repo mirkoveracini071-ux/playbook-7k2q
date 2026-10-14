@@ -3120,8 +3120,17 @@ function avvisi() {
   const today = new Date(); today.setHours(12, 0, 0, 0);
   const days = Math.round((new Date(D.piano.giornate[0].dal + "T12:00:00") - today) / 864e5);
   if (age > 30 && days <= 2) out.push(`<b>Dati vecchi di ${Math.round(age)} ore.</b> L'aggiornamento automatico potrebbe essersi fermato: il piano può non essere più valido.`);
-  if (D.token && D.token.ok === false) out.push(`<b>Token Dunkest:</b> ${esc(D.token.motivo)} (ultimo tentativo ${esc(D.token.quando)}). Va rinnovato nelle impostazioni dell'ambiente.`);
-  el.innerHTML = out.map((t, k) => `<span style="--k:${k}">${ic("warn")}<span>${t}</span></span>`).join("");
+  if (D.token && D.token.ok === false) {   // il motivo viene dalla diagnosi: "token" solo se Dunkest ha detto 401/403
+    const tok = D.token.stato === "token_non_valido" || (!D.token.stato && /token/i.test(D.token.motivo || ""));
+    const az = D.token.azione ? ` ${esc(D.token.azione.charAt(0).toUpperCase() + D.token.azione.slice(1))}.` : "";
+    out.push(`<b>${tok ? "Token Dunkest" : "Lettura dall'account Dunkest non riuscita"}:</b> ${esc(D.token.motivo)} (ultimo tentativo ${esc(D.token.quando)}).${az}`);
+  }
+  const rc = D.rosa_cambi, nomi = a => a && a.length ? a.map(esc).join(", ") : "nessuno";
+  if (rc && ((rc.entrati || []).length || (rc.usciti || []).length)) {
+    const [pd, pt] = (rc.prima || " ").split(" ");
+    out.push({ic: "alt", t: `<b>La tua rosa è cambiata dall'ultimo aggiornamento:</b> dentro ${nomi(rc.entrati)}, fuori ${nomi(rc.usciti)}${rc.prima ? ` (lettura precedente del ${dmy(pd)} alle ${esc(pt)})` : ""}.`});
+  }
+  el.innerHTML = out.map((x, k) => `<span style="--k:${k}">${ic(x.ic || "warn")}<span>${x.t || x}</span></span>`).join("");
   el.hidden = !out.length;
   el.classList.add("chain"); el.classList.remove("play");
   if (out.length && !calm) { void el.offsetWidth; el.classList.add("play"); }
