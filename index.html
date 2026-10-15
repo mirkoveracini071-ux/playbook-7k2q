@@ -44,6 +44,7 @@
   --solid-bad:#c22c2c; --solid-good:#1b7d45; --solid-grey:#4b5560; --solid-ink:#ffffff;
   --on-dark-up:#5fd08f; --on-dark-down:#ff8a8a; --on-dark-muted:#9aa6b2;
   --board:#161b22; --board-line:#2b333d; --board-ink:#f4f6f8; --board-muted:#9aa6b2; --glow:rgba(255,122,51,.4);
+  --board-accent:#ff8c4d; --live:#ff5a5a;   /* arancio e rosso "in diretta" del tabellone: uguali nei due temi (il tabellone è sempre scuro) */
   --sk:#e3e1e0; --track:#ebe8e7; --tab-on:#ffffff; --noise:rgba(98,95,94,.14); --scrim:rgba(8,10,14,.5); --shadow:rgba(20,32,48,.10); --shadow-2:rgba(20,32,48,.18);
   /* tipografia */
   --display:"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
@@ -64,8 +65,8 @@
   /* la seconda serie (e i valori negativi) è anche a righe: si distingue senza colore */
   --hatch-base:repeating-linear-gradient(135deg,var(--c-base) 0 2px,color-mix(in srgb,var(--c-base) 30%,transparent) 2px 4.5px);
   --hatch-bad:repeating-linear-gradient(135deg,var(--neg) 0 2.5px,color-mix(in srgb,var(--neg) 35%,transparent) 2.5px 5px);
-  /* movimento: quattro durate e tre curve per tutta la pagina */
-  --d-press:110ms; --d-state:200ms; --d-enter:380ms; --d-move:520ms;
+  /* movimento: quattro durate e tre curve per tutta la pagina (tutte sotto i 250 ms) */
+  --d-press:110ms; --d-state:200ms; --d-enter:240ms; --d-move:240ms;
   --e-out:cubic-bezier(.22,1,.36,1); --e-io:cubic-bezier(.65,0,.35,1); --e-spring:cubic-bezier(.34,1.45,.64,1);
   --stagger:45ms;
   /* ——— sistema di design: un solo posto per spaziature, raggi, ombre e durate (documentati in REVISIONE.md) ——— */
@@ -76,7 +77,7 @@
   --d-snap:220ms; --d-sheet:240ms;
   --nav-h:0px;
   /* stato di presenza (gioca / in dubbio / fuori): pieni, con testo leggibile sopra, uguali nei due temi */
-  --pres-ok:#0d744d; --pres-ok-ink:#ffffff; --pres-mid:#e3a120; --pres-mid-ink:#1a1200; --pres-lo:#c22824; --pres-lo-ink:#ffffff;
+  --pres-ok:var(--pos); --pres-ok-ink:#ffffff; --pres-mid:#e3a120; --pres-mid-ink:#1a1200; --pres-lo:var(--neg); --pres-lo-ink:#ffffff;   /* ok = --pos, fuori = --neg */
   --warn-bar:#a86f00;   /* barra "in dubbio" su sfondo chiaro: il giallo pieno non si vede sul binario grigio */
   --pad-x:max(16px,env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
   /* atmosfera per contesto (Squadra / mercato / analisi): solo un velo di colore in cima alla pagina */
@@ -86,11 +87,13 @@
   color-scheme:light;
 }
 :root[data-theme="light"]{color-scheme:light}
+/* tema scuro: due blocchi con le STESSE righe (scuro del sistema e scuro scelto a mano). Il CSS non sa unire una media
+   query e un attributo in un solo selettore; unirli vorrebbe dire cambiare il JS del tema. Si cambiano sempre insieme. */
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
-  --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
+  --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --board:#07090c; --board-line:#1f262e;
   --card:#272422; --card-ink:#f3eeec; --card-muted:#b8b3b1; --card-line:#403c3b; --strip:#0a0d11; --strip-ink:#ffffff;
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
@@ -98,14 +101,14 @@
   --warn-bar:#f0b429; --c-base:#7b8692; --c-hi:#e26b1b; --pos:#209485; --neg:#d2494c; --c-zero:#afaba9;
   --seq-1:#874213; --seq-2:#b35713; --seq-3:#dd6f23; --seq-4:#f39762; --seq-5:#fdc2a2;
   --seq-ink-1:#ffffff; --seq-ink-2:#ffffff; --seq-ink-3:#1a1716; --seq-ink-4:#1a1716; --seq-ink-5:#1a1716;
-  --pres-ok:#209485; --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:#d2494c; --pres-lo-ink:#1a0000;
+  --pres-ok:var(--pos); --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:var(--neg); --pres-lo-ink:#1a0000;
   --sk:#302d2b; --track:#322e2d; --tab-on:#3d3938; --noise:rgba(170,165,162,.16); --line-2:#524f4d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
   --dots:rgba(241,236,233,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
-  --wood-a:#a8804f; --wood-b:#8d6640; --wood-line:rgba(255,255,255,.62); --paint:#8a3a14; --apron:#4a1a08;
+  --apron:#4a1a08;
   --bench:#0b0e12; --bench-2:#151a21; --board:#07090c; --board-line:#1f262e;
   --card:#272422; --card-ink:#f3eeec; --card-muted:#b8b3b1; --card-line:#403c3b; --strip:#0a0d11; --strip-ink:#ffffff;
   --card-edge:rgba(255,255,255,.12); --card-shadow:0 0 0 1px rgba(255,255,255,.10),0 10px 20px -6px rgba(0,0,0,.8); --jersey-shadow:rgba(0,0,0,.6);
@@ -113,7 +116,7 @@
   --warn-bar:#f0b429; --c-base:#7b8692; --c-hi:#e26b1b; --pos:#209485; --neg:#d2494c; --c-zero:#afaba9;
   --seq-1:#874213; --seq-2:#b35713; --seq-3:#dd6f23; --seq-4:#f39762; --seq-5:#fdc2a2;
   --seq-ink-1:#ffffff; --seq-ink-2:#ffffff; --seq-ink-3:#1a1716; --seq-ink-4:#1a1716; --seq-ink-5:#1a1716;
-  --pres-ok:#209485; --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:#d2494c; --pres-lo-ink:#1a0000;
+  --pres-ok:var(--pos); --pres-ok-ink:#04200f; --pres-mid:#ca8413; --pres-mid-ink:#1a1200; --pres-lo:var(--neg); --pres-lo-ink:#1a0000;
   --sk:#302d2b; --track:#322e2d; --tab-on:#3d3938; --noise:rgba(170,165,162,.16); --line-2:#524f4d; --scrim:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.35); --shadow-2:rgba(0,0,0,.5);
   --dots:rgba(241,236,233,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}
 
@@ -133,7 +136,7 @@ button{font:inherit;color:inherit}
 :focus:not(:focus-visible){outline:none}
 .pc:focus-visible{outline-offset:4px;border-radius:var(--r-l)}
 .seg button:focus-visible,.tabs button:focus-visible,.mode button:focus-visible,.dens button:focus-visible,.mkt-seg button:focus-visible{outline-offset:-2px}
-.live :focus-visible,.board :focus-visible{--focus:#ff8c4d}
+.live :focus-visible,.board :focus-visible{--focus:var(--board-accent)}
 ::selection{background:color-mix(in srgb,var(--accent) 30%,transparent);color:inherit}
 button,summary,select,label[for],[role=tab],.jump a{cursor:pointer;touch-action:manipulation}
 button:disabled{cursor:not-allowed}
@@ -161,7 +164,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .brand-r{display:flex;align-items:center;gap:var(--sp-2h);flex-wrap:wrap;font-size:var(--fs-s)}
 .brand-r small{color:var(--muted);font-size:var(--fs-s)}
 .clock{display:inline-flex;align-items:center;gap:var(--sp-1h);background:var(--strip);color:var(--strip-ink);border-radius:var(--r-pill);padding:4px 12px 4px 6px;font-size:var(--fs-s);font-weight:600;white-space:nowrap}
-.clock b{font:800 1.1rem/1 var(--display);color:#ff8c4d;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.clock b{font:800 1.1rem/1 var(--display);color:var(--board-accent);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .clock svg{width:18px;height:18px;flex:none}
 @media (prefers-reduced-motion:no-preference){.clock svg{animation:clock-spin 6s linear infinite}@keyframes clock-spin{to{transform:rotate(360deg)}}}   /* il pallone gira piano (solo transform: costa niente) */
 
@@ -179,7 +182,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 @media (min-width:700px){:root{--stick-top:calc(var(--mini-h) + 70px)}}
 
 /* ——— menu delle viste: in basso sul telefono, in alto da computer ——— */
-.seg{z-index:3;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative}
+.seg{z-index:3;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));position:relative;container:seg/inline-size}
 .seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;min-width:0;padding:4px 2px;border-radius:var(--r-l);transition:color var(--d-state)}
 .seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 .seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:clip}
@@ -190,6 +193,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .seg.js .seg-ind{opacity:1}
 @media (max-width:699px){
   :root{--nav-h:calc(68px + env(safe-area-inset-bottom,0px))}
+  html{scroll-padding-top:calc(var(--mini-h) + 8px);scroll-padding-bottom:calc(var(--nav-h) + 8px)}
   .seg{position:fixed;left:0;right:0;bottom:0;padding:6px max(4px,env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) max(4px,env(safe-area-inset-left,0px));
     background:color-mix(in srgb,var(--surface) 92%,transparent);-webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
     border-top:1px solid var(--line);box-shadow:var(--sh-bar-up)}
@@ -211,6 +215,9 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
   .seg button span{font-size:.86rem}
   .seg.stuck{box-shadow:var(--sh-stuck)}
 }
+
+/* testo ingrandito (≥ ~125%): le etichette non stanno nelle voci, si vedono solo le icone; il nome resta per il lettore di schermo */
+@container seg (max-width:19.5em){.seg button span{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}}
 
 /* ——— elementi comuni ——— */
 .view{display:grid;gap:var(--sp-4);min-width:0}
@@ -244,7 +251,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .board .kpi{background:none;border-radius:0;padding:12px 14px;box-shadow:1px 0 0 var(--board-line),0 1px 0 var(--board-line)}
 .board .kpi b{color:var(--board-ink);font-size:1.85rem}
 .board .kpi > span{color:var(--board-muted)}
-.board .kpi.hi b{color:#ff8c4d;text-shadow:0 0 16px var(--glow)}
+.board .kpi.hi b{color:var(--board-accent);text-shadow:0 0 16px var(--glow)}
 .board .kpi .delta.pos{background:rgba(95,208,143,.18);color:var(--on-dark-up)}
 .board .kpi .delta.neg{background:rgba(255,138,138,.18);color:var(--on-dark-down)}
 @media (max-width:440px){.kpis{grid-template-columns:repeat(min(var(--n,4),2),1fr)}.kpis[style*="--n:3"]{grid-template-columns:repeat(3,minmax(0,1fr))}.kpis[style*="--n:3"] .kpi{padding:var(--sp-2h)}}
@@ -307,14 +314,14 @@ details b{color:var(--accent-text)}
 .live .card-h .meta,.live .note,.live .exp,.live .muted{color:var(--board-muted)}
 .live .kpi{background:rgba(255,255,255,.05)}
 .live .kpi b{color:var(--board-ink)}
-.live .kpi.hi b{color:#ff8c4d;text-shadow:0 0 16px var(--glow)}
+.live .kpi.hi b{color:var(--board-accent);text-shadow:0 0 16px var(--glow)}
 .live .kpi > span{color:var(--board-muted)}
-.live-dot{position:relative;width:10px;height:10px;border-radius:var(--r-pill);background:#ff5a5a;display:inline-block;flex:none}
-.live-dot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#ff5a5a;opacity:0}
+.live-dot{position:relative;width:10px;height:10px;border-radius:var(--r-pill);background:var(--live);display:inline-block;flex:none}
+.live-dot::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--live);opacity:0}
 .tips{background:rgba(255,255,255,.06);border-radius:var(--r-l);padding:var(--sp-3)}
 .tips ol{gap:var(--sp-2h)}
 .tips li{display:grid;grid-template-columns:24px 1fr;gap:var(--sp-2h);align-items:start;counter-increment:t;line-height:1.4}
-.tips li::before{content:counter(t);width:24px;height:24px;border-radius:var(--r-pill);display:grid;place-items:center;background:#ff8c4d;color:#1a0b00;font:800 .9rem/1 var(--display)}
+.tips li::before{content:counter(t);width:24px;height:24px;border-radius:var(--r-pill);display:grid;place-items:center;background:var(--board-accent);color:#1a0b00;font:800 .9rem/1 var(--display)}
 .tips b{color:#fff}
 .live-t{display:grid}
 .live-h{font:700 var(--fs-xs) var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--board-muted);padding:12px 0 4px;border-bottom:1px solid var(--board-line)}
@@ -326,7 +333,7 @@ details b{color:var(--accent-text)}
 .live-row .exp{font-size:.82rem}
 
 /* ——— giornata: selettore, piano/rosa ——— */
-.days{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;margin-inline:-16px;padding-inline:16px;padding-block:6px;margin-block:-4px}
+.days{display:flex;gap:var(--sp-2);overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity;margin-inline:-16px;padding-inline:16px;scroll-padding-inline:16px;padding-block:6px;margin-block:-4px}
 .days::-webkit-scrollbar{display:none}
 .days button{position:relative;flex:0 0 auto;min-width:84px;min-height:52px;scroll-snap-align:start;border:1px solid var(--line);background:var(--surface);border-radius:var(--r-l);padding:6px 14px;cursor:pointer;text-align:left;line-height:1.15;transition:background-color var(--d-state),border-color var(--d-state),color var(--d-state)}
 .days button b{font:800 1.3rem/1 var(--display);display:block}
@@ -339,6 +346,7 @@ details b{color:var(--accent-text)}
 .mode button span{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.07em;font-weight:600;opacity:.8}
 .mode button b{font:800 min(1.45rem,7vw)/1 var(--display);font-variant-numeric:tabular-nums}
 .mode button[aria-pressed="true"]{color:var(--accent-ink)}
+.mode button[aria-pressed="true"] span{opacity:1}   /* etichetta sulla pillola arancio: piena, per il contrasto */
 .mode i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:var(--r-m);background:var(--accent);box-shadow:0 4px 12px -4px color-mix(in srgb,var(--accent) 70%,transparent)}
 .mode[data-m="mia"] i{transform:translateX(100%)}
 
@@ -568,7 +576,7 @@ details b{color:var(--accent-text)}
 .srch-r .pt{grid-column:2;grid-row:1 / span 2;text-align:right;font-variant-numeric:tabular-nums;line-height:1.15}
 .srch-r .pt b{font:800 var(--fn-m)/1 var(--display);display:block}
 .srch-r .pt small{color:var(--muted);font-size:var(--fs-xs)}
-.srch-r .pill{font-size:.68rem;padding:1px 7px}
+.srch-r .pill{font-size:var(--fs-xs);padding:1px 7px}
 .srch-empty{padding:18px 12px;color:var(--muted);text-align:center;font-size:var(--fs-s)}
 /* giocatori di tutta la lega in arrivo (cerca.json): scheletro, oppure errore con "Riprova" */
 .all-ld{display:grid;gap:var(--sp-2);padding:8px 4px}
@@ -628,7 +636,7 @@ details b{color:var(--accent-text)}
 .pc2 .r{font:800 .85rem/1 var(--display);color:var(--muted)}
 .pc2 .n{display:grid;min-width:0;line-height:1.15}
 .pc2 .n b{font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pc2 .n small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc2 .n small{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pc2 .v{font:800 1.1rem/1 var(--display);font-variant-numeric:tabular-nums}
 .pc2.out{background:color-mix(in srgb,var(--bad) 11%,var(--surface));box-shadow:inset 3px 0 0 var(--bad)}
 .pc2.in{background:color-mix(in srgb,var(--good) 12%,var(--surface));box-shadow:inset 3px 0 0 var(--good)}
@@ -748,7 +756,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .alt{container:alt / inline-size}
 @container alt (max-width:17em){.alt .alt-h{flex-wrap:wrap}}
 .alt-d{margin-left:auto;align-self:center;white-space:nowrap;flex:none;font:700 var(--fs-s)/1 var(--body);font-variant-numeric:tabular-nums;padding:4px 8px;border-radius:var(--r-pill);background:var(--surface-2);color:var(--muted)}
-.alt-d.up{color:var(--good);background:color-mix(in srgb,var(--good) 13%,transparent)}
+.alt-d.up{color:color-mix(in srgb,var(--good) 82%,var(--fg));background:color-mix(in srgb,var(--good) 13%,transparent)}   /* verso il testo: più scuro in chiaro, più chiaro in scuro */
 .alt-d.down{color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
 .alt .mv{margin-top:0}
 .pc-l{display:grid;gap:var(--sp-1h);margin:0;font-size:var(--fs-s)}
@@ -822,7 +830,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .sh-id{min-width:0}
 .sh-pt{display:grid;justify-items:end;line-height:1.05;font-variant-numeric:tabular-nums;text-align:right;padding:4px 6px;border-radius:var(--r-m);position:relative}
 .sh-pt b{font:800 1.95rem/1 var(--display);color:var(--accent-text)}
-.sh-pt span{font-size:.66rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
+.sh-pt span{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);white-space:nowrap}
 .sh-pt small{font-size:.75rem;color:var(--muted);white-space:nowrap}
 .sh-pt::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:var(--flash);opacity:0}
 .sh-tabs{cursor:auto}
@@ -835,12 +843,12 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .facts{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-2)}
 .facts div{background:var(--surface-2);border-radius:var(--r-m);padding:8px 10px;display:grid;gap:2px;min-width:0}
 .facts b{font:800 var(--fn-m)/1 var(--display);display:block;font-variant-numeric:tabular-nums}
-.facts span{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;line-height:1.25}
+.facts span{font-size:var(--fs-xs);color:var(--muted);text-transform:uppercase;letter-spacing:.05em;line-height:1.25}
 .facts.main{background:var(--board);border-radius:var(--r-xl);gap:0;overflow:hidden}
 .facts.main div{background:none;border-radius:0;padding:var(--sp-3)}
 .facts.main div + div{box-shadow:-1px 0 0 var(--board-line)}
 .facts.main b{color:var(--board-ink);font-size:1.7rem}
-.facts.main div:first-child b{color:#ff8c4d}
+.facts.main div:first-child b{color:var(--board-accent)}
 .facts.main span{color:var(--board-muted)}
 .dl{display:grid;grid-template-columns:auto 1fr;gap:0;margin:0;font-size:.95rem}
 .dl dt{color:var(--muted);font-size:var(--fs-s);padding:8px 0;border-bottom:1px solid var(--line)}
@@ -909,7 +917,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 .f5-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--sp-1h)}
 .f5-l li{display:grid;justify-items:center;gap:2px;background:var(--surface-2);border-radius:var(--r-m);padding:7px 2px 6px;min-width:0;font-variant-numeric:tabular-nums}
 .f5-l b{font:800 var(--fn-s)/1 var(--display)}
-.f5-l small{font-size:.68rem;color:var(--muted);white-space:nowrap;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.f5-l small{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis}
 .f5-b{position:relative;width:14px;height:38px;border-radius:4px;background:var(--track);margin:3px 0 2px}
 .f5-b i{position:absolute;left:0;right:0;bottom:0;height:var(--h);border-radius:4px;background:var(--hatch-base);box-shadow:inset 0 0 0 1.5px var(--c-base);transform-origin:bottom}
 .f5-l li.hi .f5-b i{background:var(--c-hi);box-shadow:none}
@@ -975,10 +983,12 @@ tr.more:not([hidden]) td{animation:fade var(--d-enter) var(--e-out) backwards}
 
 /* ——— atmosfera: Squadra calda, mercato (Opzioni, Occasioni, Prezzi) fredda, analisi (Infortuni, Calcola, Modello) verde.
    Un velo in cima alla pagina che cambia colore con una transizione della variabile (registrata: si interpola) ——— */
-@property --atm{syntax:"<color>";inherits:true;initial-value:transparent}
-:root{--atm:var(--atm-sq)}
-:root[data-ctx="mk"]{--atm:var(--atm-mk)}
-:root[data-ctx="an"]{--atm:var(--atm-an)}
+/* --atm non è ereditata e vive solo sul velo (body::before): la sua transizione ricalcola lo stile di un elemento solo,
+   non di tutta la pagina */
+@property --atm{syntax:"<color>";inherits:false;initial-value:transparent}
+body::before{--atm:var(--atm-sq)}
+:root[data-ctx="mk"] body::before{--atm:var(--atm-mk)}
+:root[data-ctx="an"] body::before{--atm:var(--atm-an)}
 body::before{content:"";position:fixed;left:0;right:0;top:0;height:min(70vh,560px);z-index:-1;pointer-events:none;
   background:radial-gradient(130% 100% at 50% 0%,var(--atm),transparent 72%)}
 
@@ -1131,7 +1141,9 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 /* ——— stato dei dati in testata: pallino verde/giallo/rosso e l'età; il pannello dice il perché ——— */
 .fresh{display:inline-flex;align-items:center;min-height:44px;margin-block:-8px;padding:0;border:0;background:none;color:var(--fg)}
 .fp{display:inline-flex;align-items:center;gap:var(--sp-1h);min-height:28px;padding:0 var(--sp-2h) 0 var(--sp-2);border:1px solid var(--line);border-radius:var(--r-pill);
-  background:var(--surface);font:600 var(--fs-xs)/1.2 var(--body);white-space:nowrap;font-variant-numeric:tabular-nums}
+  background:var(--surface);font:600 var(--fs-xs)/1.2 var(--body);font-variant-numeric:tabular-nums;text-align:left}
+.fresh{max-width:100%;min-width:0}
+.fresh .fp{padding-block:3px}   /* se va a capo (testo ingrandito) il testo non tocca il bordo */
 /* età dei dati: icona (spunta / punto di domanda / croce) nel colore dello stato, non un pallino solo colorato */
 .fd{width:15px;height:15px;stroke-width:2.4;color:var(--pres-ok);flex:none}
 .fresh[data-l="mid"] .fd{color:var(--pres-mid)}
@@ -1187,7 +1199,7 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
   #v-form.cols > .f-a{grid-column:2;grid-row:1}
   #v-form.cols > .f-c{grid-column:2;grid-row:2}
   #v-form.cols > .f-c:first-child,#v-form.cols > .f-b:first-child + .f-c{grid-row:1 / span 2}
-  .days{margin-inline:0;padding-inline:0}
+  .days{margin-inline:0;padding-inline:0;scroll-padding-inline:0}
   /* tabelle: più aria e il nome intero */
   table{font-size:1rem}
   th,td{padding:10px 12px}
@@ -1221,11 +1233,11 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .scroll .vz-tab td:first-child{min-width:0;white-space:normal}
 .vz-tab th,.vz-tab td{padding-inline:6px}.vz-tab th:first-child,.vz-tab td:first-child{padding-left:0}
 /* punteggio realistico: fascia 10°–90° percentile, punto = punti attesi, riga verticale = il piano; alternative sulla stessa scala */
-.rr{position:relative;display:grid;--lw:6.6em;--vw:3.4em}
-.rr-r{display:grid;grid-template-columns:var(--lw) minmax(0,1fr) var(--vw);align-items:center;gap:0 var(--sp-2);min-height:44px;border-radius:var(--r-s)}
+.rr{position:relative;display:grid;--lw:6.6em;--vw:3.4em}   /* colonne con minimo 0: a testo molto ingrandito si stringono invece di allargare la pagina */
+.rr-r{display:grid;grid-template-columns:minmax(0,var(--lw)) minmax(0,1fr) minmax(0,var(--vw));align-items:center;gap:0 var(--sp-2);min-height:44px;border-radius:var(--r-s)}
 .rr-n{display:grid;line-height:1.15;min-width:0}
 .rr-n b{font-weight:700;font-size:var(--fs-s);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rr-n small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rr-n small{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .rr-v{font:800 var(--fn-s)/1 var(--display);text-align:right}
 .rr-t{position:relative;align-self:stretch;min-height:44px}
 .rr-t::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
@@ -1235,8 +1247,8 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .rr-d{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--c-hi);box-shadow:0 0 0 2px var(--surface)}
 .rr-r.base .rr-d{background:var(--c-base)}
 .rr-r.ra .rr-d{width:10px;height:10px;margin:-5px 0 0 -5px;background:var(--surface);box-shadow:inset 0 0 0 2px var(--c-base),0 0 0 2px var(--surface)}
-.rr-l{position:absolute;bottom:1px;font-size:.7rem;color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
-.rr-ax{display:grid;grid-template-columns:var(--lw) minmax(0,1fr) var(--vw);gap:0 var(--sp-2);font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
+.rr-l{position:absolute;bottom:1px;font-size:var(--fs-xs);color:var(--muted);transform:translateX(-50%);white-space:nowrap;font-variant-numeric:tabular-nums}
+.rr-ax{display:grid;grid-template-columns:minmax(0,var(--lw)) minmax(0,1fr) minmax(0,var(--vw));gap:0 var(--sp-2);font-size:var(--fs-xs);color:var(--muted);font-variant-numeric:tabular-nums}
 .rr-ax > span{position:relative;height:16px;border-top:1px solid var(--line-2);grid-column:2}
 .rr-ax i{position:absolute;top:2px;font-style:normal;transform:translateX(-50%)}
 .rr-ax i:first-child{transform:none}.rr-ax i:last-child{transform:translateX(-100%)}
@@ -1262,7 +1274,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .gm-z{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--line-2)}
 .gm-x{display:grid;grid-template-columns:repeat(var(--n,4),minmax(0,1fr));gap:2px;font-size:var(--fs-xs);color:var(--muted);text-align:center}
 .gm-x .on{color:var(--fg);font-weight:700}
-@media (max-width:380px){.gm-w{gap:var(--sp-2)}.gm-h .lab{font-size:.68rem;letter-spacing:.04em}}
+@media (max-width:380px){.gm-w{gap:var(--sp-2)}.gm-h .lab{font-size:var(--fs-xs);letter-spacing:.04em}}
 /* mappa dei turni: giocatori × turni, celle di una sola tinta (chiaro = pochi punti attesi, scuro = tanti) */
 .tmap-d > summary{font-weight:600}
 .cmpp .vz-g{gap:0}
@@ -1270,10 +1282,10 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .tmap-d .tq{color:inherit}
 .tmap{display:grid;grid-template-columns:minmax(6.5em,1.25fr) repeat(var(--n,3),minmax(44px,1fr));gap:2px;font-variant-numeric:tabular-nums}
 .tmap .th{font:600 var(--fs-xs)/1.15 var(--body);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;text-align:center;padding:2px 0 4px}
-.tmap .th small{display:block;text-transform:none;letter-spacing:0;font-weight:500}
+.tmap .th small{display:block;font-size:var(--fs-xs);text-transform:none;letter-spacing:0;font-weight:500}
 .tmap .tn{display:grid;align-content:center;line-height:1.15;min-height:44px;min-width:0;padding-right:4px}
 .tmap .tn b{font-weight:700;font-size:var(--fs-s);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.tmap .tn small{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tmap .tn small{font-size:var(--fs-xs);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tmap .tn.st b{font-weight:800}
 .tq{display:grid;place-items:center;min-height:44px;border-radius:var(--r-xs);font:800 var(--fn-s)/1 var(--display)}
 .tq.e{background:none;box-shadow:inset 0 0 0 1px var(--line)}
@@ -1289,7 +1301,9 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 
 /* ——— movimento ———
    Regole: si animano solo transform e opacity (eccetto le linee del campo, disegnate una volta).
-   press 110 ms · cambi di stato 200 ms · entrate 380 ms · spostamenti 520 ms. Le entrate vengono dalla parte
+   press 110 ms · cambi di stato 200 ms · entrate e spostamenti 240 ms (barre dei grafici 240 ms). Le entrate a
+   cascata dei blocchi solo alla prima apertura della pagina: dopo (cambio di vista, filtri) i blocchi arrivano
+   fermi (classe quiet), anche quelli fuori schermo raggiunti scorrendo. Le entrate vengono dalla parte
    da cui arriva il contenuto (vista o giornata a destra o a sinistra). Con "riduci movimento" non c'è
    nessuna di queste regole: la pagina appare subito completa. */
 @media (prefers-reduced-motion:no-preference){
@@ -1310,8 +1324,8 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .sh-tabs i,.dens i{transition:transform var(--d-move) var(--e-out)}
   /* numeri che cambiano: lampeggio breve dietro al numero (solo opacità) */
   .bump::after,.pc .tag.bump::after{animation:bump 900ms var(--e-out)}
-  /* risultati della ricerca e del mercato: entrata a cascata brevissima */
-  .cascade > .srch-r,.cascade tbody tr{animation:rise var(--d-sheet) var(--e-out) backwards;animation-delay:calc(min(var(--k,0),10) * 18ms)}
+  /* righe del mercato: entrata a cascata brevissima */
+  .cascade tbody tr{animation:rise var(--d-sheet) var(--e-out) backwards;animation-delay:calc(min(var(--k,0),10) * 18ms)}
   .cascade{--dx:0;--dy:6px}
   /* carta -> scheda (View Transitions): la carta si allarga fino a diventare la scheda e ritorno */
   :root.vt-sheet::view-transition-group(*){animation-duration:var(--d-sheet)}   /* menu e barra in alto: fermi, ma la transizione finisce con la scheda */
@@ -1319,7 +1333,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   ::view-transition-image-pair(shcard){overflow:hidden;border-radius:var(--r-xl)}
   ::view-transition-old(shcard),::view-transition-new(shcard){height:100%;object-fit:cover;object-position:50% 0}
   ::view-transition-old(shcard){animation:vt-fade-out 120ms ease-out both}
-  ::view-transition-new(shcard){animation:vt-fade-in 180ms ease-out 30ms both}
+  ::view-transition-new(shcard){animation:fade 180ms ease-out 30ms both}
   /* cambio di vista (meno di 250 ms): con View Transitions solo la vista sfuma e scivola un poco dalla parte da cui
      arriva; testata, ricerca e menu restano fermi (il menu è "vivo" e il suo indicatore scorre). Senza View
      Transitions la stessa entrata la fa la vista nuova con un'animazione CSS. */
@@ -1339,9 +1353,8 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .quiet.play,.quiet .pc,.quiet .court svg.lines *,.quiet .badges-l > *,.quiet .badges-r > *,
   .quiet .sw-p > *,.quiet .sw-p .arrow *,.quiet .chip,.quiet .cmp-row,.quiet .src-grid li,.quiet .bar em,.quiet .chart .ar,.quiet .chart .pt{animation:none!important}
   /* barre del confronto fonti (scheda, Statistiche > Altre fonti): si riempiono una dopo l'altra */
-  details[open] .sb i{animation:grow 420ms var(--e-out) backwards;animation-delay:calc(60ms + var(--k,0) * 90ms)}
+  details[open] .sb i{animation:grow var(--d-sheet) var(--e-out) backwards;animation-delay:calc(60ms + var(--k,0) * 90ms)}
   @keyframes vt-fade-out{to{opacity:0}}
-  @keyframes vt-fade-in{from{opacity:0}}
   @keyframes bump{0%{opacity:0}18%{opacity:1}100%{opacity:0}}
   .pitch{transition:transform var(--d-move) var(--e-spring)}
   .pitch.drag{transition:none}
@@ -1360,25 +1373,24 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .cap-b.moved{animation:none}
   .cap-b.moved::after{animation:ring 900ms var(--e-out) 2}
   .cap-b.flying::after{animation:none}
-  .play .bar i{transform-origin:left;animation:grow .8s 300ms var(--e-out) backwards}
-  .play .bar em{animation:drop var(--d-enter) .9s var(--e-spring) backwards}
-  .play .chart .ln{animation:line 700ms var(--d-state) var(--e-out) backwards}
-  .play .chart .ar,.play .chart .pt{animation:fade var(--d-enter) .9s backwards}
+  .play .bar i{transform-origin:left;animation:grow var(--d-sheet) 300ms var(--e-out) backwards}
+  .play .bar em{animation:drop var(--d-enter) 480ms var(--e-spring) backwards}
+  .play .chart .ln{animation:line var(--d-sheet) var(--d-state) var(--e-out) backwards}
+  .play .chart .ar,.play .chart .pt{animation:fade var(--d-enter) calc(var(--d-state) + var(--d-sheet)) backwards}
   .play .chip.o,.play .chip.i{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(180ms + var(--k,0) * 40ms)}
   /* cambi in coppia: chi esce arriva da sinistra, la freccia si traccia verso destra, chi entra esce dalla freccia */
   .play .sw-p{--sw:calc(140ms + min(var(--k,0),5) * 70ms)}
   .play .sw-p .o{animation:sw-o 260ms var(--e-out) backwards;animation-delay:var(--sw)}
-  .play .sw-p .arrow .sh{animation:sw-line var(--d-state) var(--e-out) backwards;animation-delay:calc(var(--sw) + 120ms)}
+  .play .sw-p .arrow .sh{animation:line var(--d-state) var(--e-out) backwards;animation-delay:calc(var(--sw) + 120ms)}
   .play .sw-p .arrow .hd{animation:sw-head var(--d-state) var(--e-spring) backwards;animation-delay:calc(var(--sw) + var(--d-snap))}
   .play .sw-p .i{animation:sw-i 300ms var(--e-spring) backwards;animation-delay:calc(var(--sw) + 260ms)}
   @keyframes sw-o{from{opacity:0;transform:translateX(-14px)}}
-  @keyframes sw-line{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
   @keyframes sw-head{from{opacity:0;transform:translateX(-6px)}}
   @keyframes sw-i{from{opacity:0;transform:translateX(-18px) scale(.96)}}
-  .play .sc-bar i{transform-origin:left;animation:grow .8s var(--e-out) backwards;animation-delay:calc(var(--d-state) + var(--b,0) * 100ms)}
+  .play .sc-bar i{transform-origin:left;animation:grow var(--d-sheet) var(--e-out) backwards;animation-delay:calc(var(--d-state) + var(--b,0) * 100ms)}
   .sheet.open .spark rect.b{transform-box:fill-box;transform-origin:bottom;animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(var(--d-snap) + var(--b,0) * 35ms)}
   .sheet.open .spark .v{animation:fade var(--d-state) backwards;animation-delay:calc(480ms + var(--b,0) * 35ms)}
-  .sheet.open .spark .ref{transform-box:fill-box;transform-origin:left;animation:grow 420ms var(--e-out) 260ms backwards}
+  .sheet.open .spark .ref{transform-box:fill-box;transform-origin:left;animation:grow var(--d-sheet) var(--e-out) 260ms backwards}
   /* grafici nuovi: entrano quando la scheda è in vista (classe play), al massimo 240 ms; il cambio grafico/tabella sfuma in 160 ms */
   .play .gm-c i{transform-origin:bottom;animation:rise-bar var(--d-sheet) var(--e-out) backwards;animation-delay:calc(var(--k,0) * 30ms)}
   .play .gm-c i.neg{transform-origin:top}
@@ -1389,9 +1401,9 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .tip{animation:tip-in 140ms var(--e-out)}
   @keyframes tip-in{from{opacity:0;transform:translateY(4px)}}
   .play .cmp-row{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 55ms)}
-  .play .cmp-bar i{animation:grow .7s var(--e-out) backwards;animation-delay:calc(260ms + var(--k,0) * 70ms)}
+  .play .cmp-bar i{animation:grow var(--d-sheet) var(--e-out) backwards;animation-delay:calc(260ms + var(--k,0) * 70ms)}
   .play .cmp-bar em{animation:pop var(--d-enter) var(--e-spring) backwards;animation-delay:calc(260ms + var(--k,0) * 70ms)}
-  .play .tm-bar i,.tab-in .tm-bar i{animation:grow .7s var(--e-out) backwards;animation-delay:calc(120ms + var(--k,0) * 35ms)}
+  .play .tm-bar i,.tab-in .tm-bar i{animation:grow var(--d-sheet) var(--e-out) backwards;animation-delay:calc(120ms + var(--k,0) * 35ms)}
   details[open] .src-grid li,.play .src-grid li{animation:rise var(--d-enter) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 25ms)}
   .tab-in{animation:rise var(--d-enter) var(--e-out) backwards}
   .tabs i{transition:transform var(--d-move) var(--e-out)}
@@ -1407,13 +1419,12 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .boot-c{--dx:0;--dy:8px}
   @keyframes boot-j{from{opacity:0;transform:translateY(10px)}}
   @keyframes boot-b{from{opacity:0;transform:translateY(-28px)}}
-  .ptr.busy svg{animation:spin 700ms linear infinite}
+  .ptr.busy svg{animation:clock-spin 700ms linear infinite}
   /* nuovi: interruttore "Solo da decidere" 160 ms, guida (entra 180 ms, passo 160 ms) */
   .dec-k::after,.dec-k{transition:transform 160ms var(--e-out),background-color 160ms}
   .tour.in{animation:fade 180ms ease-out both}
   .tour.in .tour-c{animation:rise var(--d-state) var(--e-out) both;--dx:0;--dy:16px}
   .tour-c.step{animation:fade 160ms ease-out both}
-  @keyframes spin{to{transform:rotate(360deg)}}
   .loader .ball{animation:bounce .62s cubic-bezier(.5,0,.5,1) infinite alternate}
   .loader .shadow{animation:squash .62s cubic-bezier(.5,0,.5,1) infinite alternate}
   /* luci del palazzetto alla prima apertura: un velo scuro che sfarfalla e si spegne (solo opacità) */
@@ -1446,14 +1457,15 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   /* scheda: le barre delle ultime 5 si riempiono dal basso all'apertura; confronto del mercato: barre di differenza dal centro */
   .sheet.open .f5-b i{animation:rise-bar var(--d-move) var(--e-out) backwards;animation-delay:calc(160ms + var(--b,0) * 50ms)}
   .sheet.open .f5-b em{animation:fade var(--d-state) backwards;animation-delay:480ms}
-  .cmpp.in .cmpp-bar i{animation:grow 480ms var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 45ms)}
+  .cmpp.in .cmpp-bar i{animation:grow var(--d-sheet) var(--e-out) backwards;animation-delay:calc(80ms + var(--k,0) * 45ms)}
   .cmpp.in{animation:rise var(--d-enter) var(--e-out) backwards;--dx:0;--dy:8px}
   .fav.pop svg{animation:pop 300ms var(--e-spring)}
   .shv.in{animation:fade 180ms ease-out both}
   .shv.in .shv-c{animation:rise var(--d-sheet) var(--e-out) both;--dx:0;--dy:16px}
   @keyframes nav-pop{from{transform:scale(.6)}}
-  /* atmosfera del contesto: il velo cambia colore in 240 ms (niente lampi: si interpola il colore) */
-  :root{transition:--atm var(--d-sheet) var(--e-out)}
+  /* atmosfera del contesto: il velo cambia colore in 240 ms (niente lampi: si interpola il colore). La transizione
+     sta sul velo, non su :root */
+  body::before{transition:--atm var(--d-sheet) var(--e-out)}
   /* conferme: entra dal basso (200 ms), la spunta si disegna (220 ms), esce in 160 ms */
   .toast.in{animation:toast-in var(--d-state) var(--e-out) both}
   .toast.in .tk{animation:line var(--d-snap) var(--e-out) 70ms backwards}
@@ -1779,7 +1791,10 @@ function card(p, g) {
     body = `<span class="info"><span><b>${cr(p.crediti)}</b><small>cr</small></span><span><b>${turno || "HC"}</b><small>${esc(opp)}</small></span></span>
     <span class="pts" style="display:block"><b data-cnt="c${p.id}">${num(p.punti)}</b> pt attesi${se ? `<small class="se" title="${seTitle}">${num(se)} se gioca${p._adj ? " ✎" : ""}</small>` : ""}</span>${cardStats(p)}`;
   }
-  return `<button type="button" class="${cls}" style="--tc:${teamTone(p.squadra)};view-transition-name:p${p.id}" data-id="${p.id}" aria-label="${esc(p.nome)}${state ? ", " + state : ""}${!rest && prob != null && prob < 1 ? `, presenza ${Math.round(prob * 100)}% (${PRES_TXT[presCls(prob)]})` : ""}: ${num(p.punti)} punti attesi, dettagli">
+  // nome accessibile: anche crediti, turno e avversario, "se gioca" e probabilità di giocare (a schermo sono testo piccolo o title)
+  const vs = (p.partita || "").replace(/^\d\d\/\d\d\s*/, "").replace(/^vs\s*/i, "contro ").replace(/^@\s*/, "in casa di ");
+  const extra = `${se ? `, ${num(se)} se gioca (probabilità di giocare ${Math.round(p.p_gioca * 100)}%)` : ""}, ${cr(p.crediti)} crediti${coach ? "" : p.turno ? `, turno ${p.turno}${vs ? " " + vs : ""}` : ""}`;
+  return `<button type="button" class="${cls}" style="--tc:${teamTone(p.squadra)};view-transition-name:p${p.id}" data-id="${p.id}" aria-label="${esc(p.nome)}${state ? ", " + state : ""}${!rest && prob != null && prob < 1 ? `, presenza ${Math.round(prob * 100)}% (${PRES_TXT[presCls(prob)]})` : ""}: ${num(p.punti)} punti attesi${esc(extra)}, dettagli">
     ${left ? `<span class="badges-l">${left}</span>` : ""}${right ? `<span class="badges-r">${right}</span>` : ""}${isCap ? `<span class="cap-b" title="Capitano">C</span>` : ""}${jersey(p.squadra, info.maglia, coach)}
     <span class="tag"><span class="nm" style="display:block"><i>${ROLE[p.ruolo]}</i>${esc(surname(p.nome))}${formArrow(info.forma)}</span>
     ${body}</span></button>`;
@@ -1827,7 +1842,7 @@ function renderForm() {
   const nm = id => esc(byId[id]?.nome ?? "?");
   const now = activeIdx();
 
-  const days = D.piano.giornate.map((d, i) => `<button type="button" data-day="${i}" aria-pressed="${i === day}"${i === now ? ` class="now" title="Giornata in corso o prossima"` : ""}><b>${esc(d.label)}</b><span>${dmy(d.dal)}–${dmy(d.al)}</span></button>`).join("");
+  const days = D.piano.giornate.map((d, i) => `<button type="button" data-day="${i}" aria-pressed="${i === day}"${i === now ? ` class="now" title="Giornata in corso o prossima"` : ""}><b>${esc(d.label)}</b><span>${dmy(d.dal)}–${dmy(d.al)}</span>${i === now ? `<span class="sr"> · in corso o prossima</span>` : ""}</button>`).join("");
   const kpis = `<div class="kpis board">
     <div class="kpi hi"><b>${num(g.punti)}</b><span>punti attesi</span></div>
     <div class="kpi"><b>${g.malus ? "−" + num(g.malus, 0) : "0"}</b><span>malus cambi</span></div>
@@ -2064,7 +2079,9 @@ function todoCard(dec) {
   if (g.dal <= t) return "";   // giornata iniziata: c'è la scheda in diretta
   const items = [], A = D.app && D.app.attuale ? D.app.attuale : null;
   const mineNames = new Set(A ? A.map(p => p.nome) : D.rosa);
-  const inn = g.giocatori.filter(p => !mineNames.has(p.nome)), out = A ? A.filter(p => !g.giocatori.some(q => q.nome === p.nome)) : [];
+  // senza la lettura dall'account: chi esce e chi entra sono quelli del piano (g.fuori/g.dentro, come la scheda Cambi)
+  const inn = A ? g.giocatori.filter(p => !mineNames.has(p.nome)) : (g.dentro || []).map(nome => ({nome}));
+  const out = A ? A.filter(p => !g.giocatori.some(q => q.nome === p.nome)) : (g.fuori || []).map(nome => ({nome}));
   const when = `${dow(g.dal)} ${dmy(g.dal)}`;
   const it = (cls, t, d = "", extra = "") => `<li class="${cls}" style="--k:${items.length}"><div class="body"><div class="t">${t}</div>${d ? `<div class="d">${d}</div>` : ""}${extra}</div></li>`;
   if (inn.length) items.push(it("", `Fai ${inn.length} ${inn.length === 1 ? "cambio" : "cambi"} prima di ${when}`,
@@ -2433,7 +2450,7 @@ function renderAlt() {
     ${o.fuori.length ? `<div class="mv" aria-label="Cambi"><span class="lab">Fuori</span><div class="chips">${o.fuori.map((n, j) => `<span class="chip o" style="--k:${j}">${esc(surname(n))}</span>`).join("")}</div>
       <span class="lab">Dentro</span><div class="chips">${o.dentro.map((n, j) => `<span class="chip i" style="--k:${j + o.fuori.length}">${esc(surname(n))}</span>`).join("")}</div></div>` : ""}
     ${o.pro || o.contro ? `<dl class="pc-l">${o.pro ? `<div><dt class="up">Pro</dt><dd>${itNum(o.pro)}</dd></div>` : ""}${o.contro ? `<div><dt class="down">Contro</dt><dd>${itNum(o.contro)}</dd></div>` : ""}</dl>` : ""}
-    ${o.rosa ? `<details class="alt-ro"><summary>Rosa completa</summary>${["titolare", "sesto uomo", "panchina", "coach"].map(sl => { const L = o.rosa.filter(g => g.slot === sl); return L.length ? `<div class="alt-sl"><small>${sl === "titolare" ? "Quintetto" : sl === "sesto uomo" ? "Sesto uomo" : sl === "panchina" ? "Panchina" : "Coach"}</small>${L.map(g => `<span class="${o.fuori.length && o.dentro.includes(g.nome) ? "new" : ""}">${esc(g.ruolo)} ${esc(surname(g.nome))} <i>${esc(g.squadra)} · ${cr(g.crediti)}</i></span>`).join("")}</div>` : ""; }).join("")}</details>` : ""}
+    ${o.rosa ? `<details class="alt-ro"><summary>Rosa completa</summary>${["titolare", "sesto uomo", "panchina", "coach"].map(sl => { const L = o.rosa.filter(g => g.slot === sl); return L.length ? `<div class="alt-sl"><small>${sl === "titolare" ? "Quintetto" : sl === "sesto uomo" ? "Sesto uomo" : sl === "panchina" ? "Panchina" : "Coach"}</small>${L.map(g => { const nw = o.fuori.length && o.dentro.includes(g.nome); return `<span class="${nw ? "new" : ""}">${esc(g.ruolo)} ${esc(surname(g.nome))}${nw ? `<span class="sr">, entra</span>` : ""} <i>${esc(g.squadra)} · ${cr(g.crediti)}</i></span>`; }).join("")}</div>` : ""; }).join("")}</details>` : ""}
     </article>`;
   }).join("");
   const pair = O.length > 1 && O.filter(o => o.rosa && o.rosa.length).length > 1 ? `<div class="card pair">${head("Confronto a due colonne", "per slot e ruolo")}
@@ -2453,14 +2470,14 @@ function renderAlt() {
       ${age > 2 ? `<p class="note" style="color:var(--warn-text)">Calcolate il ${esc(A.calcolato.split("-").reverse().join("/"))}: potrebbero non essere più aggiornate.</p>` : ""}</div>
     ${pair}
     <div class="alt-list">${cards}</div>`;
-  if (pair) drawPair(false);
+  if (pair) drawPair();
 }
 
 // Confronto a due colonne: per ogni slot (quintetto, sesto uomo, panchina, coach) chi c'è nell'opzione A e chi nella B.
 // Stesso giocatore sulla stessa riga; poi le coppie per ruolo. Rosso = esce passando da A a B, verde = entra.
 let pairA = null, pairB = null;
 const SLOTS = [["titolare", "Quintetto"], ["sesto uomo", "Sesto uomo"], ["panchina", "Panchina"], ["coach", "Coach"]];
-function drawPair(anim) {
+function drawPair() {
   const O = (D.alternative?.opzioni || []).filter(o => o.rosa && o.rosa.length), box = document.getElementById("pair-b");
   if (!box || O.length < 2) return;
   const rec = O.find(o => o.tag === "consigliata") || O[0];
@@ -2504,7 +2521,7 @@ function drawPair(anim) {
       ${A.prezzi != null && B.prezzi != null ? tr("Crediti attesi", cnt("pca", sign(A.prezzi, 2)), cnt("pcb", sign(B.prezzi, 2)), cnt("pcd", sign(B.prezzi - A.prezzi, 2)), cls(B.prezzi - A.prezzi)) : ""}
       ${tr("Cambi", A.fuori.length, B.fuori.length, B.fuori.length - A.fuori.length ? sign(B.fuori.length - A.fuori.length, 0) : "0", "")}</tbody></table>
     <div class="pair-cols" aria-hidden="true"><span>A · ${esc(A.nome)}</span><span>B · ${esc(B.nome)}</span></div>
-    <div class="pair-list${anim && !calm ? " cascade" : ""}">${groups}</div>`;
+    <div class="pair-list">${groups}</div>`;
   tickNums(box);
 }
 document.getElementById("v-alt").addEventListener("change", e => {
@@ -2512,11 +2529,11 @@ document.getElementById("v-alt").addEventListener("change", e => {
   else if (e.target.id === "pb") { pairB = +e.target.value; if (pairB === pairA) pairA = null; }
   else return;
   if (pairA == null) pairA = D.alternative.opzioni.filter(o => o.rosa).find(o => o.id !== pairB).id;
-  drawPair(true);
+  drawPair();
 });
 document.getElementById("v-alt").addEventListener("click", e => {
   if (!e.target.closest("#psw")) return;
-  [pairA, pairB] = [pairB, pairA]; drawPair(true);
+  [pairA, pairB] = [pairB, pairA]; drawPair();
 });
 
 // Occasioni: giocatori economici che avranno più minuti o il posto da titolare per l'assenza di un compagno
@@ -2714,11 +2731,16 @@ function renderInf() {
   const row = (i, k = 0) => `<div class="inj-row${mine.has(i.nome) ? " mine" : ""}${k >= 12 ? " more" : ""}"${k >= 12 ? " hidden" : ""}><span class="who">${esc(i.nome)} <span class="muted">· ${esc(i.squadra)}</span>${mine.has(i.nome) ? ` <span class="pill mine-tag">tua rosa</span>` : planned.has(i.nome) ? ` <span class="pill mine-tag">nel piano</span>` : ""}</span>${pill(i.stato)}
     <span class="why">${esc(i.motivo)}: ${esc(i.stato)}</span><span class="when">${i.data ? dmy(i.data) : ""}</span></div>`;
   const outN = rosterHits.filter(i => isOut(i.stato)).length, others = L.filter(i => !rosterHits.includes(i));
+  // fonte non aggiornata: niente "tutti disponibili" (una lista vuota non vuol dire che stanno tutti bene)
+  const src = (D.fonti || []).find(f => /infortun/i.test(f.nome)), stale = !!src && !src.ok;
+  const lastRead = !src ? "" : src.ore == null || !isFinite(src.ore) ? "mai" : src.ore < 1 ? "meno di un'ora fa" : src.ore < 48 ? `${Math.round(src.ore)} ore fa` : `${Math.round(src.ore / 24)} giorni fa`;
+  const none = stale ? `<div class="empty">${ILL.err}<b>Lista infortuni non aggiornata</b>Ultima lettura: ${lastRead}. Finché non si aggiorna qui non compare nessun avviso: controlla in Modello › Fonti.</div>`
+    : `<div class="empty">${ILL.ok}<b>Nessun avviso: tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`;
   document.getElementById("v-inf").innerHTML = `${vhead("inf", "Infortuni", "Prima chi riguarda la tua rosa e il piano, poi tutta la lega.")}
     <div class="kpis board"><div class="kpi${rosterHits.length ? " hi" : ""}"><b>${rosterHits.length}</b><span>tuoi in lista</span></div>
       <div class="kpi"><b>${outN}</b><span>tuoi fuori</span></div><div class="kpi"><b>${rosterHits.length - outN}</b><span>tuoi in dubbio</span></div>
       <div class="kpi"><b>${L.length}</b><span>nella lega</span></div></div>
-    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(i => row(i)).join("")}</div>` : `<div class="empty">${ILL.ok}<b>Nessun avviso: tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`}</div>
+    <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(i => row(i)).join("")}</div>` : none}</div>
     <div class="card">${head("Tutta la lega", `${others.length} giocatori`)}<div class="inj-list">${others.map(row).join("")}</div>
       ${others.length > 12 ? `<button type="button" class="more-btn inj-more" data-more="${others.length}" aria-expanded="false">Mostra tutti (${others.length})</button>` : ""}</div>`;
 }
@@ -2903,7 +2925,7 @@ function statsBlock(p) {
   return `<div>${lab}<div class="facts six">${[["pts", "punti"], ["reb", "rimbalzi"], ["ast", "assist"], ["stl", "recuperi"], ["blk", "stoppate"], ["min", "minuti"]].map(([k, l]) => st[k] != null ? `<div><b>${num(st[k], 1)}</b><span>${l}</span></div>` : "").join("")}</div>${src}</div>`;
 }
 
-let sheetBase = null;
+let sheetBase = null, sheetBack = null, sheetKb = false;   // sheetBack: dove era il fuoco quando la scheda si è aperta (sheetKb: da tastiera)
 function showSheet(p0, src) {
   sheetBase = p0;
   const p = adj(p0), g = curG();
@@ -2960,6 +2982,7 @@ function showSheet(p0, src) {
   el.querySelectorAll(".facts.main b").forEach(b => { b.classList.add("sgb"); b.innerHTML = seg(b.textContent); });
   if (!el.hidden && el.classList.contains("open")) return;   // già aperta (stima di presenza, sostituto): solo il contenuto
   clearTimeout(sheetTimer);
+  if (!sheetUp()) { sheetBack = document.activeElement; try { sheetKb = !!sheetBack && sheetBack.matches(":focus-visible"); } catch (e) { sheetKb = false; } }
   delete el.dataset.closing; layerOpened();
   const scrim = document.getElementById("scrim");
   const finish = () => { syncInert(true); el.querySelector(".close").focus({preventScroll: true}); };
@@ -3143,7 +3166,6 @@ function runSearch() {
   const said = toks.length || filtered ? `${list.length} giocatori${teams.length ? `, ${teams.length} squadre` : ""}` : "";
   if (said && said !== srchSaid) say(said);
   srchSaid = said;
-  if (!calm) { res.classList.remove("cascade"); void res.offsetWidth; res.classList.add("cascade"); }   // i risultati entrano a cascata, brevissima
   fitResults();
 }
 // Risultati sempre sopra la tastiera (e sopra il menu in basso): l'altezza massima è lo spazio visibile davvero,
@@ -3210,6 +3232,8 @@ function showRes() { const r = document.getElementById("qres"); if (!r.hidden) r
     }
   });
   document.addEventListener("pointerdown", e => { if (!e.target.closest("#srch")) closeSearch(); });
+  // con Tab (o altro) il fuoco esce dalla ricerca: la lista si chiude, così non copre i controlli sotto
+  document.getElementById("srch").addEventListener("focusout", e => { const to = e.relatedTarget; if (to && !document.getElementById("srch").contains(to)) closeSearch(); });
 })();
 
 document.getElementById("sheet").addEventListener("click", e => {
@@ -3235,7 +3259,12 @@ function closeSheet(fling) {
   const el = document.getElementById("sheet"), scrim = document.getElementById("scrim");
   if (el.hidden || !el.classList.contains("open")) return;
   el.dataset.closing = "1"; syncInert(false); layerClosed();
-  const back = el.dataset.from ? document.querySelector(`#v-form:not([hidden]) .pc[data-id="${el.dataset.from}"]`) : null;
+  const card = el.dataset.from ? document.querySelector(`#v-form:not([hidden]) .pc[data-id="${el.dataset.from}"]`) : null;
+  // il fuoco torna dove era (la carta, la riga del mercato...); se quell'elemento non c'è più o non si vede (un risultato
+  // della ricerca), sul campo di ricerca, ma solo se si usava la tastiera: col dito non si apre la tastiera da sola
+  const prev = sheetBack && sheetBack !== document.body && sheetBack.isConnected && !el.contains(sheetBack) && sheetBack.getClientRects().length ? sheetBack : null;
+  const back = card || prev, fb = !back && sheetKb && sheetBack && sheetBack !== document.body ? document.getElementById("q") : null;
+  sheetBack = null; sheetKb = false;
   const done = () => { if (!el.dataset.closing) return; el.hidden = true; scrim.hidden = true; el.style.transition = el.style.transform = ""; scrim.style.transition = ""; delete el.dataset.closing; };
   clearTimeout(sheetTimer);
   if (!fling && back && !calm && document.startViewTransition && inView(back)) {   // la scheda torna dentro la sua carta
@@ -3259,6 +3288,7 @@ function closeSheet(fling) {
     sheetTimer = setTimeout(done, calm ? 0 : 260);
   }
   if (back) back.focus({preventScroll: true});
+  else if (fb) fb.focus();
 }
 
 // Valore al tocco nei grafici: un'etichetta sopra il segno; sparisce toccando altrove, scorrendo o dopo 3 secondi
@@ -3384,6 +3414,7 @@ const reveal = "IntersectionObserver" in window ? new IntersectionObserver(es =>
 }), {rootMargin: "0px 0px 60px 0px"}) : null;
 
 let vswap = false;   // vero durante il render di un cambio di vista
+let entered = false; // la cascata dei blocchi c'è solo alla prima apertura della pagina: dopo i blocchi arrivano fermi
 // blocchi di una vista: i figli diretti, e dentro i gruppi di colonna (.fcol) i loro figli
 const blocks = el => [...el.children].flatMap(c => c.classList.contains("fcol") ? [...c.children] : [c]);
 function animateIn(el) {
@@ -3395,10 +3426,15 @@ function animateIn(el) {
   [...court, ...el.querySelectorAll(".bench .pc")].forEach((c, j) => c.style.setProperty("--j", j));
   void el.offsetWidth;   // riparte l'animazione anche sugli stessi elementi
   let i = 0;
-  kids.forEach(c => {
-    if (!reveal || c.getBoundingClientRect().top < innerHeight) { c.style.setProperty("--i", Math.min(i++, 10)); c.classList.add("play"); if (vswap) c.classList.add("quiet"); }
-    else { c.style.setProperty("--i", 0); reveal.observe(c); }   // fuori schermo: parte quando ci arrivi scorrendo
+  // prima tutte le letture di posizione, poi le scritture: niente ricalcolo di stile forzato a ogni blocco
+  const tops = reveal ? kids.map(c => c.getBoundingClientRect().top) : null, vh = innerHeight;
+  // quiet anche ai blocchi fuori schermo: tornando a una vista lo scorrimento ripristinato non rifà l'entrata del campo
+  const q = vswap || entered;
+  kids.forEach((c, k) => {
+    if (!reveal || tops[k] < vh) { c.style.setProperty("--i", Math.min(i++, 10)); c.classList.add("play"); if (q) c.classList.add("quiet"); }
+    else { c.style.setProperty("--i", 0); if (q) c.classList.add("quiet"); reveal.observe(c); }   // fuori schermo: play quando ci arrivi scorrendo
   });
+  entered = true;
   countKpis(el);
   el.querySelectorAll(".result b").forEach(b => roll(b, zeros(b.textContent)));
   dir = 0;
@@ -4221,7 +4257,7 @@ function layerClosed() {
 // Sfondo inerte (né tocchi né Tab) mentre scheda, anteprima o guida sono aperte: il fuoco resta lì dentro
 function syncInert(force) {
   const on = force ?? overOpen();
-  document.querySelectorAll(".app, #mini").forEach(x => { x.inert = on; });
+  document.querySelectorAll(".app, #mini, #skip").forEach(x => { x.inert = on; });
 }
 addEventListener("popstate", () => {
   if (histSkip) { histSkip--; return; }
@@ -4270,7 +4306,9 @@ function freshness() {
   const h = dataAge(), off = offline || navigator.onLine === false;
   const lvl = h <= FRESH_OK ? "ok" : h <= FRESH_MID ? "mid" : "lo";
   const prob = (D.token && D.token.ok === false) || lastFail || (D.fonti || []).some(f => !f.ok);
-  b.dataset.l = lvl; b.querySelector(".fd use")?.setAttribute("href", "#i-" + lvl);
+  // icona e colore: l'età dei dati, ma se c'è qualcosa da controllare almeno giallo (mai la spunta verde con "da controllare")
+  const shown = prob && lvl === "ok" ? "mid" : lvl;
+  b.dataset.l = shown; b.querySelector(".fd use")?.setAttribute("href", "#i-" + shown);
   document.getElementById("fresh-t").textContent = `${off ? "Offline · " : ""}dati di ${ageTxt(h)}${prob ? " · da controllare" : ""}`;
   b.setAttribute("aria-label", `${off ? "Sei offline. " : ""}Dati di ${ageTxt(h)}, ${lvl === "ok" ? "freschi" : lvl === "mid" ? "da aggiornare presto" : "vecchi"}${prob ? ", c'è qualcosa da controllare" : ""}. Dettagli`);
   b.hidden = false;
@@ -4292,6 +4330,14 @@ function freshPanel() {
 (() => {
   const b = document.getElementById("fresh"), p = document.getElementById("fresh-d");
   b.addEventListener("click", () => { const open = p.hidden; p.hidden = !open; b.setAttribute("aria-expanded", open); if (open) freshPanel(); buzz(6); });
+  // si chiude anche con Esc (il fuoco torna sul bollino se era lì o nel pannello) e toccando fuori da bollino e pannello
+  const shut = () => { if (p.hidden) return false; p.hidden = true; b.setAttribute("aria-expanded", "false"); return true; };
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape" || p.hidden || overOpen()) return;
+    const a = document.activeElement, back = a === b || p.contains(a);
+    shut(); if (back) b.focus();
+  });
+  document.addEventListener("pointerdown", e => { if (!p.hidden && !e.target.closest("#fresh, #fresh-d")) shut(); });
   setInterval(freshness, 60000);
   addEventListener("online", freshness); addEventListener("offline", freshness);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) freshness(); });
