@@ -1447,7 +1447,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .tabs i{transition:transform var(--d-base) var(--e-io)}
   .alt.flash::after{animation:flash var(--d-long) var(--e-out)}   /* parte quando lo scorrimento si ferma (JS) */
   .cmp-row,.jump a,.tabs button,.more-btn{transition:transform var(--d-fast) var(--e-out),background-color var(--d-fast),color var(--d-fast)}
-  .kpi .delta.show{animation:delta var(--d-long) var(--e-out) both}
+  .kpi .delta.show{animation:delta var(--d-base) var(--e-out) both}
   .live-dot::after{animation:ping 1.6s var(--e-out) infinite}
   .sk::after{animation:shimmer 1.3s infinite}
   .boot-ic .jy{animation:boot-j 320ms var(--e-out) both}
@@ -1484,7 +1484,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   @keyframes rise-bar{from{transform:scaleY(0)}}
   @keyframes drop{from{opacity:0;transform:translateY(-10px)}}
   @keyframes line{from{stroke-dasharray:1;stroke-dashoffset:1}to{stroke-dasharray:1;stroke-dashoffset:0}}
-  @keyframes delta{0%{opacity:0;transform:translateY(6px)}20%,75%{opacity:1;transform:none}100%{opacity:0;transform:translateY(-4px)}}
+  @keyframes delta{0%{opacity:0;transform:translateY(6px)}100%{opacity:1;transform:none}}
   @keyframes lights{0%{opacity:.82}35%{opacity:.3}50%{opacity:.55}100%{opacity:0}}
   @keyframes vt-out{to{opacity:0;transform:scale(.94) translateY(6px)}}
   @keyframes vt-in{from{opacity:0;transform:scale(.94) translateY(-8px)}}
