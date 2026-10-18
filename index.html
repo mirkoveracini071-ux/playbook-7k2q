@@ -33,6 +33,7 @@
   /* colore */
   /* neutri con una tinta leggera dell'accento (OKLCH: stessa luminosità di prima, tinta 41°, croma 0,0035): contrasti uguali o migliori */
   --bg:#f3f0ef; --surface:#ffffff; --surface-2:#f9f6f5; --fg:#1a1716; --muted:#625f5e; --line:#dedbda; --line-2:#c6c3c2;
+  --ctl-line:#868180;   /* bordo dei controlli (campo di ricerca, interruttore spento): almeno 3:1 su pagina e superficie (WCAG 1.4.11) */
   --accent:#c94a0a; --accent-text:#b2420a; --accent-ink:#ffffff;
   --good:#1b7d45; --good-ink:#ffffff; --bad:#c22c2c; --warn:#d69300; --warn-text:#875800; --warn-ink:#1a1200;
   --cap:#c9f23a; --cap-ink:#1d2a00;
@@ -96,7 +97,7 @@
 /* tema scuro: due blocchi con le STESSE righe (scuro del sistema e scuro scelto a mano). Il CSS non sa unire una media
    query e un attributo in un solo selettore; unirli vorrebbe dire cambiare il JS del tema. Si cambiano sempre insieme. */
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
+  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e; --ctl-line:#736e6b;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --apron:#4a1a08;
@@ -112,7 +113,7 @@
   --sel-bg:#4b2e20; --sel-fg:#f1ece9; --sel-line:var(--accent);   /* in scuro il pieno quasi bianco abbagliava: tinta d'accento come il menu */
   --dots:rgba(241,236,233,.11); --atm-sq:rgba(255,122,51,.09); --atm-mk:rgba(70,150,225,.10); --atm-an:rgba(80,190,140,.08); color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e;
+  --bg:#141110; --surface:#1e1b1a; --surface-2:#252220; --fg:#f1ece9; --muted:#aaa5a2; --line:#33302e; --ctl-line:#736e6b;
   --accent:#ff7a33; --accent-text:#ff9257; --accent-ink:#1a0b00;
   --good:#4cc47f; --good-ink:#04200f; --bad:#ff6b6b; --warn:#f0b429; --warn-text:#f0b429;
   --apron:#4a1a08;
@@ -194,10 +195,10 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .seg button{position:relative;z-index:1;border:0;background:none;cursor:pointer;color:var(--muted);font-weight:600;display:grid;justify-items:center;align-content:center;gap:2px;min-height:52px;min-width:0;padding:4px 2px;border-radius:var(--r-l);transition:color var(--d-fast)}
 .seg button svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
 .seg button span{font-size:.78rem;line-height:1.1;letter-spacing:.01em;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:clip}
-.seg button[aria-pressed="true"]{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 13%,transparent)}
+.seg button[aria-current="page"]{color:var(--accent-text);background:color-mix(in srgb,var(--accent) 13%,transparent)}
 /* l'indicatore copre tutto il menu e si "ritaglia" sulla voce scelta: si anima solo clip-path (niente layout) */
 .seg-ind{position:absolute;inset:0;background:color-mix(in srgb,var(--accent) 15%,transparent);pointer-events:none;opacity:0;clip-path:inset(50% 50% 50% 50%)}
-.seg.js button[aria-pressed="true"]{background:none}
+.seg.js button[aria-current="page"]{background:none}
 .seg.js .seg-ind{opacity:1}
 @media (max-width:699px){
   :root{--nav-h:calc(68px + env(safe-area-inset-bottom,0px))}
@@ -208,11 +209,11 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
   /* sul telefono la voce scelta ha la "pillola" dietro l'icona, come nelle app iOS/Android; etichette più grandi */
   .seg button{min-height:56px;padding:2px 0;gap:3px;border-radius:var(--r-m)}
   .seg button svg{box-sizing:border-box;width:46px;height:30px;padding:4px 12px;border-radius:var(--r-pill)}
-  .seg button[aria-pressed="true"]{background:none}
-  .seg button[aria-pressed="true"] svg{background:color-mix(in srgb,var(--accent) 15%,transparent)}
-  .seg.js button[aria-pressed="true"] svg{background:none}
-  .seg button span{font-size:clamp(.66rem,2.85vw,.78rem);letter-spacing:-.005em}
-  .seg button[aria-pressed="true"] span{font-weight:700}
+  .seg button[aria-current="page"]{background:none}
+  .seg button[aria-current="page"] svg{background:color-mix(in srgb,var(--accent) 15%,transparent)}
+  .seg.js button[aria-current="page"] svg{background:none}
+  .seg button span{font-size:clamp(.75rem,2.85vw,.78rem);letter-spacing:-.005em}
+  .seg button[aria-current="page"] span{font-weight:700}
 }
 @media (min-width:700px){
   .seg{position:sticky;top:calc(var(--mini-h) + 4px);background:color-mix(in srgb,var(--surface) 90%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
@@ -293,7 +294,7 @@ th{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.06em;color:va
 tbody tr:last-child td{border-bottom:0}
 td small{font-size:.8rem}
 .lastday td:first-child{white-space:normal}
-.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative}   /* relative: i testi nascosti (.sr, assoluti) restano dentro il riquadro che scorre e non allargano la pagina */
 
 details{border-top:1px solid var(--line)}
 details > summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);font-weight:600}
@@ -573,7 +574,7 @@ details b{color:var(--accent-text)}
 
 /* ——— ricerca giocatori ——— */
 .srch{position:relative;z-index:4}
-.srch-f{display:flex;align-items:center;gap:var(--sp-2);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-xl);padding:0 6px 0 12px;min-height:48px;transition:border-color var(--d-fast),box-shadow var(--d-fast)}
+.srch-f{display:flex;align-items:center;gap:var(--sp-2);background:var(--surface);border:1px solid var(--ctl-line);border-radius:var(--r-xl);padding:0 6px 0 12px;min-height:48px;transition:border-color var(--d-fast),box-shadow var(--d-fast)}
 .srch-f:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 .srch-f svg{width:20px;height:20px;flex:none;stroke:var(--muted);fill:none;stroke-width:var(--ic-w);stroke-linecap:round}
 .srch-f input{flex:1;min-width:0;border:0;background:none;color:var(--fg);font:inherit;font-size:max(16px,1rem);padding:12px 0;outline:none;-webkit-appearance:none;appearance:none}
@@ -636,6 +637,7 @@ details b{color:var(--accent-text)}
 .alt-sl span.new{color:var(--accent-text);font-weight:700}
 
 /* ——— opzioni: confronto a due colonne ——— */
+.nw{white-space:nowrap}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap}
 .pair-pick{display:grid;grid-template-columns:minmax(0,1fr) 44px minmax(0,1fr);gap:var(--sp-2);align-items:end}
 .pair-pick label{display:grid;gap:var(--sp-1);min-width:0}
@@ -707,7 +709,7 @@ details b{color:var(--accent-text)}
 .calc input[type=range]{width:100%;height:44px;margin:0;accent-color:var(--accent);cursor:pointer}
 .calc input[type=number]{font:600 1.1rem var(--body);min-height:48px;padding:8px 12px;border:1px solid var(--line-2);border-radius:var(--r-m);background:var(--surface-2);color:var(--fg);width:100%;font-variant-numeric:tabular-nums}
 .calc input[type=number]:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
-.scale-l{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--muted);margin-top:-6px;font-variant-numeric:tabular-nums}
+.scale-l{display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--muted);margin-top:calc(-1 * var(--sp-4) - 10px);font-variant-numeric:tabular-nums}
 .result{display:grid;grid-template-columns:1fr 1fr;gap:0;background:var(--board);border-radius:var(--r-xl);overflow:hidden;box-shadow:inset 0 0 0 1px var(--board-line)}
 .result div{padding:14px 16px;display:grid;gap:var(--sp-1)}
 .result div + div{box-shadow:-1px 0 0 var(--board-line)}
@@ -930,6 +932,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-base) var(--e-out) backwards}
 .td-l b{font-weight:700}
 .td-inj{display:flex;flex-wrap:wrap;gap:var(--sp-1h)}
 .td-inj .ti{display:inline-flex;align-items:center;border-radius:var(--r-pill);padding:2px 9px 2px 7px;background:var(--surface-2);white-space:nowrap}
+.td-inj.chain .ti{white-space:normal;max-width:100%}   /* un solo avviso (niente striscia che scorre): con il testo grande va a capo invece di allargare la pagina */
 /* ——— scheda: ultime 5 partite e mini-grafico di forma ——— */
 .f5{display:grid;gap:var(--sp-1h)}
 .f5-h{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
@@ -1131,7 +1134,8 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 .mq.run{-webkit-mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent);mask-image:linear-gradient(90deg,transparent,#000 12px,#000 calc(100% - 24px),transparent);cursor:pointer}
 .mq.run .mq-g[aria-hidden]{display:flex}
 .mq.st .mq-t{width:auto;flex-wrap:wrap}
-.mq.st .mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0}
+.mq.st .mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0;min-width:0}
+.mq.st .ti{white-space:normal;max-width:100%}   /* riga ferma: una pillola più larga della colonna va a capo invece di essere tagliata */
 
 /* ——— contenuto principale, salto al contenuto ——— */
 .views{display:grid;gap:var(--sp-4);min-width:0}
@@ -1150,7 +1154,7 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 #v-form.dec{width:100%;max-width:640px;justify-self:center}
 .dec-t{justify-self:start;display:inline-flex;align-items:center;gap:var(--sp-2);min-height:44px;padding:0 var(--sp-3) 0 var(--sp-2);margin-block:-4px;border:1px solid var(--line);
   border-radius:var(--r-pill);background:var(--surface);color:var(--fg);font:600 var(--fs-s)/1.2 var(--body)}
-.dec-k{position:relative;flex:none;width:32px;height:20px;border-radius:var(--r-pill);background:var(--line-2)}
+.dec-k{position:relative;flex:none;width:32px;height:20px;border-radius:var(--r-pill);background:var(--ctl-line)}
 .dec-k::after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.3)}
 .dec-t[aria-pressed="true"]{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
 .dec-t[aria-pressed="true"] .dec-k{background:var(--accent)}
@@ -1195,7 +1199,9 @@ table td:first-child small,table td:first-child .muted{font-weight:400}
 /* colore della squadra accanto alla sigla: nel tema scuro la versione schiarita (almeno 3:1 sulla superficie) */
 :root[data-theme="dark"] :is(.tm-c,.srch-t > b){border-left-color:var(--tcd,var(--line-2))}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) :is(.tm-c,.srch-t > b){border-left-color:var(--tcd,var(--line-2))}}
-.mkt-t tr[tabindex]:focus-visible{outline:2.5px solid var(--focus);outline-offset:-2px}
+.mkt-t .mn-o{border:0;background:none;padding:0;margin:0;font:inherit;color:inherit;text-align:left;cursor:pointer;border-radius:4px}
+.mkt-t tr:has(.mn-o:focus-visible){outline:2.5px solid var(--focus);outline-offset:-2px}
+.mkt-t .mn-o:focus-visible{outline:0}   /* il nome apre la scheda (da tastiera): l'anello va su tutta la riga, come prima */
 
 /* ——— guida al primo avvio ——— */
 .tour{position:fixed;inset:0;z-index:9;display:grid;place-items:end center;background:var(--scrim);
@@ -1348,7 +1354,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   .mini{transition:transform var(--d-base) var(--e-out),opacity var(--d-base) var(--e-out),visibility 0s linear var(--d-base)}
   .mini.on{transition:transform var(--d-base) var(--e-out),opacity var(--d-base) var(--e-out),visibility 0s}
   .mini-b svg{animation:clock-spin 6s linear infinite}
-  .seg.ready button[aria-pressed="true"] svg > *{transform-box:fill-box;transform-origin:center;animation:nav-pop var(--d-base) var(--e-out)}
+  .seg.ready button[aria-current="page"] svg > *{transform-box:fill-box;transform-origin:center;animation:nav-pop var(--d-base) var(--e-out)}
   .mode i{transition:transform var(--d-base) var(--e-io)}
   .pc{transition:transform var(--d-fast) var(--e-out)}
   .seg button svg,.days button,.close,.btn{transition:transform var(--d-fast) var(--e-out),background-color var(--d-fast),border-color var(--d-fast),color var(--d-fast)}
@@ -1543,7 +1549,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
   ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
   /* striscia degli avvisi: diventa una riga ferma che va a capo */
-  .mq-t{width:auto;flex-wrap:wrap}.mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0}.mq-g[aria-hidden]{display:none!important}.mq{-webkit-mask-image:none!important;mask-image:none!important}
+  .mq-t{width:auto;flex-wrap:wrap}.mq-g{flex:1 1 100%;flex-wrap:wrap;padding-right:0;min-width:0}.mq .ti{white-space:normal;max-width:100%}.mq-g[aria-hidden]{display:none!important}.mq{-webkit-mask-image:none!important;mask-image:none!important}
 }
 </style>
 </head>
@@ -1615,13 +1621,13 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
     <div id="qres" class="srch-res" role="region" aria-label="Risultati della ricerca" hidden></div>
   </div>
   <nav class="seg" aria-label="Vista"><span class="seg-ind" aria-hidden="true"></span><span id="sp" class="sp" aria-hidden="true"><i></i></span>
-    <button type="button" data-view="form" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-form"/></svg><span>Squadra</span></button>
-    <button type="button" data-view="alt" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alt"/></svg><span>Opzioni</span></button>
-    <button type="button" data-view="occ" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-occ"/></svg><span>Occasioni</span></button>
-    <button type="button" data-view="prezzi" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-prezzi"/></svg><span>Prezzi</span></button>
-    <button type="button" data-view="inf" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-inf"/></svg><span>Infortuni</span></button>
-    <button type="button" data-view="calc" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calc"/></svg><span>Calcola</span></button>
-    <button type="button" data-view="mod" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mod"/></svg><span>Modello</span></button>
+    <button type="button" data-view="form" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-form"/></svg><span>Squadra</span></button>
+    <button type="button" data-view="alt"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-alt"/></svg><span>Opzioni</span></button>
+    <button type="button" data-view="occ"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-occ"/></svg><span>Occasioni</span></button>
+    <button type="button" data-view="prezzi"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-prezzi"/></svg><span>Prezzi</span></button>
+    <button type="button" data-view="inf"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-inf"/></svg><span>Infortuni</span></button>
+    <button type="button" data-view="calc"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-calc"/></svg><span>Calcola</span></button>
+    <button type="button" data-view="mod"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mod"/></svg><span>Modello</span></button>
   </nav>
   <main id="main" class="views" tabindex="-1" aria-label="Contenuto">
   <section id="v-form" class="view" aria-label="Squadra"><div class="loader" role="status"><svg viewBox="0 0 44 60" aria-hidden="true">
@@ -2102,8 +2108,9 @@ function todayCard(frag) {
   }).filter(Boolean);
   const c = g.capitano[0], cp = c && g.giocatori.find(p => p.id === c.id), capNowA = A && A.find(p => p.capitano);
   if (!frag && !started) return "";   // prima della giornata i numeri stanno dentro "Da fare ora"
-  const kDays = n == null ? "–" : n <= 0 ? "oggi" : String(n);
-  const kDaysL = started ? (nt ? `giorni al T${nt.turno}` : "giornata finita") : `giorni alla ${esc(g.label)}`;
+  const kDays = n == null ? "–" : n <= 0 ? "Oggi" : String(n);
+  // "oggi" non è un numero di giorni: con il turno di oggi l'etichetta dice cosa si gioca
+  const kDaysL = started ? (nt ? n != null && n <= 0 ? `si gioca il T${nt.turno}` : `giorni al T${nt.turno}` : "giornata finita") : n != null && n <= 0 ? `inizia la ${esc(g.label)}` : `giorni alla ${esc(g.label)}`;
   const body = `<div class="kpis" style="--n:3"><div class="kpi hi"><b>${kDays}</b><span>${kDaysL}</span></div>
       <div class="kpi"><b>${inTurn.length}</b><span>${nt ? `in campo nel T${nt.turno}` : "in campo"}</span></div>
       <div class="kpi"><b>${warn.length}</b><span>${warn.length === 1 ? "avviso" : "avvisi"} in rosa</span></div></div>
@@ -2372,7 +2379,7 @@ function renderMod() {
     tests = `<div class="card">${head("Test sulle stagioni passate")}
       <div class="kpis" style="--n:3"><div class="kpi"><b>${num(p.mae_prima, 2)}</b><span>errore prima</span></div>
         <div class="kpi hi"><b>${num(p.mae_dopo, 2)}</b><span>errore ora</span></div>
-        <div class="kpi"><b>${p.partite.toLocaleString("it-IT")}</b><span>partite ${esc(p.stagione)}</span></div></div>
+        <div class="kpi"><b>${p.partite.toLocaleString("it-IT")}</b><span>partite <span class="nw">${esc(p.stagione)}</span></span></div></div>
       <p class="note">${esc(p.note)}</p>
       <details><summary><span>Cosa conta, misurato sui dati · ${t.effetti.length} voci</span></summary><ul class="mod-list">${eff}</ul></details></div>
       <div class="card">${head(`Strategie a confronto`, esc(s.stagione))}
@@ -2420,7 +2427,7 @@ function seasonCard() {
     <small class="muted">${num(r.punti / r.giornate, 0)} a giornata · ${r.cambi} cambi · valore rosa ${num(r.valore)}</small></div>`).join("");
   const table = vtab(`La stagione ${c.stagione} giocata dal modello`, ["Strategia", "Punti", "A giornata", "Cambi", "Valore rosa"],
     c.righe.map(r => [esc(r.strategia), r.punti.toLocaleString("it-IT"), num(r.punti / r.giornate, 0), String(r.cambi), num(r.valore)]));
-  return `<div class="card">${head(`La stagione ${esc(c.stagione)} giocata dal modello`)}${viz("sc", "Stagione giocata dal modello", `<div class="sc">${rows}</div>`, table)}<p class="note">${esc(c.note)}</p></div>`;
+  return `<div class="card">${head(`<span>La stagione <span class="nw">${esc(c.stagione)}</span> giocata dal modello</span>`)}${viz("sc", "Stagione giocata dal modello", `<div class="sc">${rows}</div>`, table)}<p class="note">${esc(c.note)}</p></div>`;
 }
 
 // Cambi di rosa consigliati per la giornata (la formazione la decidi tu turno per turno)
@@ -2663,7 +2670,13 @@ function renderMkt() {
   requestAnimationFrame(() => { mktTimer = setTimeout(() => drawMkt(true), calm ? 0 : 120); });
 }
 let mktTimer = 0;
-const mktRedraw = () => { if (D && view === "occ" && occMode === "mkt") renderMkt(); };
+// ridisegno all'arrivo di cerca.json: se il fuoco era su Occasioni/Mercato ci torna (il disegno rifà i pulsanti)
+const mktRedraw = () => {
+  if (!(D && view === "occ" && occMode === "mkt")) return;
+  const a = document.activeElement, k = a && a.matches && a.matches("#v-occ .mkt-seg [data-occ]") ? a.dataset.occ : null;
+  renderMkt();
+  if (k) document.querySelector(`#v-occ .mkt-seg [data-occ="${k}"]`)?.focus({preventScroll: true});
+};
 const mktSkeleton = () => `<div class="card mkt-sk" aria-busy="true" aria-label="Calcolo il mercato"><div class="sk" style="--h:22px;width:45%"></div>${Array.from({length: 7}, () => `<div class="sk-row"><span class="sk" style="--h:34px"></span><span class="sk" style="--h:34px"></span><span class="sk" style="--h:34px"></span></div>`).join("")}</div>`;
 function drawMkt(anim) {
   const mine = new Set(D.rosa || []), box = document.getElementById("mkt-res");
@@ -2682,7 +2695,7 @@ function drawMkt(anim) {
   const rows = shown.map(({c, v}, k) => {
     const pr = v.p != null && c.ruolo !== "HC" ? v.p : null;
     const si = cmpOn ? cmpSel.indexOf(c.id) : -1;
-    return `<tr data-mid="${c.id}" tabindex="0" aria-label="${esc(c.nome)}, ${esc(c.squadra)}, ${cr(c.crediti)} crediti, ${num(v.punti)} punti attesi. ${cmpOn ? "Scegli per il confronto" : "Apri la scheda"}" style="--k:${k}"${si >= 0 ? ' class="sel" aria-selected="true"' : ""}><td><div class="mn">${favBtn(c.nome)}<span><b>${esc(c.nome)}</b>${si >= 0 ? `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>` : ""}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></span></div></td>
+    return `<tr data-mid="${c.id}" style="--k:${k}"${si >= 0 ? ' class="sel"' : ""}><td><div class="mn">${favBtn(c.nome)}<span><button type="button" class="mn-o" aria-label="${esc(c.nome)}, ${esc(c.squadra)}, ${cr(c.crediti)} crediti, ${num(v.punti)} punti attesi. ${cmpOn ? "Scegli per il confronto" : "Apri la scheda"}"${cmpOn ? ` aria-pressed="${si >= 0}"` : ""}><b>${esc(c.nome)}</b></button>${si >= 0 ? `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>` : ""}${mine.has(c.nome) ? ' <span class="pill mine-tag">in rosa</span>' : ""}<br><small class="muted">${esc(c.squadra)} · ${ROLE_LONG[c.ruolo] || c.ruolo}</small></span></div></td>
     <td>${cr(c.crediti)}</td><td class="flashable"><b data-cnt="m${c.id}">${num(v.punti)}</b>${v.adj ? " ✎" : ""}</td><td>${num(ptcr({c, v}), 2)}${bar(ptcr({c, v}) / top * 100)}</td><td class="${v.plus_cr > 0.05 ? "up" : v.plus_cr < -0.05 ? "down" : ""}">${v.plus_cr != null ? sign(v.plus_cr, 2) : "–"}</td><td>${pr != null ? presIc(pr) + Math.round(pr * 100) + "%" + bar(pr * 100, presCls(pr)) : "–"}</td></tr>`;
   }).join("");
   const n = document.getElementById("mkt-n"); if (n) n.textContent = `${L.length} giocatori · ${curG().label}`;
@@ -2695,7 +2708,7 @@ function drawMkt(anim) {
 }
 document.getElementById("v-occ").addEventListener("click", e => {
   const o = e.target.closest("[data-occ]");
-  if (o) { occMode = o.dataset.occ; saveMkt(); render(); return; }
+  if (o) { occMode = o.dataset.occ; saveMkt(); render(); document.querySelector(`#v-occ .mkt-seg [data-occ="${occMode}"]`)?.focus({preventScroll: true}); return; }   // il disegno rifà i pulsanti: il fuoco torna sulla scelta
   if (e.target.closest("[data-retry]")) { retry(renderMkt); return; }
   const fv = e.target.closest("[data-fav]"); if (fv) { if (!swiped) toggleFav(fv.dataset.fav); return; }
   if (e.target.closest("[data-mfav]")) { mkt.fav = !mkt.fav; mkt.n = 25; e.target.closest("[data-mfav]").setAttribute("aria-pressed", mkt.fav); drawMkt(true); return; }
@@ -2724,9 +2737,9 @@ function pickCmp(id) {
 function markSel() {
   document.querySelectorAll("#mkt-res tr[data-mid]").forEach(tr => {
     const si = cmpOn ? cmpSel.indexOf(+tr.dataset.mid) : -1;
-    tr.classList.toggle("sel", si >= 0); if (si >= 0) tr.setAttribute("aria-selected", "true"); else tr.removeAttribute("aria-selected");
+    tr.classList.toggle("sel", si >= 0); const nb = tr.querySelector(".mn-o"); if (nb) { if (cmpOn) nb.setAttribute("aria-pressed", si >= 0); else nb.removeAttribute("aria-pressed"); }
     tr.querySelector(".ab")?.remove();
-    if (si >= 0) tr.querySelector(".mn > span > b")?.insertAdjacentHTML("afterend", `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>`);
+    if (si >= 0) tr.querySelector(".mn-o")?.insertAdjacentHTML("afterend", `<span class="ab${si ? " b" : ""}">${si ? "B" : "A"}</span>`);
   });
 }
 // Il confronto: due colonne (A pieno arancio, B a righe), una riga per voce con la barra della differenza che parte dal
@@ -2764,10 +2777,7 @@ function drawCmp(anim) {
     if (anim && !calm) countUp(el, prev ?? 0);
   });
 }
-// righe del mercato da tastiera: Invio o spazio come un tocco (sul nome resta la stella)
-document.getElementById("v-occ").addEventListener("keydown", e => {
-  if ((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches("tr[data-mid]")) { e.preventDefault(); e.target.click(); }
-});
+// righe del mercato da tastiera: il nome è un pulsante (.mn-o) accanto alla stella, non dentro una riga focalizzabile
 document.getElementById("v-occ").addEventListener("change", e => {
   if (e.target.id === "mt") mkt.team = e.target.value; else if (e.target.id === "mm") mkt.max = e.target.value; else if (e.target.id === "ms") mkt.sort = e.target.value; else return;
   mkt.n = 25; drawMkt(true);
@@ -2795,7 +2805,7 @@ function renderOcc() {
   document.getElementById("v-occ").innerHTML = `${occSeg()}
     <div class="card">${head("Occasioni da pochi crediti", `${occ.length} giocatori`)}
       <p class="note">Giocatori fino a 6 crediti che avranno più minuti, o il posto da titolare, per l'assenza di un compagno (infortuni da app Dunkest e basketballmonster). Ordinati per punti attesi a giornata.</p></div>
-    ${occ.length ? `<div class="occ-list chain">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.</div>`}`;
+    ${occ.length ? `<div class="occ-list chain">${cards}</div>` : `<div class="empty">${ICON.star}<b>Nessuna occasione al momento</b>Compaiono quando un titolare si ferma e un giocatore economico eredita i suoi minuti.<button type="button" class="btn-o" data-occ="mkt">Cerca nel Mercato</button></div>`}`;
 }
 
 function renderInf() {
@@ -3428,7 +3438,8 @@ const MO = (() => {
   };
   document.addEventListener("pointerdown", e => {
     if (calm || e.button > 0) return;
-    const el = e.target.closest && e.target.closest(SEL);
+    let el = e.target.closest && e.target.closest(SEL);
+    if (el && el.classList.contains("mn-o")) el = el.closest("tr");   // il nome nel mercato: si stringe la riga intera, come prima
     if (!el || el.disabled || el.getAttribute("aria-disabled") === "true" || el.closest(".sheet.drag")) return;
     release();
     const k = el.offsetWidth > 220 ? .985 : .97;
@@ -3630,7 +3641,7 @@ function toast(msg, kind = "ok") {
 // Si muove ritagliando (clip-path) un velo grande quanto il menu: nessun ricalcolo del layout durante l'animazione.
 const mobileNav = matchMedia("(max-width: 699px)");
 function moveIndicator() {
-  const nav = document.querySelector(".seg"), on = nav.querySelector('button[aria-pressed="true"]'), ind = nav.querySelector(".seg-ind");
+  const nav = document.querySelector(".seg"), on = nav.querySelector('button[aria-current="page"]'), ind = nav.querySelector(".seg-ind");
   if (!on) return;
   const tgt = mobileNav.matches ? on.querySelector("svg") : on;
   const n = nav.getBoundingClientRect(), r = tgt.getBoundingClientRect();
@@ -3732,7 +3743,7 @@ function avvisi() {
 function render() {
   if (!D) return;
   day = Math.min(Math.max(day, 0), D.piano.giornate.length - 1);
-  document.querySelectorAll(".seg button").forEach(b => { b.setAttribute("aria-pressed", b.dataset.view === view); if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
+  document.querySelectorAll(".seg button").forEach(b => { if (b.dataset.view === view) b.setAttribute("aria-current", "page"); else b.removeAttribute("aria-current"); });
   VIEWS.forEach(v => document.getElementById("v-" + v).hidden = v !== view);
   document.documentElement.classList.toggle("swipe-x", view === "form" || view === "occ");
   document.documentElement.dataset.ctx = {form: "sq", alt: "mk", occ: "mk", prezzi: "mk", inf: "an", calc: "an", mod: "an"}[view];
@@ -3821,9 +3832,10 @@ document.addEventListener("keydown", e => {
   const shv = document.getElementById("shv");
   if (e.key === "Escape" && shv && !shv.hidden) { closeShare(); return; }
   if (e.key === "Escape") closeSheet();
-  if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".sh-tabs")) {
+  if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(e.key) && e.target.closest && e.target.closest(".sh-tabs")) {
     const btns = [...e.target.closest(".sh-tabs").querySelectorAll("[data-shtab]")], i = btns.indexOf(e.target.closest("[data-shtab]"));
-    const n = btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length]; if (n) pickShTab(n.dataset.shtab, true);
+    if (e.key === "Home" || e.key === "End") e.preventDefault();   // Home/End: prima e ultima scheda (pattern APG), senza scorrere la scheda
+    const n = e.key === "Home" ? btns[0] : e.key === "End" ? btns.at(-1) : btns[(i + (e.key === "ArrowRight" ? 1 : -1) + btns.length) % btns.length]; if (n) pickShTab(n.dataset.shtab, true);
     return;
   }
   if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && e.target.closest && e.target.closest(".tabs")) {
