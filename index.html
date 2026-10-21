@@ -1000,7 +1000,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-base) var(--e-out) backwards}
 .badge.inj{display:inline-flex;align-items:center;gap:2px}   /* icona e percentuale sulla stessa riga, alto come prima (19 px) */
 .badge .ic{width:11px;height:11px;stroke-width:2.6;vertical-align:-2px}
 .pill .ic{width:13px;height:13px;stroke-width:2.2;vertical-align:-2px;margin:0 3px 0 -2px}
-.avv > span{display:flex;gap:var(--sp-2);align-items:flex-start}.avv .ic{color:var(--warn-text);margin-top:1px}
+.avv > span{display:flex;gap:var(--sp-2);align-items:flex-start}.avv .ctl{margin-top:var(--sp-1)}.avv .ctl summary{cursor:pointer;min-height:44px;display:flex;align-items:center;color:var(--warn-text);font-weight:600}.avv .ctl ul{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:var(--fs-xs);line-height:1.45;color:var(--fg);overflow-wrap:anywhere}.avv .ic{color:var(--warn-text);margin-top:1px}
 .chip-b .ic{width:16px;height:16px;margin:0 5px 0 -3px;vertical-align:-3px}
 
 /* ——— atmosfera: Squadra calda, mercato (Opzioni, Occasioni, Prezzi) fredda, analisi (Infortuni, Calcola, Modello) verde.
@@ -3733,6 +3733,15 @@ function avvisi() {
   if (rc && ((rc.entrati || []).length || (rc.usciti || []).length)) {
     const [pd, pt] = (rc.prima || " ").split(" ");
     out.push({ic: "alt", t: `<b>La tua rosa è cambiata dall'ultimo aggiornamento:</b> dentro ${nomi(rc.entrati)}, fuori ${nomi(rc.usciti)}${rc.prima ? ` (lettura precedente del ${dmy(pd)} alle ${esc(pt)})` : ""}.`});
+  }
+  const ct = D.controllo;   // ultimo controllo pre-turno (notizie, quintetti, cambi di formazione), se di meno di 18 ore
+  if (ct && ct.quando && (ct.righe || []).length) {
+    const [cd, ch] = ct.quando.split(" "), cage = (Date.now() - new Date(cd + "T" + ch + ":00")) / 36e5;
+    if (cage < 18) {
+      const nulla = ct.righe.some(r => /Nessun problema/i.test(r)) && ct.righe.some(r => /formazione già a posto/i.test(r));
+      out.push({ic: "alt", t: `<b>Controllo pre-turno del ${dmy(cd)} alle ${esc(ch)}:</b> ${nulla ? "niente da segnalare, formazione già a posto." : "guarda i dettagli."}
+        <details class="ctl"><summary>Dettagli</summary><ul>${ct.righe.map(r => `<li>${esc(r.trim().replace(/\s{2,}/g, " · "))}</li>`).join("")}</ul></details>`});
+    }
   }
   el.innerHTML = out.map((x, k) => `<span style="--k:${k}">${ic(x.ic || "warn")}<span>${x.t || x}</span></span>`).join("");
   el.hidden = !out.length;
