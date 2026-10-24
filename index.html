@@ -1555,8 +1555,57 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .dvp th[aria-sort] .dvp-s{color:var(--fg);font-weight:800}
 .dvp th[aria-sort] .dvp-s i{opacity:1}
 .dvp th.on .dvp-s{background:var(--sel-bg);color:var(--sel-fg)}
-.dvp td.v{background:color-mix(in srgb,var(--dc,transparent) var(--dk,0%),var(--surface));border-radius:var(--r-xs);border-bottom-color:transparent;box-shadow:inset 0 -1px 0 var(--surface)}
-.dvp td.v.pos{--dc:var(--pos)}.dvp td.v.neg{--dc:var(--neg)}
+.dvp td.v,.cal4 td.v{background:color-mix(in srgb,var(--dc,transparent) var(--dk,0%),var(--surface));border-radius:var(--r-xs);border-bottom-color:transparent;box-shadow:inset 0 -1px 0 var(--surface)}
+.dvp td.v.pos,.cal4 td.v.pos{--dc:var(--pos)}.dvp td.v.neg,.cal4 td.v.neg{--dc:var(--neg)}
+/* la riga sotto il puntatore resta tinta (prima prendeva il grigio di .scroll tbody tr:hover e perdeva i colori) */
+@media (hover:hover){.scroll :is(.dvp,.cal4) tbody tr:hover td.v{background:color-mix(in srgb,var(--dc,transparent) calc(var(--dk,0%) + 6%),var(--surface))}}
+.dvp-vs{display:block;font-size:var(--fs-xs);color:var(--muted);font-weight:500;white-space:normal;max-width:7em;line-height:1.2;margin-top:2px}
+.dvp-f{justify-self:start;min-height:44px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line-2);background:var(--surface);color:var(--fg);font-weight:600;font-size:var(--fs-s);cursor:pointer}
+.dvp-f[aria-pressed="true"]{background:var(--sel-bg);border-color:var(--sel-line);color:var(--sel-fg)}
+.dvp-f[aria-pressed="true"] .muted{color:inherit}
+/* calendario della rosa */
+.cal4{font-size:var(--fs-s)}
+.cal4 th,.cal4 td{padding:6px 3px;vertical-align:middle;text-align:center}
+.cal4 thead th{text-align:center}
+.cal4 thead th:first-child,.cal4 tbody th{text-align:left;padding-left:0}
+.scroll .cal4 tbody th{position:sticky;left:0;z-index:1;background:var(--surface);min-width:6.2em;font-weight:600;text-transform:none;letter-spacing:0;color:var(--fg);font-size:var(--fs-s)}
+.cal4 tbody th .nm{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:7.5em}
+.cal4 tbody th small{display:block;font-size:var(--fs-xs);font-weight:500}
+.cal4 td{min-width:64px}
+.cal4 td b{display:block;font-weight:700;line-height:1.15}
+.cal4 td small{display:block;font-size:var(--fs-xs);color:var(--muted);line-height:1.2}
+.cal4 td.rip{background:repeating-linear-gradient(135deg,var(--surface-2) 0 5px,var(--surface) 5px 10px);border-radius:var(--r-xs)}
+.cal4 td.rip b{font-size:var(--fs-xs);letter-spacing:.06em;color:var(--muted)}
+/* "Da fare ora": le tre scelte */
+.o3{display:grid;gap:var(--sp-1h);margin:8px 0 2px;padding:var(--sp-2h) var(--sp-3);border:1px solid var(--line);border-radius:var(--r-m);background:var(--surface-2)}
+.o3 ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.o3 li{display:grid;grid-template-columns:1fr auto 5.6em;gap:var(--sp-2);align-items:center;padding:4px 0;border-bottom:1px solid var(--line);counter-increment:none}
+.o3 li:last-child{border-bottom:0}
+.o3 li::before,.o3 li::after{display:none!important}
+.o3 .o3-n{font-weight:600;line-height:1.15}
+.o3 .o3-n small{display:block;font-weight:400;color:var(--muted);font-size:var(--fs-xs)}
+.o3 li > b{font:800 var(--fn-s)/1 var(--display)}
+.o3 li.best > b{color:var(--accent-text)}
+.o3 li.rec .o3-n{font-weight:800}
+.o3 .o3-g{text-align:right;font-weight:700;line-height:1.1}
+.o3 .o3-g small{display:block;font-weight:400;color:var(--muted);font-size:var(--fs-xs)}
+.o3-w{margin:2px 0 0;font-size:var(--fs-s);line-height:1.4;color:var(--fg)}
+.o3-b{justify-self:start;display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0;border:0;background:none;color:var(--accent-text);font-weight:700;font-size:var(--fs-s);cursor:pointer}
+.o3-b svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+/* La tua giornata, valore nel tempo, prezzo nella scheda */
+.yg > .lab{margin-bottom:-6px}
+.tv-l{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:var(--fs-s)}
+.tv-l li{display:grid;grid-template-columns:2.4em 1fr auto;gap:var(--sp-2);align-items:baseline}
+.ph{list-style:none;margin:0 0 8px;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.ph li{display:grid;justify-items:center;min-width:3.6em;padding:5px 8px;border:1px solid var(--line);border-radius:var(--r-s)}
+.ph li b{font:800 var(--fn-s)/1.1 var(--display)}
+.ph li small{font-size:var(--fs-xs);font-weight:700}
+.pmv-r{margin:0 0 6px;line-height:1.45}
+/* pulsante Guida in testata */
+.gd-b{margin-left:auto;flex:none;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--line);border-radius:var(--r-pill);background:var(--surface);color:var(--fg);cursor:pointer;padding:0;position:relative}
+.gd-b svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:var(--ic-w);stroke-linecap:round;stroke-linejoin:round}
+.gd-b + .thm{margin-left:0}
+.gd-b.new::after{content:"";position:absolute;top:6px;right:6px;width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--surface)}
 .dvp td.on{font-weight:800}
 .dvp td.st{color:var(--muted)}
 .dvp td.n{color:var(--muted);font-size:var(--fs-xs)}
@@ -1644,7 +1693,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 <button type="button" class="skip" id="skip">Vai al contenuto</button>
 <div class="app">
   <header class="top">
-    <div class="brand"><h1 id="team">PolloconCurry</h1><button type="button" class="thm" id="thm" aria-label="Tema: come il sistema. Tocca per cambiare" title="Tema: come il sistema"></button></div>
+    <div class="brand"><h1 id="team">PolloconCurry</h1><button type="button" class="gd-b" id="gd-b" data-tour aria-label="Guida rapida" title="Guida"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mid"/></svg></button><button type="button" class="thm" id="thm" aria-label="Tema: come il sistema. Tocca per cambiare" title="Tema: come il sistema"></button></div>
     <div class="brand-r"><span id="clock" class="clock" hidden></span><small id="upd">Carico i dati…</small><button type="button" class="fresh" id="fresh" hidden aria-expanded="false" aria-controls="fresh-d"><span class="fp"><svg class="ic fd" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-ok"/></svg><span id="fresh-t"></span></span></button></div>
     <div id="fresh-d" class="fresh-d" hidden></div>
   </header>
@@ -2017,7 +2066,7 @@ function renderForm() {
   // da 768 px (due colonne) Punteggio realistico e Le 4 giornate vanno sotto il campo, dove la colonna sinistra restava vuota;
   // sul telefono restano in fondo come sempre (stesso ordine per gli occhi e per il Tab)
   const wide = WIDE.matches;
-  el.innerHTML = `${fa ? `<div class="fcol f-a">${fa}</div>` : ""}<div class="fcol f-b"><div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}${wide ? rng : ""}</div><div class="fcol f-c">${top}${mode === "mia" ? "" : changes}${cap}${turns}${excludedCard()}${subs}${wide ? "" : rng}</div>`;
+  el.innerHTML = `${fa ? `<div class="fcol f-a">${fa}</div>` : ""}<div class="fcol f-b"><div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}${wide ? rng : ""}</div><div class="fcol f-c">${top}${mode === "mia" ? "" : changes}${cap}${turns}${excludedCard()}${calGrid()}${subs}${wide ? "" : rng}</div>`;
 }
 
 
@@ -2129,6 +2178,8 @@ function activeIdx() {
 
 // Oggi: in cima a Squadra, quello che serve sapere aprendo l'app. Solo dati veri: le date dei turni ci sono, l'orario
 // della prima partita (cioè della chiusura dei cambi) in data.json non c'è, quindi il conto è in giorni e non in ore.
+// giornata iniziata (mercato chiuso): con l'ora della prima partita (data.json "inizio"), altrimenti con la sola data
+const begun = g => g.inizio ? Date.now() >= Date.parse(g.inizio) : g.dal <= today();
 const daysTo = d => Math.round((new Date(d + "T12:00:00") - new Date(today() + "T12:00:00")) / 864e5);
 function todayCard(frag) {
   const i = activeIdx(), g = D.piano.giornate[i], t = today();
@@ -2138,7 +2189,7 @@ function todayCard(frag) {
   // prossimo turno con dentro i tuoi giocatori: in questa giornata, altrimenti nella prossima
   let tg = mg, nt = (mg.turni || []).find(x => x.data >= t);
   if (!nt && D.piano.giornate[i + 1]) { tg = hasMine() ? D.piano.attuale[i + 1] : D.piano.giornate[i + 1]; nt = (tg.turni || [])[0]; }
-  const started = g.dal <= t;
+  const started = begun(g);
   const dl = started ? (nt ? nt.data : null) : g.dal, n = dl ? daysTo(dl) : null;
   const byId = Object.fromEntries((tg.giocatori || []).map(p => [p.id, p]));
   const inTurn = nt ? nt.giocatori.map(id => byId[id]).filter(Boolean) : [];
@@ -2159,7 +2210,9 @@ function todayCard(frag) {
       <div class="kpi"><b>${warn.length}</b><span>${warn.length === 1 ? "avviso" : "avvisi"} in rosa</span></div></div>
     <ul class="td-l">
       ${nt ? `<li><span class="lab">Prossimo</span><span><b>${esc(tg.label)} · T${nt.turno}</b>, ${dow(nt.data)} ${dmy(nt.data)}: ${inTurn.map(p => esc(surname(p.nome))).join(", ") || "nessuno dei tuoi"}</span></li>` : ""}
-      ${!started ? `<li><span class="lab">Cambi</span><span>Entro l'inizio della ${esc(g.label)}, ${dow(g.dal)} ${dmy(g.dal)}. <span class="muted">L'orario della prima partita controllalo in Dunkest: qui il conto è in giorni.</span></span></li>` : ""}
+      ${!started ? `<li><span class="lab">Cambi</span><span>${g.inizio ? (() => { const d = new Date(Date.parse(g.inizio) - 60000), hh = String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+        return `Entro le <b>${hh}</b> di ${dow(g.dal)} ${dmy(g.dal)}: un minuto prima della prima partita della ${esc(g.label)} il mercato chiude.`; })()
+        : `Entro l'inizio della ${esc(g.label)}, ${dow(g.dal)} ${dmy(g.dal)}. <span class="muted">L'orario della prima partita controllalo in Dunkest: qui il conto è in giorni.</span>`}</span></li>` : ""}
       ${cp ? `<li><span class="lab">Capitano</span><span><span class="badge-inline">C</span> <b>${esc(cp.nome)}</b> (T${c.turno})${capNowA ? capNowA.nome === cp.nome ? " · ha già la fascia" : ` · ora ce l'ha ${esc(surname(capNowA.nome))}` : ""}</span></li>` : ""}
       <li><span class="lab">Avvisi</span>${warn.length ? warnStrip(warn) : `<span class="muted">Nessun tuo giocatore nella lista infortuni.</span>`}</li>
     </ul>`;
@@ -2185,7 +2238,7 @@ function warnStrip(warn) {
 // Vale solo finché c'è "Da fare ora", cioè prima dell'inizio della giornata.
 let decide = false;
 try { decide = localStorage.getItem("pcc-decide") === "1"; } catch (e) {}
-const todoNow = () => D.piano.giornate[activeIdx()].dal > today();
+const todoNow = () => !begun(D.piano.giornate[activeIdx()]);
 const decideOn = () => decide && todoNow();
 function setDecide(on) {
   decide = on; try { localStorage.setItem("pcc-decide", on ? "1" : "0"); } catch (e) {}
@@ -2194,21 +2247,43 @@ function setDecide(on) {
   say(on ? "Solo da decidere: cambi, capitano e avvisi" : "Squadra completa");
   document.querySelector("#v-form [data-decide]")?.focus({preventScroll: true});
 }
+// Le tre scelte di Opzioni (stessa fonte: data/alternative.json) per la giornata dei cambi: punti attesi (malus compreso)
+// e guadagno per cambio rispetto a "Non toccare nulla". Se la consigliata non batte "non toccare" lo dice: i cambi
+// puntano alle giornate dopo (plusvalenze, calendario). La consigliata resta in vista comunque.
+function optCompare(g) {
+  const A = D.alternative;
+  if (!A || !(A.opzioni || []).length || !(A.giornata === g.label || String(A.giornata || "").startsWith(g.label + " "))) return null;
+  const by = t => A.opzioni.find(o => o.tag === t), rec = by("consigliata"), att = by("attacco"), fer = by("ferma");
+  if (!rec || !fer) return null;
+  const L = [[rec, "Consigliata"], [att, "Solo punti"], [fer, "Non toccare"]].filter(x => x[0]);
+  const best = Math.max(...L.map(([o]) => o.punti));
+  const rows = L.map(([o, l]) => { const k = (o.fuori || []).length, d = o.punti - fer.punti, pc = k ? d / k : null;
+    return `<li class="${o === rec ? "rec" : ""}${o.punti === best ? " best" : ""}"><span class="o3-n">${l}<small>${k ? `${k} ${k === 1 ? "cambio" : "cambi"}` : "nessun cambio"}</small></span>
+      <b>${num(o.punti)}</b><span class="o3-g ${pc == null ? "" : pc > 0.05 ? "up" : pc < -0.05 ? "down" : ""}">${pc == null ? "<small>riferimento</small>" : `${sign(pc, 1)}<small>per cambio</small>`}</span></li>`; }).join("");
+  const rende = rec.punti > fer.punti + 0.05, k = (rec.fuori || []).length;
+  const msg = rende ? "" : `<p class="o3-w"><b>I ${k} cambi della consigliata non rendono in ${esc(g.label)}</b> (${num(rec.punti)} contro ${num(fer.punti)} senza cambi): puntano alle giornate dopo e alle plusvalenze.${att && att.punti > fer.punti + 1.5 ? ` Per i punti della ${esc(g.label)} rende di più "Solo punti" (${num(att.punti)}, ${(att.fuori || []).length} cambi).` : ""}</p>`;
+  return {rende, html: `<div class="o3"><div class="lab">Punti attesi in ${esc(g.label)}, malus compreso</div><ol>${rows}</ol>${msg}
+    <button type="button" class="o3-b" data-goview="alt">Confronta in Opzioni<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>`};
+}
+
 // Da fare ora: cambi, capitano, titolari e notizie, nell'ordine in cui vanno fatti. Con dec (solo da decidere):
 // solo cambi, capitano, avvisi e il pulsante Condividi
 function todoCard(dec) {
   const i = activeIdx(), g = D.piano.giornate[i], t = today();
-  if (g.dal <= t) return "";   // giornata iniziata: c'è la scheda in diretta
+  if (begun(g)) return "";   // giornata iniziata (prima partita passata): c'è la scheda in diretta
   const items = [], A = D.app && D.app.attuale ? D.app.attuale : null;
   const mineNames = new Set(A ? A.map(p => p.nome) : D.rosa);
   // senza la lettura dall'account: chi esce e chi entra sono quelli del piano (g.fuori/g.dentro, come la scheda Cambi)
   const inn = A ? g.giocatori.filter(p => !mineNames.has(p.nome)) : (g.dentro || []).map(nome => ({nome}));
   const out = A ? A.filter(p => !g.giocatori.some(q => q.nome === p.nome)) : (g.fuori || []).map(nome => ({nome}));
-  const when = `${dow(g.dal)} ${dmy(g.dal)}`;
+  // con l'ora della prima partita: "le 22:59 di dom 25/10" (il mercato chiude un minuto prima)
+  const close = g.inizio ? new Date(Date.parse(g.inizio) - 60000) : null;
+  const when = close ? `le ${String(close.getHours()).padStart(2, "0")}:${String(close.getMinutes()).padStart(2, "0")} di ${dow(g.dal)} ${dmy(g.dal)}` : `${dow(g.dal)} ${dmy(g.dal)}`;
+  const o3 = inn.length ? optCompare(g) : null;
   const it = (cls, t, d = "", extra = "") => `<li class="${cls}" style="--k:${items.length}"><div class="body"><div class="t">${t}</div>${d ? `<div class="d">${d}</div>` : ""}${extra}</div></li>`;
-  if (inn.length) items.push(it("", `Fai ${inn.length} ${inn.length === 1 ? "cambio" : "cambi"} prima di ${when}`,
+  if (inn.length) items.push(it(o3 && !o3.rende ? "warn" : "", `${o3 && !o3.rende ? "Il piano fa" : "Fai"} ${inn.length} ${inn.length === 1 ? "cambio" : "cambi"} ${close ? "entro" : "prima di"} ${when}`,
     g.malus ? `Malus −${num(g.malus, 0)}` : g.label === "G1" ? "Senza malus" : "",
-    `<div class="mv">${out.length ? `<span class="lab">Fuori</span><div class="chips">${out.map((p, k) => `<span class="chip o" style="--k:${k}">${esc(surname(p.nome))}</span>`).join("")}</div>` : ""}
+    `${o3 ? o3.html : ""}<div class="mv">${out.length ? `<span class="lab">Fuori</span><div class="chips">${out.map((p, k) => `<span class="chip o" style="--k:${k}">${esc(surname(p.nome))}</span>`).join("")}</div>` : ""}
       <span class="lab">Dentro</span><div class="chips">${inn.map((p, k) => `<span class="chip i" style="--k:${k + out.length}">${esc(surname(p.nome))}</span>`).join("")}</div></div>`));
   else items.push(it("ok", `Nessun cambio prima della ${esc(g.label)}`, "La rosa va bene così."));
   const c = g.capitano[0], cp = c && g.giocatori.find(p => p.id === c.id);
@@ -2248,13 +2323,14 @@ function liveCard() {
   const started = A.some(p => p.giocata) || (plan && plan.dal <= t && t <= plan.al);
   if (!started) return "";
   const exp = n => plan?.giocatori.find(p => p.nome === n);
+  const DR = D.diretta && D.diretta.giornata === G.number ? D.diretta.giocatori || {} : {};
   const turns = [...new Set(A.map(p => p.turno || 0))].sort((a, b) => (a || 9) - (b || 9));
   const W = {titolare: 1, "sesto uomo": 1, panchina: .5};
   const tot = A.reduce((s, p) => s + (p.punti || 0) * (W[p.slot] ?? 1) * (p.capitano ? 1.5 : 1), 0);
   const rows = turns.map(tn => `<div class="live-h">${tn ? `Turno ${tn}` : "Riposo"}</div>` + A.filter(p => (p.turno || 0) === tn).map(p => {
-    const e = exp(p.nome);
+    const e = exp(p.nome), r = !p.giocata && DR[p.nome];
     return `<div class="live-row"><span>${esc(p.nome)}${p.capitano ? ' <span class="badge-inline">C</span>' : ""} <small class="muted">${esc(p.slot)}</small></span>
-      <span class="exp">${e ? "attesi " + num(e.punti) : ""}</span><b class="${p.giocata && e ? (p.punti >= e.punti ? "up" : "down") : ""}">${p.giocata ? num(p.punti) : "–"}</b></div>`;
+      <span class="exp">${e ? "attesi " + num(e.punti) : r && r.stima != null ? `${r.partita === "riposo" ? "media" : "stima"} ${num(r.stima)}` : ""}</span><b class="${p.giocata && e ? (p.punti >= e.punti ? "up" : "down") : ""}">${p.giocata ? num(p.punti) : "–"}</b></div>`;
   }).join("")).join("");
   const tips = [];
   if (plan) {
@@ -2275,27 +2351,51 @@ function liveCard() {
     }
   }
   const [dd, hh] = D.aggiornato.split(" ");
+  // stima di fine giornata: punti fatti + stima di chi ha ancora una partita valida (o la media, se a riposo)
+  const todo = A.filter(p => !p.giocata && DR[p.nome] && DR[p.nome].stima != null);
+  const rest = todo.reduce((s, p) => s + DR[p.nome].stima * (W[p.slot] ?? 1) * (p.capitano ? 1.5 : 1), 0);
+  const fin = (D.storico || []).filter(r => r.stato === "finita" && r.punti != null), media = fin.length ? fin.reduce((a, r) => a + r.punti, 0) / fin.length : null;
+  const end = tot + rest, vsM = media != null ? end - media : null;
+  const est = todo.length ? `<div class="kpis" style="--n:2"><div class="kpi hi"><b>${num(end)}</b><span>stima a fine giornata</span></div>
+      <div class="kpi"><b class="${vsM == null ? "" : vsM >= 0 ? "up" : "down"}">${vsM == null ? "–" : sign(vsM)}</b><span>${media != null ? `sulla tua media (${num(media)})` : "media non ancora disponibile"}</span></div></div>
+    <p class="note" style="margin:0">Stima: ${num(tot)} fatti + ${num(rest)} di ${todo.map(p => `${esc(surname(p.nome))} (${esc(DR[p.nome].partita)}, ${num(DR[p.nome].stima)}${p.capitano ? " ×1,5" : p.slot === "panchina" ? " ×0,5" : ""})`).join(", ")}. Il piano parte dalla giornata dopo: per la partita di stanotte uso il "se gioca" del modello della prossima giornata per la presenza (avversario diverso), o la media Dunkest.</p>` : "";
   return `<div class="card live">${head(`<span class="live-dot" aria-hidden="true"></span>In diretta · G${G.number}`, `al ${dmy(dd)} · ${hh}`)}
     <div class="kpis" style="--n:2"><div class="kpi hi"><b>${num(tot)}</b><span>punti finora</span></div><div class="kpi"><b>${A.filter(p => p.giocata).length}/${A.length}</b><span>hanno giocato</span></div></div>
+    ${est}
     ${tips.length ? `<div class="tips"><ol>${tips.map(x => `<li><span>${x}</span></li>`).join("")}</ol></div>` : ""}
     <div class="live-t">${rows}</div>
     <p class="note">Punti dall'app Dunkest al ${dmy(dd)} alle ${hh} (stima: capitano ×1,5, panchina al 50%). Si aggiornano a ogni "Aggiorna" e nei controlli prima dei turni.</p></div>`;
 }
 
-// Ultima giornata giocata, dai dati dell'app Dunkest
+// La tua giornata (in corso o ultima) dallo storico per giornata (data/fonti/storico_squadra.csv): numeri della giornata
+// e della stagione separati, andamento giornata per giornata, giocatori dell'ultima giornata finita
 function lastDay() {
-  const u = D.app && D.app.ultima;
-  if (!u) return "";
-  const t = u.totali || {}, sq = D.app.squadra || {};
-  const rows = [...u.giocatori].sort((a, b) => (a.posizione || 99) - (b.posizione || 99)).map(p => `<tr>
+  const H = (D.storico || []).filter(r => r.punti != null);
+  const u = D.app && D.app.ultima, sq = (D.app && D.app.squadra) || {};
+  if (!H.length && !u) return "";
+  const cur = H.at(-1) || {giornata: u.numero, stato: "finita", punti: u.totali?.pts, plusvalenza: u.totali?.plus, cambi: u.totali?.trades};
+  const live = cur.stato === "in corso", fin = H.filter(r => r.stato === "finita");
+  const media = fin.length ? fin.reduce((a, r) => a + r.punti, 0) / fin.length : null;
+  const mx = Math.max(...H.map(r => r.punti), 1);
+  const trend = H.length ? `<div class="sc tr-g">${H.map((r, k) => `<div class="sc-row${r.stato === "in corso" ? " ghost" : ""}">
+      <div class="sc-h"><span>G${r.giornata}${r.stato === "in corso" ? " · in corso" : ""}</span><b>${num(r.punti)}</b></div>
+      <div class="sc-bar"><i style="--w:${(r.punti / mx * 100).toFixed(1)}%;--b:${k}"></i></div>
+      <small class="muted">${r.posizione ? `${r.posizione.toLocaleString("it-IT")}° in classifica` : "posizione non letta"}${r.plusvalenza != null ? ` · plus ${sign(r.plusvalenza)} cr` : ""}${r.cambi ? ` · ${r.cambi} cambi` : ""}</small></div>`).join("")}</div>` : "";
+  const rows = u ? [...u.giocatori].sort((a, b) => (a.posizione || 99) - (b.posizione || 99)).map(p => `<tr>
     <td>${esc(p.nome)}${p.capitano ? ' <span class="badge-inline">C</span>' : ""} <br><small class="muted">${esc(p.slot)}</small></td>
-    <td>${num(p.punti || 0)}</td><td class="${p.variazione > 0 ? "up" : p.variazione < 0 ? "down" : ""}">${p.variazione == null ? "–" : sign(p.variazione)}</td></tr>`).join("");
-  return `<div class="card">${head(`La tua G${u.numero}`, "dall'app Dunkest")}
-    <div class="kpis"><div class="kpi hi"><b>${num(t.pts || 0)}</b><span>punti</span></div>
-      <div class="kpi"><b>${sign(t.plus || 0)}</b><span>plusvalenza</span></div>
-      <div class="kpi"><b>${sq.position ? sq.position + "°" : "–"}</b><span>classifica</span></div>
-      <div class="kpi"><b>${num(sq.total_pts || 0)}</b><span>punti totali</span></div></div>
-    <div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Punti</th><th>Prezzo</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+    <td>${num(p.punti || 0)}</td><td class="${p.variazione > 0 ? "up" : p.variazione < 0 ? "down" : ""}">${p.variazione == null ? "–" : sign(p.variazione)}</td></tr>`).join("") : "";
+  return `<div class="card yg">${head(`La tua G${cur.giornata}`, live ? "in corso · dall'app Dunkest" : "finita · dall'app Dunkest")}
+    <div class="lab">Giornata ${cur.giornata}</div>
+    <div class="kpis" style="--n:3"><div class="kpi hi"><b>${num(cur.punti || 0)}</b><span>${live ? "punti in giornata, per ora" : "punti in giornata"}</span></div>
+      <div class="kpi"><b>${cur.plusvalenza != null ? sign(cur.plusvalenza) : "–"}</b><span>${live ? "plus a fine giornata" : "plusvalenza (cr)"}</span></div>
+      <div class="kpi"><b>${cur.cambi ?? "–"}</b><span>cambi</span></div></div>
+    <div class="lab">Stagione</div>
+    <div class="kpis" style="--n:3"><div class="kpi"><b>${sq.position || cur.posizione ? `${(sq.position || cur.posizione).toLocaleString("it-IT")}°` : "–"}</b><span>classifica generale</span></div>
+      <div class="kpi"><b>${num(sq.total_pts ?? cur.punti_totali ?? 0)}</b><span>punti totali</span></div>
+      <div class="kpi"><b>${media != null ? num(media) : "–"}</b><span>media a giornata</span></div></div>
+    ${H.length > 1 ? `<div><div class="lab" style="margin-bottom:6px">Giornata per giornata</div>${trend}</div>` : ""}
+    ${u ? `<details><summary><span>Giocatori della G${u.numero}${live ? " (ultima finita)" : ""}</span></summary><div class="scroll"><table class="lastday"><thead><tr><th>Giocatore</th><th>Punti</th><th>Prezzo</th></tr></thead><tbody>${rows}</tbody></table></div></details>` : ""}
+    <p class="note" style="margin:0">La posizione è quella generale letta dall'app${H.some(r => !r.posizione) ? "; per le giornate prima dello storico (dal 24/10) non c'è" : ""}. La media conta solo le giornate finite.</p></div>`;
 }
 
 // Quanto sbaglia il modello: registro di questa stagione (previsti vs veri)
@@ -2477,7 +2577,18 @@ function seasonCard() {
 // media a quel ruolo). Tabella ordinabile: G / A / C scelgono il ruolo (e le sue statistiche), un secondo tocco inverte.
 const DVP_ST = {G: [["AST", "AS", "assist"], ["FG3M", "3P", "triple"]], F: [["FG3M", "3P", "triple"]], C: [["DREB", "RD", "rimbalzi difensivi"], ["OREB", "RO", "rimbalzi offensivi"]]};
 const DVP_R = {G: "guardie", F: "ali", C: "centri"}, DVP_A = {G: "alle guardie", F: "alle ali", C: "ai centri"};
-let dvp = {role: "C", key: "C", dir: -1};
+let dvp = {role: "C", key: "C", dir: -1, opp: false};
+// Avversari della tua rosa nella prima giornata del piano: {squadra: [cognomi]} (righe dell'indice di ricerca)
+function rosaOpp() {
+  const lab = D.piano.giornate[0]?.label, out = {}, names = new Set(rosaNames());
+  for (const c of D.cerca_rosa || []) {
+    if (!names.has(c.nome) || c.ruolo === "HC") continue;
+    const d = (c.g || []).find(x => x.l === lab), m = d && /(?:vs|@)\s*([A-Z]{3})/.exec(d.partita || "");
+    if (m) (out[m[1]] = out[m[1]] || []).push(surname(c.nome));
+  }
+  return out;
+}
+const rosaNames = () => D.app && D.app.attuale ? D.app.attuale.map(p => p.nome) : (D.rosa || []);
 function dvpCell(f, cls = "") {
   if (f == null) return `<td class="${cls}">–</td>`;
   const d = (f - 1) * 100, k = Math.abs(d) < 2 ? 0 : Math.min(38, Math.round(Math.abs(d) / 15 * 38));
@@ -2488,32 +2599,63 @@ function defenseCard() {
   if (!d || !(d.squadre || []).length) return "";
   const r = dvp.role, st = DVP_ST[r];
   const val = s => dvp.key === "t" ? s.t : dvp.key === "n" ? s.n : dvp.key.includes(".") ? s[r]?.[dvp.key.split(".")[1]] : s[dvp.key]?.FP;
-  const L = [...d.squadre].sort((a, b) => dvp.key === "t" ? dvp.dir * -a.t.localeCompare(b.t) : ((val(a) ?? 1) - (val(b) ?? 1)) * dvp.dir || a.t.localeCompare(b.t));
+  const OPP = rosaOpp(), lab0 = D.piano.giornate[0]?.label || "";
+  const L = [...d.squadre].filter(s => !dvp.opp || OPP[s.t]).sort((a, b) => dvp.key === "t" ? dvp.dir * -a.t.localeCompare(b.t) : ((val(a) ?? 1) - (val(b) ?? 1)) * dvp.dir || a.t.localeCompare(b.t));
   const desc = dvp.dir < 0 ? "descending" : "ascending";
   const th = (k, l, al, on) => `<th scope="col"${dvp.key === k ? ` aria-sort="${k === "t" ? (dvp.dir < 0 ? "ascending" : "descending") : desc}"` : ""}${on ? ' class="on"' : ""}><button type="button" class="dvp-s" data-dfs="${k}" aria-label="${al}">${l}<i aria-hidden="true">${(k === "t" ? -dvp.dir : dvp.dir) < 0 ? "▼" : "▲"}</i></button></th>`;
   const head2 = `<tr>${th("t", "Squadra", "Ordina per squadra")}${["G", "F", "C"].map(x => th(x, ROLE[x], `Punti concessi ${DVP_A[x]}${x === r ? "" : ": mostra le loro statistiche"}`, x === r)).join("")}
     ${st.map(([k, l, al]) => th(r + "." + k, l, `Ordina per ${al} concessi ${DVP_A[r]}`)).join("")}${th("n", "PG", "Ordina per partite giocate in stagione")}</tr>`;
-  const rows = L.map(s => `<tr><td><span class="tm-c" style="${teamVars(s.t)}">${esc(s.t)}</span></td>${["G", "F", "C"].map(x => dvpCell(s[x]?.FP, x === r ? "on" : "")).join("")}${st.map(([k]) => dvpCell(s[r]?.[k], "st")).join("")}<td class="n">${s.n}</td></tr>`).join("");
+  const rows = L.map(s => `<tr><td><span class="tm-c" style="${teamVars(s.t)}">${esc(s.t)}</span>${dvp.opp && OPP[s.t] ? `<small class="dvp-vs">${OPP[s.t].map(esc).join(", ")}</small>` : ""}</td>${["G", "F", "C"].map(x => dvpCell(s[x]?.FP, x === r ? "on" : "")).join("")}${st.map(([k]) => dvpCell(s[r]?.[k], "st")).join("")}<td class="n">${s.n}</td></tr>`).join("");
   const ns = d.squadre.map(s => s.n), lo = Math.min(...ns), hi = Math.max(...ns);
   const early = hi < 15 ? `<p class="note dvp-w">${ic("warn")}<span><b>A inizio stagione pesa ancora molto l'anno scorso.</b> Ogni squadra ha giocato ${lo === hi ? lo : `${lo}–${hi}`} ${hi === 1 ? "partita" : "partite"} del ${esc(d.stagione)}: il ${esc(d.precedente)} conta a ${d.peso_prec === 0.5 ? "metà" : num(d.peso_prec, 2)} peso e il fattore si avvicina alla media come se ci fossero altre ${d.k} partite neutre.</span></p>` : "";
   const top = L.length ? L.filter(s => s[r]).sort((a, b) => b[r].FP - a[r].FP)[0] : null;
   return `<div class="card">${head("Difese contro ruolo", `${d.squadre.length} squadre`)}
     <p class="note" style="margin:0">Quanto ogni difesa concede in punti Dunkest a guardie, ali e centri rispetto alla media della lega per quel ruolo: è il fattore che il modello usa per la partita. +10% = concede il 10% in più${top ? ` (${DVP_A[r]} oggi concede di più ${esc(top.t)}, ${sign((top[r].FP - 1) * 100, 0)}%)` : ""}.</p>
     ${early}
+    ${Object.keys(OPP).length ? `<button type="button" class="dvp-f" data-dfopp aria-pressed="${dvp.opp}">Solo avversarie della mia rosa in ${esc(lab0)} <span class="muted">· ${Object.keys(OPP).length}</span></button>` : ""}
     <div class="scroll"><table class="dvp"><caption class="sr">Difesa contro ruolo: scarto dalla media dei punti Dunkest concessi a guardie, ali e centri; statistiche concesse ${DVP_A[r]}; partite giocate nel ${esc(d.stagione)}</caption>
       <thead>${head2}</thead><tbody>${rows}</tbody></table></div>
     <p class="legend"><span><i class="dv-pos"></i>Concede di più (meglio per chi la affronta)</span><span><i class="dv-neg"></i>Concede di meno</span><span>PG = partite ${esc(d.stagione)}</span></p>
     <p class="note" style="margin:0">Tocca G, A o C per ordinare per quel ruolo e vedere le sue statistiche (${r === "G" ? "AS assist e 3P triple" : r === "F" ? "3P triple" : "RD rimbalzi difensivi e RO offensivi"} concessi al minuto); un secondo tocco inverte l'ordine. Si ricalcola a ogni aggiornamento.</p></div>`;
 }
+function dvpRedraw(sel) {
+  const box = document.getElementById("m-dif"); if (!box) return;
+  box.innerHTML = defenseCard();
+  box.querySelector(sel)?.focus({preventScroll: true});
+}
 function dvpSort(b) {
   const k = b.dataset.dfs;
   if (k === dvp.key) dvp.dir = -dvp.dir;
   else { dvp.key = k; dvp.dir = -1; if (["G", "F", "C"].includes(k)) dvp.role = k; }
-  const box = document.getElementById("m-dif"); if (!box) return;
-  box.innerHTML = defenseCard();
-  box.querySelector(`[data-dfs="${k}"]`)?.focus({preventScroll: true});
-  const th = box.querySelector("th[aria-sort]");
+  dvpRedraw(`[data-dfs="${k}"]`);
+  const th = document.querySelector("#m-dif th[aria-sort]");
   say(`Ordinata per ${th ? th.textContent.replace(/[▲▼]/g, "").trim() : ""}, ${dvp.dir < 0 && k !== "t" ? "dal valore più alto" : "in ordine crescente"}`);
+}
+
+// Calendario della rosa nelle giornate del piano: cella = avversario e punti attesi, tinta con la difesa di quella
+// squadra contro il ruolo del giocatore (tabella Difese); riposo = la media che prenderà. Scorre di lato solo la griglia.
+function calGrid() {
+  const G = D.piano.giornate.map(g => g.label), names = rosaNames();
+  const R = names.map(n => (D.cerca_rosa || []).find(c => c.nome === n)).filter(Boolean)
+    .sort((a, b) => (ROLE_ORDER[a.ruolo] ?? 3) - (ROLE_ORDER[b.ruolo] ?? 3) || b.crediti - a.crediti);
+  if (!R.length || !G.length) return "";
+  const DF = Object.fromEntries(((D.difese || {}).squadre || []).map(s => [s.t, s]));
+  const cell = (c, l) => {
+    const d = (c.g || []).find(x => x.l === l);
+    if (!d) return `<td class="muted">–</td>`;
+    if (/(^|,\s*)riposo:/.test(d.note || "")) return `<td class="rip" title="${esc(restTxt(d.punti))}"><b>RIP</b><small>media ~${num(d.punti, 0)}</small></td>`;
+    if (!d.partita) return `<td class="muted">–</td>`;
+    const m = /(vs|@)\s*([A-Z]{3})/.exec(d.partita), opp = m ? m[2] : "", f = c.ruolo !== "HC" && DF[opp] && DF[opp][c.ruolo] ? DF[opp][c.ruolo].FP : null;
+    const dv = f == null ? 0 : (f - 1) * 100, k = f == null || Math.abs(dv) < 2 ? 0 : Math.min(38, Math.round(Math.abs(dv) / 15 * 38));
+    const tip = `${c.nome}, ${l}: ${d.partita}, ${num(d.punti)} punti attesi${f != null ? `, ${opp} concede ${sign(dv, 0)}% ${DVP_A[c.ruolo]}` : ""}`;
+    return `<td class="v ${dv > 0 ? "pos" : "neg"}" style="--dk:${k}%" title="${esc(tip)}"><b>${m ? (m[1] === "@" ? "@" : "") + opp : esc(d.partita)}</b><small>${num(d.punti)}${f != null && k ? ` · ${sign(dv, 0)}%` : ""}</small></td>`;
+  };
+  const tab = `<div class="scroll"><table class="cal4"><caption class="sr">Calendario della rosa: avversario e punti attesi per giornata, con la difesa dell'avversario contro il ruolo</caption>
+    <thead><tr><th scope="col">Giocatore</th>${G.map(l => `<th scope="col">${esc(l)}</th>`).join("")}</tr></thead>
+    <tbody>${R.map(c => `<tr><th scope="row"><span class="nm">${esc(surname(c.nome))}</span><small class="muted">${ROLE[c.ruolo] || c.ruolo} · ${esc(c.squadra)}</small></th>${G.map(l => cell(c, l)).join("")}</tr>`).join("")}</tbody></table></div>`;
+  return foldCard("cal4", "Calendario della rosa", `${G[0]}–${G.at(-1)}`, `${tab}
+    <p class="legend"><span><i class="dv-pos"></i>Avversario che concede di più al ruolo</span><span><i class="dv-neg"></i>Concede di meno</span><span>@ = in trasferta · RIP = riposo</span></p>
+    <p class="note" style="margin:0">Punti attesi della tua rosa di oggi (senza cambi) giornata per giornata; il colore viene da Modello › Difese. Riposo: prende la media, niente capitano, 50% in panchina.</p>`);
 }
 
 // Riposo: Dunkest dà la media punti del giocatore (niente capitano, 50% se in panchina, niente plusvalenze)
@@ -2568,6 +2710,28 @@ function priceRows(names) {
   });
 }
 
+// Valore della squadra giornata per giornata (storico): prezzi della rosa di QUELLA giornata + banca, con le plusvalenze
+function teamValueCard() {
+  const H = (D.storico || []).filter(r => r.totale != null);
+  if (!H.length) return "";
+  const W = 320, Hh = 150, pl = 34, pr = 14, top = 28, base = Hh - 24;
+  const vals = H.map(r => r.totale), mn = Math.min(...vals) - .6, mx = Math.max(...vals) + .6;
+  const X = i => H.length === 1 ? (pl + W - pr) / 2 : pl + 18 + i * (W - pl - pr - 36) / (H.length - 1), Y = v => base - (v - mn) / (mx - mn) * (base - top);
+  const pts = vals.map((v, i) => `${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join(" ");
+  const grid = [0, .5, 1].map(f => { const v = mn + (mx - mn) * f, y = Y(v).toFixed(1);
+    return `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="${f ? "var(--line)" : "var(--line-2)"}"/><text x="${pl - 6}" y="${(+y + 3.5).toFixed(1)}" text-anchor="end" font-size="10" fill="var(--muted)">${num(v)}</text>`; }).join("");
+  const svg = `<div class="chart"><svg viewBox="0 0 ${W} ${Hh}" role="img" aria-label="Valore della squadra per giornata: ${H.map(r => `G${r.giornata} ${num(r.totale)} crediti`).join(", ")}">${grid}
+    ${H.length > 1 ? `<polyline points="${pts}" fill="none" stroke="var(--c-hi)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>` : ""}
+    ${H.map((r, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(r.totale).toFixed(1)}" r="${i === H.length - 1 ? 5 : 4}" fill="${i === H.length - 1 ? "var(--c-hi)" : "var(--surface)"}" stroke="${i === H.length - 1 ? "var(--surface)" : "var(--c-hi)"}" stroke-width="2"/>
+      <text x="${X(i).toFixed(1)}" y="${(Y(r.totale) - 10).toFixed(1)}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--fg)">${num(r.totale)}</text>
+      <text x="${X(i).toFixed(1)}" y="${Hh - 6}" text-anchor="middle" font-size="11" fill="${i === H.length - 1 ? "var(--fg)" : "var(--muted)"}"${i === H.length - 1 ? ' font-weight="700"' : ""}>G${r.giornata}</text>`).join("")}</svg></div>
+    <ul class="tv-l">${H.map(r => `<li><b>G${r.giornata}</b><span>rosa ${r.valore_rosa != null ? num(r.valore_rosa) : "–"} + banca ${r.banca != null ? num(r.banca) : "–"}</span><span class="${r.plusvalenza > 0 ? "up" : r.plusvalenza < 0 ? "down" : "muted"}">${r.plusvalenza != null ? `plus ${sign(r.plusvalenza)}` : r.stato === "in corso" ? "plus a fine giornata" : "plus –"}</span></li>`).join("")}</ul>`;
+  const table = vtab("Valore della squadra per giornata", ["Giornata", "Rosa", "Banca", "Totale", "Plusvalenza"],
+    H.map(r => [`G${r.giornata}${r.stato === "in corso" ? " (in corso)" : ""}`, r.valore_rosa != null ? num(r.valore_rosa) : "–", r.banca != null ? num(r.banca) : "–", num(r.totale), r.plusvalenza != null ? sign(r.plusvalenza) : "–"]));
+  return `<div class="card">${head("Valore della squadra nel tempo", "rosa + banca, crediti")}${viz("tv", "Valore della squadra nel tempo", svg, table)}
+    <p class="note" style="margin:0">Ogni punto è la rosa che avevi in quella giornata ai prezzi di quella giornata (fotografie data/prezzi), più i crediti in banca. La plusvalenza di una giornata entra nei prezzi della giornata dopo.</p></div>`;
+}
+
 function renderPrezzi() {
   const snaps = D.fotografie;
   const rows = priceRows(D.rosa);
@@ -2601,7 +2765,8 @@ function renderPrezzi() {
     <div class="kpis board"><div class="kpi hi"><b>${num(tot.at(-1))}</b><span>valore rosa</span></div>
       <div class="kpi"><b>${snaps.length > 1 ? sign(tot.at(-1) - tot[0]) : "–"}</b><span>dalla ${esc(snaps[0] || "G1")}</span></div>
       <div class="kpi"><b>${snaps.length}</b><span>${snaps.length === 1 ? "fotografia" : "fotografie"}</span></div><div class="kpi"><b>${esc(snaps.at(-1) || "–")}</b><span>ultima</span></div></div>
-    <div class="card">${head("Valore della rosa", "crediti")}${chart}</div>
+    ${teamValueCard()}
+    <div class="card">${head("La rosa di oggi nelle fotografie", "crediti")}${chart}</div>
     <div class="card">${head("Prezzi della rosa", `${rows.length} giocatori`)}<div class="scroll"><table class="pz-t"><thead><tr><th>Giocatore</th>${snaps.map(s => `<th>${esc(s)}</th>`).join("")}<th>Var.</th></tr></thead>
       <tbody>${rows.sort((a, b) => (b.d ?? 0) - (a.d ?? 0) || (b.vals.at(-1) ?? 0) - (a.vals.at(-1) ?? 0)).map(r => `<tr><td>${esc(r.n)}</td>${r.vals.map((v, i) => `<td${i === r.vals.length - 1 ? ' class="cur"' : ""}>${v == null ? "–" : cr(v)}</td>`).join("")}
       <td class="${r.d > 0 ? "up" : r.d < 0 ? "down" : ""}">${r.d == null || snaps.length < 2 ? "–" : sign(r.d)}</td></tr>`).join("")}</tbody></table></div></div>
@@ -2948,13 +3113,31 @@ function renderInf() {
 // Dunkest muove i prezzi a passi di 0,1 e il minimo è 4 crediti.
 const rule = () => (D.taratura && D.taratura.b > 0) ? D.taratura : null;
 const round1 = v => Math.round(v * 10) / 10;
-function plusFor(cr, pts) { const t = rule(); if (!t) return null; const raw = t.a + t.b * pts + t.c * cr; return Math.max(round1(raw), round1(4 - cr)); }
-function ptsFor(cr, plus) { const t = rule(); return t ? (plus - 0.05 - t.a - t.c * cr) / t.b : null; }   // punti minimi per arrivare a "plus"
+// Regola di quest'anno: variazione = round(S·(a + b·punti + c·prezzo), 1), S = scala_stagione (taratura.json); i coach
+// hanno la loro (config squadra.plus_coach, già variazione vera: S = 1). Mai sotto 4 crediti.
+const ruleOf = coach => { const t = rule(); if (coach && D.plus_coach) { const [a, b, c] = D.plus_coach; return {a, b, c, S: 1}; } return t ? {a: t.a, b: t.b, c: t.c, S: t.scala_stagione || 1} : null; };
+function plusFor(cr, pts, coach) { const t = ruleOf(coach); if (!t) return null; const raw = t.S * (t.a + t.b * pts + t.c * cr); return Math.max(round1(raw), round1(4 - cr)); }
+function ptsFor(cr, plus, coach) { const t = ruleOf(coach); return t ? ((plus - 0.05) / t.S - t.a - t.c * cr) / t.b : null; }   // punti minimi per arrivare a "plus"
+// Storico del prezzo per fotografia e prossimo movimento: soglie per +0,1 e per scendere, variazione con i punti attesi
+function priceBlock(p, info) {
+  const coach = p.ruolo === "HC", snaps = D.fotografie || [], pr = info.prezzi || {};
+  const vals = snaps.map(s => pr[s] ?? null);
+  const hist = vals.some(v => v != null) ? `<ol class="ph">${snaps.map((s, i) => { const v = vals[i], d = i && v != null && vals[i - 1] != null ? v - vals[i - 1] : null;
+    return `<li><span class="lab">${esc(s)}</span><b>${v == null ? "–" : cr(v)}</b>${d != null ? `<small class="${d > 0.05 ? "up" : d < -0.05 ? "down" : "muted"}">${Math.abs(d) < 0.05 ? "=" : sign(d)}</small>` : ""}</li>`; }).join("")}</ol>` : "";
+  const t = ruleOf(coach), c0 = p.crediti;
+  if (!t || c0 == null) return hist ? `<div><div class="lab" style="margin-bottom:6px">Prezzi</div>${hist}</div>` : "";
+  const up = Math.max(0, ptsFor(c0, 0.1, coach));
+  const dn = (-0.05 / t.S - t.a - t.c * c0) / t.b, floor = c0 <= 4;   // sotto dn la variazione arrotondata è negativa
+  const pts = seGioca(p) ?? p.punti, exp = pts != null ? plusFor(c0, pts, coach) : null;
+  return `<div class="pmv"><div class="lab" style="margin-bottom:6px">Prezzo</div>${hist}
+    <p class="pmv-r">Per salire di <b class="up">+0,1</b> servono almeno <b>${num(up, 0)}</b> punti nella giornata${floor ? "; è al minimo: <b>non scende sotto 4</b>" : `, sotto <b>${num(Math.max(0, dn), 0)}</b> scende`}.${exp != null ? ` Con i ${num(pts)} punti ${seGioca(p) ? "se gioca" : "attesi"}: <b class="${exp > 0 ? "up" : exp < 0 ? "down" : ""}">${exp ? sign(exp) : "0,0"}</b>.` : ""}</p>
+    <p class="note" style="margin:0">${coach ? "Regola dei coach di quest'anno (30 coach G1→G2)" : `Regola delle stagioni passate × ${num(t.S, 3)} (scala misurata quest'anno)`}, arrotondata a 0,1; mai sotto 4 crediti.</p></div>`;
+}
 const TARGETS = [-0.3, -0.1, 0, 0.1, 0.3, 0.5, 1.0];
 
-function thresholdsTable(cr) {
+function thresholdsTable(cr, coach) {
   return `<table class="thr-table"><thead><tr><th>Per ottenere</th><th>Servono almeno</th></tr></thead><tbody>${
-    TARGETS.map(tg => `<tr><td class="${tg > 0 ? "up" : tg < 0 ? "down" : ""}">${tg > 0 ? "+" : ""}${num(tg)} cr</td><td><b>${num(Math.max(0, ptsFor(cr, tg)))}</b> punti</td></tr>`).join("")
+    TARGETS.map(tg => `<tr><td class="${tg > 0 ? "up" : tg < 0 ? "down" : ""}">${tg > 0 ? "+" : ""}${num(tg)} cr</td><td><b>${num(Math.max(0, ptsFor(cr, tg, coach)))}</b> punti</td></tr>`).join("")
   }</tbody></table>`;
 }
 
@@ -2978,7 +3161,7 @@ function renderCalc() {
       <p class="note">Quanti punti servono, a questo prezzo, per ogni plusvalenza o minusvalenza.</p>
       <div id="c-thr"></div></div>
     <div class="card">${head("Da dove viene")}
-      <p class="note">Il calcolatore ufficiale non esiste più. Questa regola è ricavata da ${t.campioni.toLocaleString("it-IT")} variazioni reali delle stagioni ${Object.keys(t.stagioni || {}).sort().join(", ")}: sui prezzi veri del 2025-26 indovina la variazione esatta nel 91% dei casi e sbaglia di più di 0,1 crediti solo nell'1%. Varianti con la media del giocatore o curve non lineari non fanno meglio. Vale per i giocatori; per gli allenatori non ci sono dati.</p></div>`;
+      <p class="note">Il calcolatore ufficiale non esiste più. Questa regola è ricavata da ${t.campioni.toLocaleString("it-IT")} variazioni reali delle stagioni ${Object.keys(t.stagioni || {}).sort().join(", ")}: sui prezzi veri del 2025-26 indovina la variazione esatta nel 91% dei casi e sbaglia di più di 0,1 crediti solo nell'1%. Varianti con la media del giocatore o curve non lineari non fanno meglio. Quest'anno le variazioni sono più piccole: la regola è moltiplicata per ${num(t.scala_stagione || 1, 3)} (misurata sulle variazioni del 2026-27) e arrotondata a 0,1. Vale per i giocatori; per gli allenatori c'è una regola a parte (nella loro scheda).</p></div>`;
   const upd = () => {
     calcCr = +document.getElementById("c-cr").value; calcPts = parseFloat(String(document.getElementById("c-pts").value).replace(",", ".")) || 0;
     try { localStorage.setItem("pcc-calc", JSON.stringify({cr: calcCr, pts: calcPts})); } catch (e) {}
@@ -3164,10 +3347,10 @@ function showSheet(p0, src) {
         <div><b>${p.p_td < 0.01 ? "<1" : Math.round(p.p_td * 100)}%</b><span>tripla doppia</span></div>
         <div><b>${Math.round((p.p_3t || 0) * 100)}%</b><span>3+ triple</span></div></div>` : ""}
       ${sourcesBlock(info.fonti)}
-      ${p.ruolo !== "HC" && rule() ? `<details><summary><span>Punti che servono a ${cr(p.crediti)} crediti</span></summary>${thresholdsTable(p.crediti)}</details>` : ""}`],
+      ${rule() ? `<details><summary><span>Punti che servono a ${cr(p.crediti)} crediti</span></summary>${thresholdsTable(p.crediti, p.ruolo === "HC")}</details>` : ""}`],
     ["sto", "Storico", `${spark(info.partite, se ?? p.punti, se != null)}
       ${formBlock(info.forma)}
-      <div><div class="lab" style="margin-bottom:6px">Prezzi</div><div class="prices">${prices}</div></div>`],
+      ${priceBlock(p, info) || `<div><div class="lab" style="margin-bottom:6px">Prezzi</div><div class="prices">${prices}</div></div>`}`],
     ["sub", "Sostituti", subsBlock(p) || `<p class="note">Nessun sostituto con partita in ${esc(g.label)} nello stesso ruolo e fascia di prezzo.</p>`]
   ].filter(x => x[2].replace(/\s+/g, ""));
   if (!panels.some(x => x[0] === shTab)) shTab = "pan";
@@ -3903,6 +4086,8 @@ function pickTab(k, focus) {
 document.addEventListener("click", e => {
   const vz = e.target.closest("[data-vz]"); if (vz) { setViz(vz); return; }
   const dfs = e.target.closest("[data-dfs]"); if (dfs) { dvpSort(dfs); return; }
+  const dfo = e.target.closest("[data-dfopp]"); if (dfo) { dvp.opp = !dvp.opp; dvpRedraw("[data-dfopp]"); return; }
+  const gv = e.target.closest("[data-goview]"); if (gv) { switchView(gv.dataset.goview); return; }
   const rm = e.target.closest("[data-rrmore]"); if (rm) {
     rrMore = rm.getAttribute("aria-expanded") !== "true"; const box = document.getElementById("rr-more"); if (box) box.hidden = !rrMore;
     rm.setAttribute("aria-expanded", rrMore); rm.textContent = rrMore ? "Nascondi le alternative" : `Le ${box ? box.children.length : ""} alternative sulla stessa scala`; buzz(6);
@@ -4582,9 +4767,14 @@ const TOUR = [
   ["alt", "Opzioni", "Formazioni alternative messe a confronto con la <b>consigliata</b>. Una differenza entro ±1,5 punti è rumore: scegli quella che ti convince."],
   ["occ", "Occasioni e Mercato", "In <b>Occasioni</b>, seconda scheda <b>Mercato</b>, tutti i giocatori della lega: filtri per ruolo, squadra e prezzo, ★ per i preferiti e <b>Confronta</b> per metterne due a fianco."]];
 let tourK = 0, tourBack = null;
+// Una volta sola: segnata appena si apre (anche se chiudi la pagina a metà non torna). Se c'è "Da fare ora" non si apre
+// sopra di lui: il pulsante Guida in testata si accende una volta e la guida resta lì.
 function maybeTour() {
   let seen = true; try { seen = !!localStorage.getItem("pcc-tour"); } catch (e) {}
-  if (!seen && D && !document.getElementById("boot")) openTour();
+  if (seen || !D || document.getElementById("boot")) return;
+  try { localStorage.setItem("pcc-tour", "1"); } catch (e) {}
+  if (view === "form" && todoNow()) { document.getElementById("gd-b")?.classList.add("new"); return; }
+  openTour();
 }
 function openTour() {
   let el = document.getElementById("tour");
@@ -4607,6 +4797,7 @@ function openTour() {
     });
   }
   tourBack = document.activeElement; tourK = 0;
+  document.getElementById("gd-b")?.classList.remove("new");
   el.hidden = false; drawTour(false); layerOpened(); syncInert(true);
   if (!calm) { el.classList.remove("in"); void el.offsetWidth; el.classList.add("in"); }
 }
