@@ -1626,6 +1626,7 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
 .ex-l li .muted{font-size:var(--fs-s);line-height:1.4}
 .ex-l .pill{justify-self:start}
 .ex-g details b{color:var(--fg)}
+.rtr{font-variant-numeric:tabular-nums;color:var(--warn-text);font-weight:600}
 .ex-g details > summary{min-height:44px;font-size:var(--fs-s)}
 /* "Riduci movimento": nessuna animazione né transizione, nemmeno quelle fuori dal blocco qui sopra (colori dei
    pulsanti, freccia dei dettagli, comparsa della barra di avanzamento). Anche il JS lo controlla (calm). */
@@ -1924,7 +1925,7 @@ function card(p, g) {
     p.nuovo ? `<span class="badge new">NUOVO</span>` : out ? `<span class="badge esce" title="Il piano lo cambia">ESCE</span>` : "",
     info.quintetto && !coach ? `<span class="badge role ${info.quintetto.titolare ? "tit" : "pan"}${info.quintetto.confermato ? "" : " prev"}" title="${info.quintetto.titolare ? "Titolare" : "Dalla panchina"} (${info.quintetto.confermato ? "quintetto confermato" : "quintetto previsto"}) · ${esc(info.quintetto.partita)}">${info.quintetto.titolare ? "TIT" : "PAN"}</span>` : ""
   ];
-  let right = rest ? `<span class="badge rest" title="${esc(restTxt(p.punti))}">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}">${ic(presCls(prob))}${Math.round(prob * 100)}%</span>` : "");
+  let right = rest ? `<span class="badge rest" title="${esc(restTxt(p.punti))}">RIPOSO</span>` : (prob != null && prob < 1 ? `<span class="badge inj ${presCls(prob)}" title="Probabilità di giocare: ${PRES_TXT[presCls(prob)]}${rientroTxt(info) ? " · " + esc(rientroTxt(info)) : ""}">${ic(presCls(prob))}${Math.round(prob * 100)}%</span>` : "");
   // sulla carta del capitano in alto a destra c'è la C (che resta dov'è): il bollino passa a sinistra, sotto gli altri.
   // Sotto la C non c'è posto: tra la C e il nome restano meno dei 19 px del bollino fino a 375 px di schermo.
   const left = left0.join("") + (isCap ? right : "");
@@ -2198,7 +2199,7 @@ function todayCard(frag) {
     const info = D.giocatori[nm] || {}, inj = info.infortunio, abs = info.assente;
     if (!((inj && !/available/i.test(inj.stato)) || (abs != null && abs < 1))) return null;
     const pr = abs != null ? abs : inj && /out/i.test(inj.stato) && !/question/i.test(inj.stato) ? 0 : .5;
-    return {nm, pr, st: inj ? inj.stato : "in dubbio", abs};
+    return {nm, pr, st: inj ? inj.stato : "in dubbio", abs, rt: rientroTxt(info, true)};
   }).filter(Boolean);
   const c = g.capitano[0], cp = c && g.giocatori.find(p => p.id === c.id), capNowA = A && A.find(p => p.capitano);
   if (!frag && !started) return "";   // prima della giornata i numeri stanno dentro "Da fare ora"
@@ -2229,7 +2230,7 @@ function todayCard(frag) {
 // Avvisi sui tuoi in Oggi: con uno solo una pillola ferma; con più di uno una striscia che scorre piano se non sta nella
 // riga (la decide mqSetup dopo il disegno), con una seconda copia nascosta al lettore di schermo per il giro senza salti.
 function warnStrip(warn) {
-  const items = warn.map((w, k) => `<span class="ti" style="--k:${k}">${presIc(w.pr)}${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}</span>`).join("");
+  const items = warn.map((w, k) => `<span class="ti" style="--k:${k}">${presIc(w.pr)}${esc(surname(w.nm))} · ${esc(w.st)}${w.abs != null ? ` (${Math.round(w.abs * 100)}%)` : ""}${w.rt ? ` · ${esc(w.rt)}` : ""}</span>`).join("");
   if (warn.length < 2) return `<span class="td-inj chain">${items}</span>`;
   return `<span class="td-inj mq" title="Tocca per fermare o far ripartire"><span class="mq-t"><span class="mq-g chain">${items}</span><span class="mq-g" aria-hidden="true">${items}</span></span></span>`;
 }
@@ -2304,7 +2305,7 @@ function todoCard(dec) {
     const inj = info.infortunio, abs = info.assente;
     if ((inj && !/available/i.test(inj.stato)) || (abs != null && abs < 1))
       items.push(it("warn", `${esc(n)}: ${esc(inj ? inj.stato : "in dubbio")}${abs != null ? ` <span class="muted">(gioca al ${Math.round(abs * 100)}%)</span>` : ""}`,
-        `${inj ? esc(inj.motivo) + " · " : ""}${g.giocatori.some(p => p.nome === n) ? "nel piano" : "nella tua rosa"}`));
+        `${inj ? esc(inj.motivo) + " · " : ""}${rientroTxt(info) ? esc(rientroTxt(info)) + " · " : ""}${g.giocatori.some(p => p.nome === n) ? "nel piano" : "nella tua rosa"}`));
   });
   const sw = `<button type="button" class="dec-t" data-decide aria-pressed="${!!dec}"><span class="dec-k" aria-hidden="true"></span>Solo da decidere</button>`;
   if (dec) return `<div class="card todo dec-c">${head(`Da fare ora`, `${esc(g.label)} · ${when}`)}${sw}<ol class="chain">${items.join("")}</ol>
@@ -2407,7 +2408,15 @@ function accuracy() {
     <div class="kpis" style="--n:3"><div class="kpi"><b>${num(r.MAE)}</b><span>errore medio (punti)</span></div>
       <div class="kpi"><b>${sign(r.bias)}</b><span>distorsione</span></div>
       <div class="kpi"><b>${r.partite}</b><span>partite</span></div></div>
-    <p class="note">Partita per partita, sui giocatori scesi in campo. Il modello si ritara da solo su questi dati.</p></div>`;
+    <p class="note">Partita per partita, sui giocatori scesi in campo. Il modello si ritara da solo su questi dati.</p>${coachAcc(r.coach)}</div>`;
+}
+// Coach nel registro: punti attesi contro veri e vittorie previste contro vinte (solo misura, nessuna correzione)
+function coachAcc(c) {
+  if (!c || !c.partite) return "";
+  const fasce = (c.fasce || []).map(f => [`${Math.round(f.da * 100)}–${Math.round(f.a * 100)}%`, String(f.partite), `${Math.round(f.prevista * 100)}%`, `${Math.round(f.vinte * 100)}%`]);
+  return `<details><summary><span>Coach · ${c.partite} partite</span></summary>
+    <p class="note" style="margin:0 0 8px">Attesi ${num(c.atteso)} a partita, veri ${num(c.vero)}; errore medio ${num(c.MAE)} punti. Vittorie: previste ${c.prevista != null ? Math.round(c.prevista * 100) + "%" : "–"}, vinte ${c.vinte != null ? Math.round(c.vinte * 100) + "%" : "–"}${c.p_ricostruite ? ` (${c.p_ricostruite} probabilità ricostruite dai punti attesi: le previsioni salvate prima del 25/10 non le avevano)` : ""}.</p>
+    ${fasce.length ? vtab("Vittorie dei coach: prevista contro vinte, a fasce", ["Prob. prevista", "Partite", "Prevista", "Vinte"], fasce) : ""}</details>`;
 }
 
 // Prova sulla carta contro le quote (nessun soldo vero)
@@ -2656,6 +2665,16 @@ function calGrid() {
   return foldCard("cal4", "Calendario della rosa", `${G[0]}–${G.at(-1)}`, `${tab}
     <p class="legend"><span><i class="dv-pos"></i>Avversario che concede di più al ruolo</span><span><i class="dv-neg"></i>Concede di meno</span><span>@ = in trasferta · RIP = riposo</span></p>
     <p class="note" style="margin:0">Punti attesi della tua rosa di oggi (senza cambi) giornata per giornata; il colore viene da Modello › Difese. Riposo: prende la media, niente capitano, 50% in panchina.</p>`);
+}
+
+// Rientro da un'assenza con una data (notizia o tipo di infortunio): "fuori fino al GG/MM (fonte)" o "rientro previsto
+// dopo il GG/MM". corto = senza fonte (strisce e bollini)
+function rientroTxt(info, corto) {
+  const r = info && info.rientro;
+  if (!r || !r.fino_al) return "";
+  const fonte = r.tipo === "tipo" ? `stima dal tipo di infortunio, ${r.fonte}` : r.fonte;
+  const txt = r.p === 0 && r.tipo === "notizia" ? `fuori fino al ${dmy(r.fino_al)}` : `rientro previsto dopo il ${dmy(r.fino_al)}`;
+  return corto ? txt : `${txt} (${fonte})`;
 }
 
 // Riposo: Dunkest dà la media punti del giocatore (niente capitano, 50% se in panchina, niente plusvalenze)
@@ -3322,6 +3341,7 @@ function showSheet(p0, src) {
     seGioca(p) ? [`Punti se gioca`, `<b>${num(seGioca(p))}</b> <span class="muted">· i ${num(p.punti)} attesi sono già ridotti al&nbsp;${Math.round(p.p_gioca * 100)}%</span>`] : null,
     info.quintetto ? [`Quintetto`, `${info.quintetto.titolare ? "<b>Titolare</b>" : "<b>Dalla panchina</b>"} · ${info.quintetto.confermato ? "confermato" : "previsto"} (${esc(info.quintetto.partita.split(" in ")[0])})`] : null,
     info.infortunio ? [`Infortunio`, `<span class="pill q">${esc(info.infortunio.motivo)}</span> ${esc(info.infortunio.stato)}`] : null,
+    rientroTxt(info) ? [`Rientro`, `<span class="rtr">${esc(rientroTxt(info, true))}</span> <span class="muted">${esc(rientroTxt(info).slice(rientroTxt(info, true).length).trim())}</span>`] : null,
     isCap ? [`Fascia`, `<span class="badge-inline">C</span> capitano nel piano`] : null
   ].filter(Boolean);
   const se = seGioca(p);
