@@ -172,6 +172,7 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .thm .f{fill:currentColor;stroke:none}
 .brand-r{display:flex;align-items:center;gap:var(--sp-2h);flex-wrap:wrap;font-size:var(--fs-s)}
 .brand-r small{color:var(--muted);font-size:var(--fs-s)}
+@media (max-width:480px){.brand-r{flex-wrap:nowrap;gap:var(--sp-2)}.brand-r small{white-space:nowrap;font-variant-numeric:tabular-nums}.upd-w{display:none}.brand-r .fresh{min-width:0}.brand-r .fresh .fp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 .clock{display:inline-flex;align-items:center;gap:var(--sp-1h);background:var(--strip);color:var(--strip-ink);border-radius:var(--r-pill);padding:4px 12px 4px 6px;font-size:var(--fs-s);font-weight:600;white-space:nowrap}
 .clock b{font:800 1.1rem/1 var(--display);color:var(--board-accent);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .clock svg{width:18px;height:18px;flex:none}
@@ -269,6 +270,11 @@ code{font-size:.9em;background:var(--surface-2);padding:1px 5px;border-radius:5p
 .board .kpi b{color:var(--board-ink);font-size:1.85rem}
 .board .kpi > span{color:var(--board-muted)}
 .board .kpi.hi b{color:var(--board-accent);text-shadow:0 0 16px var(--glow)}
+.board .kpi.bad b{color:var(--on-dark-down)}.board .kpi.warn b{color:#ffc857}
+.kspk{position:relative;display:block;height:26px;margin:6px 4px 0 0}
+.kspk svg{display:block;width:100%;height:100%;overflow:visible}
+.kspk path{fill:none;stroke:var(--board-accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kspk i{position:absolute;left:100%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;background:var(--board-accent);box-shadow:0 0 8px var(--glow)}
 .board .kpi .delta.pos{background:rgba(95,208,143,.18);color:var(--on-dark-up)}
 .board .kpi .delta.neg{background:rgba(255,138,138,.18);color:var(--on-dark-down)}
 @media (max-width:440px){.kpis{grid-template-columns:repeat(min(var(--n,4),2),1fr)}.kpis[style*="--n:3"]{grid-template-columns:repeat(3,minmax(0,1fr))}.kpis[style*="--n:3"] .kpi{padding:var(--sp-2h)}}
@@ -340,6 +346,16 @@ details b{color:var(--accent-text)}
 .tips li{display:grid;grid-template-columns:24px 1fr;gap:var(--sp-2h);align-items:start;counter-increment:t;line-height:1.4}
 .tips li::before{content:counter(t);width:24px;height:24px;border-radius:var(--r-pill);display:grid;place-items:center;background:var(--board-accent);color:#1a0b00;font:800 .9rem/1 var(--display)}
 .tips b{color:#fff}
+.lv-bar{position:relative;height:12px;border-radius:var(--r-pill);background:rgba(255,255,255,.08);margin-top:22px}
+.lv-bar > i{position:absolute;top:0;bottom:0;border-radius:var(--r-pill);transform-origin:0 50%}
+.lv-d{left:0;width:var(--w);background:var(--board-accent);box-shadow:0 0 12px var(--glow)}
+.lv-r{left:var(--x);width:var(--w);background:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--board-accent) 55%,transparent) 0 4px,transparent 4px 8px)}
+.lv-m{position:absolute;top:-6px;bottom:-6px;left:var(--x);width:2px;background:var(--board-ink);border-radius:2px}
+.lv-m span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);font:600 var(--fs-xs) var(--body);color:var(--board-muted);white-space:nowrap;padding-bottom:2px}
+.lv-leg{display:flex;gap:var(--sp-3);font-size:var(--fs-xs);color:var(--board-muted)}
+.lv-leg span{display:inline-flex;align-items:center;gap:6px}
+.lv-k{width:14px;height:8px;border-radius:var(--r-pill);display:inline-block}
+.lv-k.d{background:var(--board-accent)}.lv-k.r{background:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--board-accent) 55%,transparent) 0 3px,transparent 3px 6px)}
 .live-t{display:grid}
 .live-h{font:700 var(--fs-xs) var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--board-muted);padding:12px 0 4px;border-bottom:1px solid var(--board-line)}
 .live-row{display:grid;grid-template-columns:1fr auto 3.2em;gap:2px 12px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--board-line);font-variant-numeric:tabular-nums}
@@ -793,6 +809,7 @@ tr.more:not([hidden]) td{animation:fade var(--d-base) var(--e-out) backwards}
 .jump a{flex:none;display:inline-flex;align-items:center;min-height:44px;padding:0 14px;border-radius:var(--r-pill);border:1px solid var(--line);background:var(--surface);color:var(--fg);text-decoration:none;font-weight:600;font-size:var(--fs-s);white-space:nowrap;transition:background-color var(--d-fast),color var(--d-fast),border-color var(--d-fast)}
 .jump a[aria-current="true"]{background:var(--sel-bg);border-color:var(--sel-line);color:var(--sel-fg)}
 @media (max-width:699px){.jump{position:sticky;top:var(--mini-h);padding-top:8px;background:color-mix(in srgb,var(--bg) 86%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}}
+.fsec{scroll-margin-top:calc(var(--mini-h) + 72px)}
 .msec{display:grid;gap:var(--sp-4);min-width:0;scroll-margin-top:calc(var(--mini-h) + 72px)}
 .alt{scroll-margin-top:calc(var(--stick-top) + 16px)!important}
 @media (min-width:700px){.msec{scroll-margin-top:calc(var(--stick-top) + 12px)}.jump{margin-inline:0;padding-inline:0}}
@@ -1486,6 +1503,11 @@ h1,h2,h3,.vh h2,.alt-h b,.occ-h b,.mkt-fh b,.tour h2,.shv-h b{text-wrap:balance}
   @keyframes ping{from{opacity:.7;transform:scale(1)}to{opacity:0;transform:scale(2.6)}}
   @keyframes draw{from{stroke-dasharray:1600;stroke-dashoffset:1600}to{stroke-dasharray:1600;stroke-dashoffset:0}}
   @keyframes fade{from{opacity:0}}
+  .lv-d{animation:grow .7s var(--e-out) both}
+  .lv-r{animation:grow .6s var(--e-out) .45s both}
+  .lv-m{animation:drop .4s var(--e-out) .9s both}
+  .kspk path{animation:line .9s var(--e-out) .15s both}
+  .kspk i{animation:pop .3s var(--e-spring) .95s both}
   @keyframes grow{from{transform:scaleX(0)}}
   @keyframes rise-bar{from{transform:scaleY(0)}}
   @keyframes drop{from{opacity:0;transform:translateY(-10px)}}
@@ -1786,6 +1808,13 @@ const ILL = {
 const MORE = 6;   // righe visibili nelle tabelle lunghe, il resto dietro "Mostra tutti"
 const moreRows = rows => rows.map((r, i) => i < MORE ? r : r.replace("<tr", '<tr class="more" hidden')).join("");
 const moreBtn = n => n > MORE ? `<button type="button" class="more-btn" data-more="${n}" aria-expanded="false">Mostra tutti (${n})</button>` : "";
+// mini-curva dentro un riquadro del tabellone: la serie in scala propria, l'ultimo punto acceso; si disegna da sinistra
+const kspark = v => {
+  if (!v || v.length < 2) return "";
+  const lo = Math.min(...v), hi = Math.max(...v), r = hi - lo || 1, X = k => (k / (v.length - 1) * 100).toFixed(1), Y = x => (22 - (x - lo) / r * 18).toFixed(1);
+  const d = v.map((x, k) => `${k ? "L" : "M"}${X(k)} ${Y(x)}`).join("");
+  return `<span class="kspk" aria-hidden="true"><svg viewBox="0 0 100 26" preserveAspectRatio="none"><path pathLength="1" d="${d}"/></svg><i style="top:${(Y(v.at(-1)) / 26 * 100).toFixed(1)}%"></i></span>`;
+};
 const head = (title, meta = "") => `<div class="card-h"><h2>${title}</h2>${meta ? `<span class="meta">${meta}</span>` : ""}</div>`;
 // Schede che si possono chiudere (Turni, Sostituzioni): aperte di base, la scelta resta su questo telefono (pcc-fold)
 let FOLD = {};
@@ -2068,6 +2097,39 @@ function renderForm() {
   // sul telefono restano in fondo come sempre (stesso ordine per gli occhi e per il Tab)
   const wide = WIDE.matches;
   el.innerHTML = `${fa ? `<div class="fcol f-a">${fa}</div>` : ""}<div class="fcol f-b"><div class="days" role="group" aria-label="Giornata">${days}</div>${toggle}${kpis}${pitch}${wide ? rng : ""}</div><div class="fcol f-c">${top}${mode === "mia" ? "" : changes}${cap}${turns}${excludedCard()}${calGrid()}${subs}${wide ? "" : rng}</div>`;
+  formJump(el, wide);
+}
+
+// Indice della Squadra (solo telefono, dove la vista è una colonna lunga ~9 schermate): una pillola per blocco, presa dal
+// titolo della scheda; resta in alto sotto la barra compatta e si accende la sezione che stai leggendo (come in Modello)
+let fjObs = null;
+const FJ_SHORT = {"Da fare ora": "Da fare", "Cambi di rosa": "Cambi", "Partite che non contano": "Escluse", "Calendario della rosa": "Calendario",
+  "Punteggio realistico": "Forchetta", "Le 4 giornate del piano": "4 giornate", "La tua storia": "Storia"};
+function formJump(el, wide) {
+  if (fjObs) { fjObs.disconnect(); fjObs = null; }
+  if (wide) return;
+  const blocks = [];
+  el.querySelectorAll(".fcol > *").forEach(b => {
+    if (b.classList.contains("days")) { blocks.push([b, "Campo"]); return; }
+    const h = b.querySelector(":scope > .card-h h2, :scope > summary h2, :scope > summary .card-h h2, .card-h h2");
+    if (!h || !b.offsetParent && b.hidden) return;
+    const t = h.textContent.replace(/\s+/g, " ").replace(/·.*$/, "").replace(/ per la G\d+$/, "").trim();
+    if (t && !blocks.some(x => x[1] === t)) blocks.push([b, t]);
+  });
+  if (blocks.length < 4) return;
+  blocks.forEach(([b], k) => { b.id = b.id || "fs-" + k; b.classList.add("fsec"); });
+  const nav = document.createElement("nav");
+  nav.className = "jump fjump"; nav.setAttribute("aria-label", "Sezioni della squadra");
+  nav.innerHTML = blocks.map(([b, t], k) => `<a href="#${b.id}" data-jump="${b.id}"${k ? "" : ' aria-current="true"'}>${esc(FJ_SHORT[t] || t)}</a>`).join("");
+  el.prepend(nav);
+  if (!("IntersectionObserver" in window)) return;
+  fjObs = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    nav.querySelectorAll("a").forEach(a => a.dataset.jump === e.target.id ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current"));
+    const a = nav.querySelector("[aria-current]");
+    if (a) nav.scrollTo({left: a.offsetLeft - 16, behavior: calm ? "auto" : "smooth"});
+  }), {rootMargin: "-30% 0px -65% 0px"});
+  blocks.forEach(([b]) => fjObs.observe(b));
 }
 
 
@@ -2254,15 +2316,18 @@ function setDecide(on) {
 function optCompare(g) {
   const A = D.alternative;
   if (!A || !(A.opzioni || []).length || !(A.giornata === g.label || String(A.giornata || "").startsWith(g.label + " "))) return null;
-  const by = t => A.opzioni.find(o => o.tag === t), rec = by("consigliata"), att = by("attacco"), fer = by("ferma");
+  // riferimento senza cambi: "Non toccare nulla", oppure un'altra opzione che non cambia nessuno (quando coincidono,
+  // la pipeline tiene solo la prima: 01/11 "Solo punti" con 0 cambi e niente "Non toccare", e il confronto spariva)
+  const by = t => A.opzioni.find(o => o.tag === t), rec = by("consigliata"), att = by("attacco"),
+    fer = by("ferma") || A.opzioni.find(o => o !== rec && !(o.fuori || []).length);
   if (!rec || !fer) return null;
-  const L = [[rec, "Consigliata"], [att, "Solo punti"], [fer, "Non toccare"]].filter(x => x[0]);
+  const L = [[rec, "Consigliata"], [att, "Solo punti"], [fer, "Non toccare"]].filter((x, k, all) => x[0] && all.findIndex(y => y[0] === x[0]) === k);
   const best = Math.max(...L.map(([o]) => o.punti));
   const rows = L.map(([o, l]) => { const k = (o.fuori || []).length, d = o.punti - fer.punti, pc = k ? d / k : null;
     return `<li class="${o === rec ? "rec" : ""}${o.punti === best ? " best" : ""}"><span class="o3-n">${l}<small>${k ? `${k} ${k === 1 ? "cambio" : "cambi"}` : "nessun cambio"}</small></span>
       <b>${num(o.punti)}</b><span class="o3-g ${pc == null ? "" : pc > 0.05 ? "up" : pc < -0.05 ? "down" : ""}">${pc == null ? "<small>riferimento</small>" : `${sign(pc, 1)}<small>per cambio</small>`}</span></li>`; }).join("");
   const rende = rec.punti > fer.punti + 0.05, k = (rec.fuori || []).length;
-  const msg = rende ? "" : `<p class="o3-w"><b>I ${k} cambi della consigliata non rendono in ${esc(g.label)}</b> (${num(rec.punti)} contro ${num(fer.punti)} senza cambi): puntano alle giornate dopo e alle plusvalenze.${att && att.punti > fer.punti + 1.5 ? ` Per i punti della ${esc(g.label)} rende di più "Solo punti" (${num(att.punti)}, ${(att.fuori || []).length} cambi).` : ""}</p>`;
+  const msg = rende ? "" : `<p class="o3-w"><b>I ${k} cambi della consigliata non rendono in ${esc(g.label)}</b> (${num(rec.punti)} contro ${num(fer.punti)} senza cambi): puntano alle giornate dopo e alle plusvalenze${rec.prezzi != null && fer.prezzi != null ? ` (${sign(rec.prezzi - fer.prezzi, 2)} crediti attesi)` : ""}.${att && att.punti > fer.punti + 1.5 ? ` Per i punti della ${esc(g.label)} rende di più "Solo punti" (${num(att.punti)}, ${(att.fuori || []).length} cambi).` : ""}</p>`;
   return {rende, html: `<div class="o3"><div class="lab">Punti attesi in ${esc(g.label)}, malus compreso</div><ol>${rows}</ol>${msg}
     <button type="button" class="o3-b" data-goview="alt">Confronta in Opzioni<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg></button></div>`};
 }
@@ -2357,12 +2422,17 @@ function liveCard() {
   const rest = todo.reduce((s, p) => s + DR[p.nome].stima * (W[p.slot] ?? 1) * (p.capitano ? 1.5 : 1), 0);
   const fin = (D.storico || []).filter(r => r.stato === "finita" && r.punti != null), media = fin.length ? fin.reduce((a, r) => a + r.punti, 0) / fin.length : null;
   const end = tot + rest, vsM = media != null ? end - media : null;
+  // barra della giornata: punti fatti (pieno) + quelli ancora da giocare (tratteggio) fino alla stima, tacca sulla tua media
+  const sc = Math.max(end, media || 0) * 1.08 || 1, pc = v => (Math.max(0, v) / sc * 100).toFixed(1);
+  const bar = todo.length ? `<div class="lv-bar" role="img" aria-label="${num(tot)} punti fatti e circa ${num(rest)} ancora da giocare${media != null ? `, contro una media di ${num(media)}` : ""}">
+      <i class="lv-d" style="--w:${pc(tot)}%"></i><i class="lv-r" style="--x:${pc(tot)}%;--w:${pc(rest)}%"></i>${media != null ? `<b class="lv-m" style="--x:${pc(media)}%"><span>media</span></b>` : ""}</div>
+    <div class="lv-leg"><span><i class="lv-k d"></i>fatti</span><span><i class="lv-k r"></i>da giocare</span></div>` : "";
   const est = todo.length ? `<div class="kpis" style="--n:2"><div class="kpi hi"><b>${num(end)}</b><span>stima a fine giornata</span></div>
       <div class="kpi"><b class="${vsM == null ? "" : vsM >= 0 ? "up" : "down"}">${vsM == null ? "–" : sign(vsM)}</b><span>${media != null ? `sulla tua media (${num(media)})` : "media non ancora disponibile"}</span></div></div>
     <p class="note" style="margin:0">Stima: ${num(tot)} fatti + ${num(rest)} di ${todo.map(p => `${esc(surname(p.nome))} (${esc(DR[p.nome].partita)}, ${num(DR[p.nome].stima)}${p.capitano ? " ×1,5" : p.slot === "panchina" ? " ×0,5" : ""})`).join(", ")}. Il piano parte dalla giornata dopo: per la partita di stanotte uso il "se gioca" del modello della prossima giornata per la presenza (avversario diverso), o la media Dunkest.</p>` : "";
   return `<div class="card live">${head(`<span class="live-dot" aria-hidden="true"></span>In diretta · G${G.number}`, `al ${dmy(dd)} · ${hh}`)}
     <div class="kpis" style="--n:2"><div class="kpi hi"><b>${num(tot)}</b><span>punti finora</span></div><div class="kpi"><b>${A.filter(p => p.giocata).length}/${A.length}</b><span>hanno giocato</span></div></div>
-    ${est}
+    ${est}${bar}
     ${tips.length ? `<div class="tips"><ol>${tips.map(x => `<li><span>${x}</span></li>`).join("")}</ol></div>` : ""}
     <div class="live-t">${rows}</div>
     <p class="note">Punti dall'app Dunkest al ${dmy(dd)} alle ${hh} (stima: capitano ×1,5, panchina al 50%). Si aggiornano a ogni "Aggiorna" e nei controlli prima dei turni.</p></div>`;
@@ -2782,7 +2852,7 @@ function renderPrezzi() {
     : `<p class="muted">Partirà da sola dopo la prima giornata con le variazioni reali: oggi le plusvalenze attese sono una stima.</p>`;
   document.getElementById("v-prezzi").innerHTML = `${vhead("prezzi", "Prezzi", "Valore della tua rosa giornata per giornata e regola delle plusvalenze.")}
     <div class="kpis board"><div class="kpi hi"><b>${num(tot.at(-1))}</b><span>valore rosa</span></div>
-      <div class="kpi"><b>${snaps.length > 1 ? sign(tot.at(-1) - tot[0]) : "–"}</b><span>dalla ${esc(snaps[0] || "G1")}</span></div>
+      <div class="kpi"><b>${snaps.length > 1 ? sign(tot.at(-1) - tot[0]) : "–"}</b><span>dalla ${esc(snaps[0] || "G1")}</span>${kspark(tot)}</div>
       <div class="kpi"><b>${snaps.length}</b><span>${snaps.length === 1 ? "fotografia" : "fotografie"}</span></div><div class="kpi"><b>${esc(snaps.at(-1) || "–")}</b><span>ultima</span></div></div>
     ${teamValueCard()}
     <div class="card">${head("La rosa di oggi nelle fotografie", "crediti")}${chart}</div>
@@ -3121,7 +3191,7 @@ function renderInf() {
     : `<div class="empty">${ILL.ok}<b>Nessun avviso: tutti disponibili</b>Nessun giocatore della rosa o del piano è nella lista infortuni.</div>`;
   document.getElementById("v-inf").innerHTML = `${vhead("inf", "Infortuni", "Prima chi riguarda la tua rosa e il piano, poi tutta la lega.")}
     <div class="kpis board"><div class="kpi${rosterHits.length ? " hi" : ""}"><b>${rosterHits.length}</b><span>tuoi in lista</span></div>
-      <div class="kpi"><b>${outN}</b><span>tuoi fuori</span></div><div class="kpi"><b>${rosterHits.length - outN}</b><span>tuoi in dubbio</span></div>
+      <div class="kpi${outN ? " bad" : ""}"><b>${outN}</b><span>tuoi fuori</span></div><div class="kpi${rosterHits.length - outN ? " warn" : ""}"><b>${rosterHits.length - outN}</b><span>tuoi in dubbio</span></div>
       <div class="kpi"><b>${L.length}</b><span>nella lega</span></div></div>
     <div class="card">${head("La tua rosa e il piano", rosterHits.length ? `${rosterHits.length} in lista` : "")}${rosterHits.length ? `<div class="inj-list">${rosterHits.map(i => row(i)).join("")}</div>` : none}</div>
     <div class="card">${head("Tutta la lega", `${others.length} giocatori`)}<div class="inj-list">${others.map(row).join("")}</div>
@@ -4847,7 +4917,8 @@ function applyData(data) {
   try { localStorage.setItem("pcc-seen", "1"); } catch (e) {}
   document.getElementById("team").textContent = D.squadra;
   const [dd, tt] = D.aggiornato.split(" ");
-  document.getElementById("upd").textContent = `${offline ? "Offline · dati salvati del" : "Aggiornato"} ${dmy(dd)} alle ${tt}`;
+  // sul telefono le parole cadono ("01/11 09:58"): badge, ora e freschezza stanno su una riga sola (la testata si accorcia)
+  document.getElementById("upd").innerHTML = `<span class="upd-w">${offline ? "Offline · dati salvati del" : "Aggiornato"} </span>${dmy(dd)}<span class="upd-w"> alle</span> ${tt}`;
   document.getElementById("mini-t").textContent = D.squadra;
   document.getElementById("mini-u").textContent = `${offline ? "offline · " : ""}${dmy(dd)} · ${tt}`;
   clock();
